@@ -1,14 +1,18 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { ContactForm } from "@/features/contact/contact-form";
 
-export const metadata = {
-  title: "Contact — Showroom Paris",
-  description:
-    "Notre équipe vous accompagne. Showroom du Marais, hotline 7j/7, formulaire de contact.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "contactPage" });
+  return { title: t("title"), description: t("intro") };
+}
 
 export default async function ContactPage({
   params,
@@ -17,18 +21,18 @@ export default async function ContactPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("contactPage");
   return (
     <div className="pt-28 pb-24 md:pt-32">
       <Container>
         <div className="grid gap-16 md:grid-cols-[1.4fr_1fr]">
           <div>
-            <Eyebrow>Nous contacter</Eyebrow>
+            <Eyebrow>{t("eyebrow")}</Eyebrow>
             <h1 className="mt-4 font-serif text-5xl leading-tight md:text-7xl">
-              Parlons de votre projet.
+              {t("title")}
             </h1>
             <p className="text-secondary mt-6 max-w-lg text-base">
-              Nos conseillers vous accompagnent, matières en main, dans notre
-              showroom parisien du Marais. Devis chiffré sous 48h.
+              {t("intro")}
             </p>
 
             <ContactForm />
@@ -37,35 +41,34 @@ export default async function ContactPage({
           <aside className="space-y-6">
             <InfoCard
               Icon={MapPin}
-              title="Showroom Paris"
+              title={t("showroom")}
               lines={[
                 "12 rue de Rivoli",
                 "75004 Paris — Le Marais",
-                "Ouvert du mardi au samedi, 10h–19h",
+                t("openHours"),
               ]}
             />
             <InfoCard
               Icon={Phone}
-              title="Hotline"
-              lines={["+33 1 84 88 00 00", "Lun–Sam, 9h–19h"]}
+              title={t("hotline")}
+              lines={["+33 1 84 88 00 00", t("hotlineHours")]}
             />
             <InfoCard
               Icon={Mail}
-              title="Email"
+              title={t("email")}
               lines={["bonjour@pergolafr.com"]}
             />
             <InfoCard
               Icon={MessageCircle}
-              title="WhatsApp"
-              lines={["+33 6 12 34 56 78 — Devis express en 2h"]}
+              title={t("whatsapp")}
+              lines={["+33 6 12 34 56 78 — " + t("whatsappHelper")]}
             />
           </aside>
         </div>
 
-        {/* Showroom map */}
         <div className="mt-16 aspect-[16/6] w-full overflow-hidden rounded-[var(--radius-lg)]">
           <iframe
-            title="Localisation showroom Pergola FR — 12 rue de Rivoli, 75004 Paris"
+            title="Showroom"
             src="https://www.openstreetmap.org/export/embed.html?bbox=2.3552%2C48.8546%2C2.3620%2C48.8582&layer=mapnik&marker=48.8564%2C2.3586"
             className="h-full w-full grayscale-[0.4]"
             loading="lazy"
@@ -76,7 +79,6 @@ export default async function ContactPage({
     </div>
   );
 }
-
 
 function InfoCard({
   Icon,

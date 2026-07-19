@@ -36,9 +36,7 @@ export function ConfiguratorTeaser() {
                     <span className="bg-accent/20 text-accent mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full">
                       <Check className="size-3.5" />
                     </span>
-                    <span className="text-primary-foreground/85">
-                      {t(p)}
-                    </span>
+                    <span className="text-primary-foreground/85">{t(p)}</span>
                   </li>
                 ))}
               </ul>
@@ -53,27 +51,27 @@ export function ConfiguratorTeaser() {
             <div className="relative">
               <div className="bg-primary-foreground/5 border-primary-foreground/10 aspect-[4/5] overflow-hidden rounded-[var(--radius-lg)] border p-8 backdrop-blur">
                 <div className="text-primary-foreground/50 flex items-center justify-between text-[10px] uppercase tracking-[0.3em]">
-                  <span>Aperçu live</span>
+                  <span>{t("previewLabel")}</span>
                   <span className="text-accent">SKU-PGL-4030-BC</span>
                 </div>
                 <div className="mt-6 aspect-square w-full overflow-hidden rounded-2xl">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={editorialPhoto.configuratorTeaser}
-                    alt="Aperçu configurateur"
+                    alt=""
                     className="h-full w-full object-cover"
                   />
                 </div>
                 <div className="text-primary-foreground/70 mt-6 space-y-3 text-xs">
-                  <Row label="Largeur" value="4,00 m" />
-                  <Row label="Longueur" value="3,00 m" />
-                  <Row label="Toit" value="Bioclimatique" />
-                  <Row label="Coloris cadre" value="Anthracite RAL 7016" />
-                  <Row label="LED périmétrique" value="Incluse" />
+                  <Row label={t("specWidth")} value="4,00 m" />
+                  <Row label={t("specLength")} value="3,00 m" />
+                  <Row label={t("specRoof")} value={t("specRoofSample")} />
+                  <Row label={t("specColor")} value={t("specColorSample")} />
+                  <Row label={t("specLed")} value={t("specLedSample")} />
                 </div>
                 <div className="border-primary-foreground/10 mt-6 flex items-baseline justify-between border-t pt-5">
                   <span className="text-primary-foreground/50 text-[10px] uppercase tracking-[0.3em]">
-                    Estimation
+                    {t("estimate")}
                   </span>
                   <span className="font-serif text-3xl">8 490 €</span>
                 </div>

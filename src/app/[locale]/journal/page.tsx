@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { PageHeader } from "@/components/layout/page-header";
@@ -6,11 +6,15 @@ import { Container } from "@/components/ui/container";
 import { journalPosts } from "@/features/journal/journal-data";
 import { journalPhoto } from "@/lib/imagery";
 
-export const metadata = {
-  title: "Journal — Inspirations et savoir-faire",
-  description:
-    "Reportages, conseils et inspirations pour votre projet de pergola, gazebo ou structure d'extérieur.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "journalPage" });
+  return { title: t("title"), description: t("intro") };
+}
 
 export default async function BlogPage({
   params,
@@ -19,13 +23,15 @@ export default async function BlogPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("journalPage");
+  const en = locale === "en";
 
   return (
     <>
       <PageHeader
-        eyebrow="Journal"
-        title="Nos inspirations et savoir-faire."
-        intro="Guides matériaux, retours de chantier, nouveautés atelier — la pensée derrière chaque projet."
+        eyebrow={t("eyebrow")}
+        title={t("title")}
+        intro={t("intro")}
       />
 
       <section className="py-16 md:py-24">
@@ -41,7 +47,7 @@ export default async function BlogPage({
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={journalPhoto[p.slug]}
-                    alt={p.title}
+                    alt={en ? p.title_en : p.title}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div
@@ -51,24 +57,29 @@ export default async function BlogPage({
                 </div>
                 <div className="pt-6">
                   <div className="text-secondary flex items-center gap-3 text-[10px] uppercase tracking-[0.25em]">
-                    <span className="text-accent">{p.category}</span>
+                    <span className="text-accent">
+                      {en ? p.category_en : p.category}
+                    </span>
                     <span>·</span>
                     <time dateTime={p.date}>
-                      {new Date(p.date).toLocaleDateString("fr-FR", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
+                      {new Date(p.date).toLocaleDateString(
+                        en ? "en-GB" : "fr-FR",
+                        { day: "numeric", month: "long", year: "numeric" },
+                      )}
                     </time>
                     <span>·</span>
-                    <span>{p.readingMinutes} min</span>
+                    <span>
+                      {p.readingMinutes} {t("minutes")}
+                    </span>
                   </div>
                   <h2 className="mt-4 font-serif text-2xl leading-tight">
-                    {p.title}
+                    {en ? p.title_en : p.title}
                   </h2>
-                  <p className="text-secondary mt-3 text-sm">{p.excerpt}</p>
+                  <p className="text-secondary mt-3 text-sm">
+                    {en ? p.excerpt_en : p.excerpt}
+                  </p>
                   <div className="text-primary mt-5 inline-flex items-center gap-1 text-sm font-medium">
-                    Lire l&apos;article{" "}
+                    {t("readArticle")}{" "}
                     <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                   </div>
                 </div>

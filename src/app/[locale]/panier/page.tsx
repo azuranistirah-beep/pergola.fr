@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
@@ -9,6 +10,7 @@ import { useCart } from "@/features/cart/cart-store";
 import { formatEUR } from "@/lib/utils";
 
 export default function PanierPage() {
+  const t = useTranslations("cart");
   const { lines, remove, setQuantity, subtotalCents, clear } = useCart();
   const shippingCents = subtotalCents > 200000 ? 0 : 14900;
   const totalCents = subtotalCents + shippingCents;
@@ -16,9 +18,9 @@ export default function PanierPage() {
   return (
     <div className="pt-28 pb-24 md:pt-32">
       <Container>
-        <Eyebrow>Panier</Eyebrow>
+        <Eyebrow>{t("eyebrow")}</Eyebrow>
         <h1 className="mt-4 font-serif text-4xl leading-tight md:text-6xl">
-          Votre panier
+          {t("title")}
         </h1>
 
         {lines.length === 0 ? (
@@ -26,12 +28,10 @@ export default function PanierPage() {
             <div className="bg-muted text-secondary flex size-16 items-center justify-center rounded-full">
               <ShoppingBag className="size-6" />
             </div>
-            <p className="text-secondary">
-              Votre panier est vide.
-            </p>
+            <p className="text-secondary">{t("empty")}</p>
             <Button asChild variant="primary" size="lg">
               <Link href="/pergolas">
-                Découvrir les pergolas <ArrowRight />
+                {t("emptyCta")} <ArrowRight />
               </Link>
             </Button>
           </div>
@@ -67,7 +67,7 @@ export default function PanierPage() {
                         <button
                           onClick={() => setQuantity(l.id, l.quantity - 1)}
                           className="px-3 py-1.5 text-sm"
-                          aria-label="Diminuer"
+                          aria-label={t("quantityDown")}
                         >
                           −
                         </button>
@@ -75,7 +75,7 @@ export default function PanierPage() {
                         <button
                           onClick={() => setQuantity(l.id, l.quantity + 1)}
                           className="px-3 py-1.5 text-sm"
-                          aria-label="Augmenter"
+                          aria-label={t("quantityUp")}
                         >
                           +
                         </button>
@@ -86,7 +86,7 @@ export default function PanierPage() {
                         </span>
                         <button
                           onClick={() => remove(l.id)}
-                          aria-label="Retirer"
+                          aria-label={t("removeLine")}
                           className="text-secondary hover:text-primary"
                         >
                           <Trash2 className="size-4" />
@@ -101,49 +101,56 @@ export default function PanierPage() {
                   onClick={clear}
                   className="text-secondary hover:text-primary underline underline-offset-4"
                 >
-                  Vider le panier
+                  {t("clear")}
                 </button>
                 <Link
                   href="/pergolas"
                   className="text-primary font-medium underline underline-offset-4"
                 >
-                  Continuer mes achats
+                  {t("continue")}
                 </Link>
               </div>
             </div>
 
             <aside className="lg:sticky lg:top-32 lg:self-start">
               <div className="border-border rounded-[var(--radius-lg)] border p-8">
-                <h2 className="font-serif text-xl">Récapitulatif</h2>
+                <h2 className="font-serif text-xl">{t("summary")}</h2>
                 <dl className="mt-6 space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <dt className="text-secondary">Sous-total</dt>
+                    <dt className="text-secondary">{t("subtotal")}</dt>
                     <dd>{formatEUR(subtotalCents)}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-secondary">Livraison</dt>
+                    <dt className="text-secondary">{t("shipping")}</dt>
                     <dd>
                       {shippingCents === 0 ? (
-                        <span className="text-accent">Offerte</span>
+                        <span className="text-accent">
+                          {t("shippingFree")}
+                        </span>
                       ) : (
                         formatEUR(shippingCents)
                       )}
                     </dd>
                   </div>
                   <div className="border-border flex justify-between border-t pt-4 text-base">
-                    <dt className="font-medium">Total TTC</dt>
+                    <dt className="font-medium">{t("total")}</dt>
                     <dd className="font-serif text-2xl">
                       {formatEUR(totalCents)}
                     </dd>
                   </div>
                 </dl>
-                <Button asChild variant="primary" size="lg" className="mt-6 w-full">
+                <Button
+                  asChild
+                  variant="primary"
+                  size="lg"
+                  className="mt-6 w-full"
+                >
                   <Link href="/checkout">
-                    Commander <ArrowRight />
+                    {t("checkoutCta")} <ArrowRight />
                   </Link>
                 </Button>
                 <p className="text-secondary mt-4 text-center text-xs">
-                  Paiement sécurisé Stripe & PayPal
+                  {t("secure")}
                 </p>
               </div>
             </aside>

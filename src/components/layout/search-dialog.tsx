@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { Search as SearchIcon, X } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
@@ -18,10 +19,11 @@ const suggestions = [
   "Pergola bioclimatique",
   "Pergola bois cèdre",
   "Pergola adossée",
-  "Cabana d'angle",
+  "Cabana",
 ];
 
 export function SearchDialog({ open, onClose, catalog }: Props) {
+  const c = useTranslations("common");
   const [q, setQ] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -77,12 +79,12 @@ export function SearchDialog({ open, onClose, catalog }: Props) {
               ref={inputRef}
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Rechercher une pergola, un matériau, une famille…"
+              placeholder={c("search_placeholder")}
               className="flex-1 bg-transparent text-lg outline-none placeholder:text-secondary/50"
             />
             <button
               onClick={onClose}
-              aria-label="Fermer"
+              aria-label={c("close")}
               className="hover:bg-muted rounded-full p-2 transition-colors"
             >
               <X className="size-5" />
@@ -92,7 +94,7 @@ export function SearchDialog({ open, onClose, catalog }: Props) {
           {q.trim() === "" ? (
             <div className="py-10">
               <div className="text-secondary mb-4 text-[10px] uppercase tracking-[0.25em]">
-                Suggestions
+                {c("suggestions")}
               </div>
               <div className="flex flex-wrap gap-2">
                 {suggestions.map((s) => (
@@ -108,8 +110,8 @@ export function SearchDialog({ open, onClose, catalog }: Props) {
             </div>
           ) : results.length === 0 ? (
             <div className="text-secondary py-12 text-center text-sm">
-              Aucun résultat pour <strong className="text-primary">« {q} »</strong>.
-              Essayez « bioclimatique », « cèdre » ou « adossée ».
+              {c("noResults")}{" "}
+              <strong className="text-primary">« {q} »</strong>.
             </div>
           ) : (
             <ul className="divide-border/60 divide-y py-2">

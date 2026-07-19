@@ -1,14 +1,25 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Award, Factory, Leaf, MapPin } from "lucide-react";
 import { editorialPhoto } from "@/lib/imagery";
 
-export const metadata = {
-  title: "Maison Pergola FR — Notre histoire",
-  description:
-    "Fondée à Paris, fabriquée en Vendée. Une maison française dédiée à l'art de vivre dehors depuis 12 ans.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "about" });
+  return { title: t("title"), description: t("intro") };
+}
+
+const commitments = [
+  { key: "design", Icon: MapPin },
+  { key: "workshop", Icon: Factory },
+  { key: "ecodesign", Icon: Leaf },
+  { key: "awarded", Icon: Award },
+] as const;
 
 export default async function AboutPage({
   params,
@@ -17,18 +28,17 @@ export default async function AboutPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("about");
   return (
     <>
       <section className="bg-muted pt-32 pb-16 md:pt-40 md:pb-24">
         <Container>
-          <Eyebrow>La Maison</Eyebrow>
+          <Eyebrow>{t("eyebrow")}</Eyebrow>
           <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-tight md:text-7xl">
-            L&apos;art de vivre dehors, savoir-faire français.
+            {t("title")}
           </h1>
           <p className="text-secondary mt-8 max-w-2xl text-lg leading-relaxed">
-            Depuis 2014, nous dessinons à Paris et fabriquons en Vendée des
-            structures d&apos;extérieur pensées pour durer. Chaque pièce est
-            singulière, chaque projet suivi par un chef de studio dédié.
+            {t("intro")}
           </p>
         </Container>
       </section>
@@ -40,28 +50,22 @@ export default async function AboutPage({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={editorialPhoto.aboutAtelier}
-                alt="Atelier Pergola FR en Vendée"
+                alt=""
                 className="h-full w-full object-cover"
               />
             </div>
             <div>
-              <Eyebrow>Atelier Vendée</Eyebrow>
+              <Eyebrow>{t("atelierEyebrow")}</Eyebrow>
               <h2 className="mt-4 font-serif text-4xl leading-tight md:text-5xl">
-                Chaque profil, extrudé chez nous.
+                {t("atelierTitle")}
               </h2>
-              <p className="text-secondary mt-6 text-base">
-                Notre atelier des Herbiers travaille l&apos;aluminium extrudé,
-                le cèdre PEFC et l&apos;acier galvanisé. Machines à commande
-                numérique, contrôles qualité au dixième, thermolaquage certifié
-                Qualicoat. Rien ne quitte l&apos;atelier sans passer par les
-                mains de nos artisans.
-              </p>
+              <p className="text-secondary mt-6 text-base">{t("atelierBody")}</p>
               <dl className="mt-10 grid grid-cols-2 gap-y-6">
                 {[
-                  ["3 200 m²", "Atelier de production"],
-                  ["42", "Compagnons"],
-                  ["4 semaines", "Délai moyen sur-mesure"],
-                  ["100%", "Fabriqué en France"],
+                  ["3 200 m²", t("statWorkshop")],
+                  ["42", t("statCompanions")],
+                  ["4", t("statLeadtime")],
+                  ["100%", t("statMadeIn")],
                 ].map(([k, v]) => (
                   <div key={v}>
                     <dt className="font-serif text-3xl">{k}</dt>
@@ -79,24 +83,21 @@ export default async function AboutPage({
       <section className="bg-primary text-primary-foreground py-24 md:py-32">
         <Container>
           <div className="mx-auto mb-16 max-w-2xl text-center">
-            <Eyebrow className="text-accent">Nos engagements</Eyebrow>
+            <Eyebrow className="text-accent">{t("commitmentsEyebrow")}</Eyebrow>
             <h2 className="mt-4 font-serif text-4xl leading-tight md:text-5xl">
-              Une exigence, à chaque étape.
+              {t("commitmentsTitle")}
             </h2>
           </div>
           <div className="grid gap-8 md:grid-cols-4">
-            {[
-              { Icon: MapPin, title: "Dessin à Paris", body: "Studio de design intégré au showroom du Marais." },
-              { Icon: Factory, title: "Atelier Vendée", body: "Fabrication artisanale, machines à commande numérique." },
-              { Icon: Leaf, title: "Éco-conçu", body: "Aluminium recyclable, cèdre PEFC, LED basse consommation." },
-              { Icon: Award, title: "Distingué", body: "Prix Janus de l'Industrie, référencé Architectes du Patrimoine." },
-            ].map(({ Icon, title, body }) => (
-              <div key={title}>
+            {commitments.map(({ key, Icon }) => (
+              <div key={key}>
                 <div className="border-accent/40 bg-accent/10 text-accent inline-flex size-14 items-center justify-center rounded-full border">
                   <Icon className="size-6" />
                 </div>
-                <h3 className="mt-6 font-serif text-xl">{title}</h3>
-                <p className="text-primary-foreground/70 mt-3 text-sm">{body}</p>
+                <h3 className="mt-6 font-serif text-xl">{t(`${key}.title`)}</h3>
+                <p className="text-primary-foreground/70 mt-3 text-sm">
+                  {t(`${key}.body`)}
+                </p>
               </div>
             ))}
           </div>

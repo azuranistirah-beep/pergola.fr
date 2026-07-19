@@ -1,41 +1,28 @@
+import { useTranslations } from "next-intl";
 import { Download, FileText, Layers, Wrench } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 
 const items = [
-  {
-    Icon: FileText,
-    title: "Fiche produit PDF",
-    body: "Dimensions, matériaux, coloris, tarifs — 4 pages.",
-    size: "1,8 Mo",
-  },
-  {
-    Icon: Layers,
-    title: "Plan technique DWG / PDF",
-    body: "Vues de face, dessus, côtés et détails de fixation.",
-    size: "3,2 Mo",
-  },
-  {
-    Icon: Wrench,
-    title: "Notice de pose illustrée",
-    body: "Guide pas-à-pas avec accès vidéo YouTube.",
-    size: "5,4 Mo",
-  },
-];
+  { key: "sheet", Icon: FileText, size: "1,8 Mo" },
+  { key: "plan", Icon: Layers, size: "3,2 Mo" },
+  { key: "notice", Icon: Wrench, size: "5,4 Mo" },
+] as const;
 
 export function ProductDownloads() {
+  const t = useTranslations("pdp.downloads");
   return (
     <section className="bg-muted py-24 md:py-32">
       <Container>
-        <Eyebrow>Documents à télécharger</Eyebrow>
+        <Eyebrow>{t("eyebrow")}</Eyebrow>
         <h2 className="mt-4 font-serif text-3xl leading-tight md:text-5xl">
-          Tout ce dont vous avez besoin.
+          {t("title")}
         </h2>
 
         <div className="mt-12 grid gap-4 md:grid-cols-3">
-          {items.map(({ Icon, title, body, size }) => (
+          {items.map(({ key, Icon, size }) => (
             <button
-              key={title}
+              key={key}
               type="button"
               className="border-border/60 group bg-background flex items-start gap-4 rounded-[var(--radius-lg)] border p-6 text-left transition-colors hover:border-primary"
             >
@@ -43,8 +30,12 @@ export function ProductDownloads() {
                 <Icon className="size-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-primary text-sm font-medium">{title}</div>
-                <div className="text-secondary mt-1 text-xs">{body}</div>
+                <div className="text-primary text-sm font-medium">
+                  {t(`${key}.title`)}
+                </div>
+                <div className="text-secondary mt-1 text-xs">
+                  {t(`${key}.body`)}
+                </div>
                 <div className="text-secondary mt-3 text-[10px] uppercase tracking-[0.25em]">
                   {size}
                 </div>

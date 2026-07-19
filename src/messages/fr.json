@@ -14,41 +14,57 @@
     "journal": "Journal",
     "contact": "Contact"
   },
+  "common": {
+    "discover": "Découvrir",
+    "explore": "Explorer",
+    "readMore": "En savoir plus",
+    "seeAll": "Tout voir",
+    "seeCollection": "Voir la collection",
+    "backToHome": "Retour à l'accueil",
+    "loading": "Chargement…",
+    "language": "Langue",
+    "search": "Rechercher",
+    "menu": "Menu",
+    "close": "Fermer",
+    "account": "Compte",
+    "wishlist": "Wishlist",
+    "cart": "Panier",
+    "from": "À partir de",
+    "product": "produit",
+    "products": "produits",
+    "required": "Requis",
+    "included": "Inclus",
+    "free": "Offert",
+    "customerRating": "Note client",
+    "search_placeholder": "Rechercher une pergola, un matériau, une famille…",
+    "noResults": "Aucun résultat pour",
+    "suggestions": "Suggestions",
+    "orLabel": "ou",
+    "acceptTerms": "J'accepte les",
+    "and": "et"
+  },
   "home": {
     "heroEyebrow": "Collection 2026 — Fabrication française",
     "heroTitle": "L'art de vivre dehors, redessiné.",
     "heroSubtitle": "Pergolas bioclimatiques, gazebos et structures d'extérieur haut de gamme, dessinées à Paris et fabriquées dans nos ateliers en Vendée.",
     "heroCta": "Configurer ma pergola",
-    "heroCtaSecondary": "Voir nos réalisations",
+    "heroCtaSecondary": "Voir la collection",
     "statYears": "Ans de savoir-faire",
     "statInstalls": "Installations réalisées",
     "statAluminium": "Aluminium recyclable",
     "statWarranty": "Garantie constructeur",
     "categories": {
-      "eyebrow": "Nos collections",
-      "title": "Chaque structure, une pièce sur mesure.",
-      "subtitle": "Cinq familles de produits, une même exigence : matériaux nobles, lignes minimalistes, installation soignée.",
+      "eyebrow": "La collection 2026",
+      "title": "Chaque pergola, une pièce singulière.",
+      "subtitle": "{count} modèles, du cèdre massif au bioclimatique à lames orientables — tous fabriqués sur commande, livrés en 4 à 6 semaines.",
       "cta": "Découvrir la collection",
-      "bioclimatic": {
-        "tag": "Signature",
-        "name": "Pergolas bioclimatiques"
-      },
-      "aluminium": {
-        "tag": "Contemporain",
-        "name": "Pergolas aluminium"
-      },
-      "wood": {
-        "tag": "Classique",
-        "name": "Pergolas bois"
-      },
-      "carport": {
-        "tag": "Sur-mesure",
-        "name": "Carports"
-      },
-      "kitchen": {
-        "tag": "Nouveau",
-        "name": "Cuisines d'extérieur"
-      }
+      "all": "Toutes nos pergolas",
+      "wood": "Bois cèdre",
+      "louvered": "Lames orientables",
+      "wallmount": "Adossée mur",
+      "aluminium": "Voile d'ombrage",
+      "cabana": "Cabana d'angle",
+      "productsCount": "{count, plural, =0 {aucun produit} =1 {# produit} other {# produits}}"
     },
     "why": {
       "eyebrow": "Notre engagement",
@@ -79,7 +95,30 @@
       "p2": "18 coloris cadre & toit, RAL et anodisés",
       "p3": "LED périmétrique, capteurs pluie / vent",
       "p4": "Devis PDF envoyé instantanément",
-      "cta": "Ouvrir le configurateur"
+      "cta": "Ouvrir le configurateur",
+      "previewLabel": "Aperçu live",
+      "estimate": "Estimation",
+      "specWidth": "Largeur",
+      "specLength": "Longueur",
+      "specRoof": "Toit",
+      "specColor": "Coloris cadre",
+      "specLed": "LED périmétrique",
+      "specRoofSample": "Bioclimatique",
+      "specColorSample": "Anthracite RAL 7016",
+      "specLedSample": "Incluse"
+    },
+    "projects": {
+      "eyebrow": "Réalisations",
+      "title": "Chez nos clients.",
+      "subtitle": "Résidences privées, hôtels 5 étoiles, restaurants étoilés, piscines familiales — voici comment nos pergolas transforment leurs extérieurs.",
+      "cta": "Voir toutes les réalisations"
+    },
+    "journal": {
+      "eyebrow": "Journal",
+      "title": "Dernières inspirations.",
+      "cta": "Tous les articles",
+      "read": "Lire",
+      "minutes": "min"
     },
     "testimonials": {
       "eyebrow": "Ils nous ont fait confiance",
@@ -107,6 +146,463 @@
       "cta": "Réserver ma visite"
     }
   },
+  "plp": {
+    "eyebrow": "Collection",
+    "title": "Toutes nos pergolas",
+    "intro": "Cèdre massif, acier galvanisé, lames orientables ou voile d'ombrage — la structure qui prolonge votre intérieur au grand air.",
+    "filters": {
+      "material": "Matériau",
+      "budget": "Budget",
+      "sortLabel": "Trier",
+      "reset": "Réinitialiser",
+      "upTo": "jusqu'à",
+      "sort": {
+        "featured": "Sélection",
+        "priceAsc": "Prix croissant",
+        "priceDesc": "Prix décroissant",
+        "sizeDesc": "Plus grande surface"
+      },
+      "materials": {
+        "wood": "Bois cèdre",
+        "steel": "Acier",
+        "aluminium": "Aluminium"
+      }
+    }
+  },
+  "pdp": {
+    "breadcrumbHome": "Accueil",
+    "breadcrumbCollection": "Pergolas",
+    "materialLabel": {
+      "wood": "Cèdre massif certifié",
+      "steel": "Acier galvanisé thermolaqué",
+      "aluminium": "Aluminium extrudé"
+    },
+    "priceEyebrow": "Prix TTC — livraison France offerte",
+    "installments": "ou 3× {amount} sans frais",
+    "specDim": "Dimensions",
+    "specFinish": "Finition",
+    "specWarranty": "Garantie",
+    "specShipping": "Livraison",
+    "warrantyYears": "10 ans",
+    "shippingDelay": "4–6 semaines",
+    "finishDefault": "Cèdre naturel",
+    "ctaConfigure": "Configurer & commander",
+    "ctaQuote": "Demander un devis personnalisé",
+    "usps": [
+      "Fabrication sur commande dans notre atelier de Vendée",
+      "Pose par nos équipes ou en autonomie (notice détaillée)",
+      "Paiement sécurisé Stripe & PayPal"
+    ],
+    "specsEyebrow": "Caractéristiques",
+    "specsTitle": "Pensée pour durer.",
+    "specsIntro": "Chaque composant est sélectionné pour offrir la meilleure longévité en climat maritime, alpin ou méditerranéen.",
+    "specsRows": {
+      "sku": "SKU",
+      "material": "Matériau",
+      "structure": "Structure",
+      "roof": "Toit",
+      "footprint": "Emprise au sol",
+      "fixation": "Fixation",
+      "wind": "Résistance vent",
+      "origin": "Origine"
+    },
+    "specsValues": {
+      "structureWood": "Poteaux cèdre 145 mm",
+      "structureSteel": "Poteaux acier 100 mm",
+      "roofLouvered": "Lames orientables à 160°",
+      "roofSail": "Voile d'ombrage tissée",
+      "roofDefault": "Chevrons ajourés",
+      "fixation": "Platines sol et sabots en acier",
+      "wind": "Jusqu'à 160 km/h (essais soufflerie)",
+      "origin": "Fabriqué en France"
+    },
+    "included": {
+      "eyebrow": "Livré chez vous",
+      "title": "Tout est inclus.",
+      "kit": {
+        "title": "Kit prêt à poser",
+        "body": "Toutes les pièces pré-percées et étiquetées, visserie inox fournie."
+      },
+      "guide": {
+        "title": "Notice détaillée",
+        "body": "Guide de pose illustré + accès vidéo YouTube pas-à-pas."
+      },
+      "warranty": {
+        "title": "Garantie 10 ans",
+        "body": "Structure porteuse, finitions et motorisations couvertes."
+      }
+    },
+    "downloads": {
+      "eyebrow": "Documents à télécharger",
+      "title": "Tout ce dont vous avez besoin.",
+      "sheet": {
+        "title": "Fiche produit PDF",
+        "body": "Dimensions, matériaux, coloris, tarifs — 4 pages."
+      },
+      "plan": {
+        "title": "Plan technique DWG / PDF",
+        "body": "Vues de face, dessus, côtés et détails de fixation."
+      },
+      "notice": {
+        "title": "Notice de pose illustrée",
+        "body": "Guide pas-à-pas avec accès vidéo YouTube."
+      }
+    },
+    "reviews": {
+      "eyebrow": "Avis clients vérifiés",
+      "title": "La confiance, ressentie.",
+      "count": "{count} avis clients",
+      "outOf": "/ 5"
+    },
+    "related": {
+      "eyebrow": "Vous aimerez aussi",
+      "title": "Dans le même esprit",
+      "cta": "Voir toute la collection"
+    }
+  },
+  "cart": {
+    "eyebrow": "Panier",
+    "title": "Votre panier",
+    "empty": "Votre panier est vide.",
+    "emptyCta": "Découvrir les pergolas",
+    "quantityDown": "Diminuer",
+    "quantityUp": "Augmenter",
+    "removeLine": "Retirer",
+    "clear": "Vider le panier",
+    "continue": "Continuer mes achats",
+    "summary": "Récapitulatif",
+    "subtotal": "Sous-total",
+    "shipping": "Livraison",
+    "shippingFree": "Offerte",
+    "total": "Total TTC",
+    "checkoutCta": "Commander",
+    "secure": "Paiement sécurisé Stripe & PayPal"
+  },
+  "checkout": {
+    "eyebrow": "Commande",
+    "title": "Finaliser votre commande",
+    "step1": "1. Coordonnées",
+    "step2": "2. Adresse de livraison",
+    "step3": "3. Livraison",
+    "step4": "4. Paiement",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "street": "Adresse",
+    "street2": "Complément (optionnel)",
+    "postal": "Code postal",
+    "city": "Ville",
+    "country": "Pays",
+    "countryDefault": "France",
+    "shippingStandard": "Standard — 4 à 6 semaines",
+    "shippingExpress": "Express — 3 semaines",
+    "shippingWithPose": "Livraison + pose (RDV équipe)",
+    "paymentCard": "Carte",
+    "paymentCardHelper": "Visa, Mastercard, Amex",
+    "paymentPaypal": "PayPal",
+    "paymentPaypalHelper": "Compte PayPal",
+    "paymentSepa": "Virement SEPA",
+    "paymentSepaHelper": "Sans frais",
+    "encryptedNotice": "Paiement chiffré SSL. Aucune donnée bancaire n'est stockée.",
+    "payCta": "Payer",
+    "summary": "Récapitulatif",
+    "articleSingular": "article",
+    "articlePlural": "articles",
+    "subtotalHt": "Sous-total HT",
+    "vat": "TVA 20%",
+    "totalTtc": "Total TTC",
+    "freeShipping": "Livraison France offerte dès 2 000 €",
+    "warranty": "Garantie 10 ans",
+    "cartEmpty": "Panier vide."
+  },
+  "confirmation": {
+    "badge": "Commande confirmée",
+    "title": "Merci Camille, votre pergola est en route.",
+    "intro": "Un email de confirmation vous a été envoyé à",
+    "orderRef": "Référence",
+    "orderTotal": "Total TTC",
+    "orderPayment": "Paiement",
+    "download": "Télécharger la facture",
+    "track": "Suivre ma commande",
+    "nextEyebrow": "Prochaines étapes",
+    "nextTitle": "Ce qui vous attend.",
+    "step": "Étape",
+    "steps": {
+      "email": {
+        "title": "Confirmation par email",
+        "body": "Vous recevez sous 15 minutes un email avec votre facture PDF et un lien de suivi.",
+        "time": "0 – 15 min"
+      },
+      "engineering": {
+        "title": "Validation du bureau d'études",
+        "body": "Nos ingénieurs vérifient la configuration et valident le plan technique.",
+        "time": "24 – 48h"
+      },
+      "manufacturing": {
+        "title": "Fabrication",
+        "body": "Votre pergola prend forme dans notre atelier de Vendée.",
+        "time": "3 – 5 semaines"
+      },
+      "delivery": {
+        "title": "Livraison & pose",
+        "body": "Notre équipe vous contacte 48h avant pour convenir d'un créneau.",
+        "time": "6 – 8 semaines"
+      }
+    }
+  },
+  "account": {
+    "eyebrow": "Espace client",
+    "title": "Bonjour, Camille.",
+    "intro": "Suivez vos commandes en cours, retrouvez vos devis sauvegardés et gérez votre compte.",
+    "sidebar": {
+      "overview": "Aperçu",
+      "orders": "Commandes",
+      "quotes": "Devis",
+      "addresses": "Adresses",
+      "wishlist": "Wishlist",
+      "settings": "Paramètres",
+      "logout": "Déconnexion"
+    },
+    "ordersTitle": "Commandes récentes",
+    "quickTitle": "Actions rapides",
+    "quoteCard": {
+      "title": "Ouvrir un nouveau devis",
+      "body": "Composez votre pergola et recevez un chiffrage sous 48h."
+    },
+    "savedCard": {
+      "title": "Voir mes configurations",
+      "body": "Retrouvez toutes les compositions que vous avez sauvegardées."
+    },
+    "continue": "Continuer",
+    "orderStatusInAtelier": "En atelier",
+    "orderStatusDelivered": "Livré"
+  },
+  "wishlistPage": {
+    "eyebrow": "Espace client",
+    "title": "Ma wishlist",
+    "intro": "Sauvegardez vos coups de cœur, comparez, et retrouvez-les quand vous êtes prêt·e.",
+    "empty": "Votre wishlist est vide.",
+    "emptyBody": "Cliquez sur le cœur d'une pergola pour la sauvegarder ici. Vous pourrez la retrouver et la commander plus tard.",
+    "explore": "Explorer la collection"
+  },
+  "auth": {
+    "loginEyebrow": "Espace client",
+    "loginTitle": "Content de vous revoir.",
+    "loginIntro": "Suivez vos commandes, retrouvez vos devis et vos configurations sauvegardées.",
+    "loginCta": "Se connecter",
+    "loginNoAccount": "Pas encore de compte ?",
+    "loginRegister": "Créer un compte",
+    "forgotPassword": "Mot de passe oublié ?",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithGitHub": "Continuer avec GitHub",
+    "signupWithGoogle": "S'inscrire avec Google",
+    "signupWithGitHub": "S'inscrire avec GitHub",
+    "registerEyebrow": "Créer un compte",
+    "registerTitle": "Bienvenue chez Pergola FR.",
+    "registerIntro": "Un espace pour suivre vos commandes, sauvegarder vos configurations et bénéficier d'un accompagnement dédié.",
+    "registerCta": "Créer mon compte",
+    "registerHaveAccount": "Vous avez déjà un compte ?",
+    "registerLogin": "Se connecter",
+    "termsBefore": "J'accepte les",
+    "termsLink": "conditions générales de vente",
+    "termsMiddle": "et la",
+    "privacyLink": "politique de confidentialité",
+    "email": "Email",
+    "password": "Mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "quote": "Camille & Antoine L. — Saint-Malo",
+    "quoteText": "« Une pergola magnifique, installée en une matinée. Le rendu est plus beau que sur les visuels du configurateur. »",
+    "madeIn": "Fabriqué en Vendée"
+  },
+  "contactPage": {
+    "eyebrow": "Nous contacter",
+    "title": "Parlons de votre projet.",
+    "intro": "Nos conseillers vous accompagnent, matières en main, dans notre showroom parisien du Marais. Devis chiffré sous 48h.",
+    "showroom": "Showroom Paris",
+    "hotline": "Hotline",
+    "hotlineHours": "Lun–Sam, 9h–19h",
+    "email": "Email",
+    "whatsapp": "WhatsApp",
+    "whatsappHelper": "Devis express en 2h",
+    "openHours": "Ouvert du mardi au samedi, 10h–19h",
+    "form": {
+      "name": "Prénom et nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "postal": "Code postal",
+      "projectLabel": "Votre projet",
+      "projectPlaceholder": "Type de pergola envisagée, dimensions approximatives, contraintes du site…",
+      "submit": "Envoyer ma demande",
+      "submitPending": "Envoi en cours…",
+      "consent": "En envoyant ce formulaire, vous acceptez notre politique de confidentialité. Nous vous répondons sous 48h ouvrées.",
+      "successTitle": "Message envoyé",
+      "successBody": "Notre équipe vous répond sous 48h ouvrées. Un email de confirmation vient de partir."
+    }
+  },
+  "about": {
+    "eyebrow": "La Maison",
+    "title": "L'art de vivre dehors, savoir-faire français.",
+    "intro": "Depuis 2014, nous dessinons à Paris et fabriquons en Vendée des structures d'extérieur pensées pour durer. Chaque pièce est singulière, chaque projet suivi par un chef de studio dédié.",
+    "atelierEyebrow": "Atelier Vendée",
+    "atelierTitle": "Chaque profil, extrudé chez nous.",
+    "atelierBody": "Notre atelier des Herbiers travaille l'aluminium extrudé, le cèdre PEFC et l'acier galvanisé. Machines à commande numérique, contrôles qualité au dixième, thermolaquage certifié Qualicoat. Rien ne quitte l'atelier sans passer par les mains de nos artisans.",
+    "statWorkshop": "Atelier de production",
+    "statCompanions": "Compagnons",
+    "statLeadtime": "Délai moyen sur-mesure",
+    "statMadeIn": "Fabriqué en France",
+    "commitmentsEyebrow": "Nos engagements",
+    "commitmentsTitle": "Une exigence, à chaque étape.",
+    "design": { "title": "Dessin à Paris", "body": "Studio de design intégré au showroom du Marais." },
+    "workshop": { "title": "Atelier Vendée", "body": "Fabrication artisanale, machines à commande numérique." },
+    "ecodesign": { "title": "Éco-conçu", "body": "Aluminium recyclable, cèdre PEFC, LED basse consommation." },
+    "awarded": { "title": "Distingué", "body": "Prix Janus de l'Industrie, référencé Architectes du Patrimoine." }
+  },
+  "projectsPage": {
+    "eyebrow": "Réalisations",
+    "title": "Portfolio de nos projets sur-mesure.",
+    "intro": "Résidences, hôtels, restaurants, bords de piscine — chaque projet est unique, dessiné avec un chef de studio dédié.",
+    "discover": "Découvrir le projet",
+    "back": "Retour aux réalisations",
+    "detailProjectEyebrow": "Le projet",
+    "challenge": "Le défi",
+    "solution": "Notre réponse",
+    "materials": "Matériaux & options",
+    "ctaEyebrow": "Un projet similaire ?",
+    "ctaTitle": "Parlons de votre extérieur.",
+    "ctaCta": "Demander un devis",
+    "relatedEyebrow": "Autres réalisations",
+    "relatedTitle": "À découvrir également"
+  },
+  "journalPage": {
+    "eyebrow": "Journal",
+    "title": "Nos inspirations et savoir-faire.",
+    "intro": "Guides matériaux, retours de chantier, nouveautés atelier — la pensée derrière chaque projet.",
+    "readArticle": "Lire l'article",
+    "minutes": "min",
+    "backToJournal": "Retour au journal",
+    "minutesReading": "min de lecture",
+    "readyEyebrow": "Prêt à passer à l'action ?",
+    "readyTitle": "Configurez votre pergola.",
+    "readyCta": "Ouvrir le configurateur",
+    "relatedEyebrow": "Vous aimerez aussi",
+    "relatedTitle": "Continuer la lecture"
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Questions fréquentes.",
+    "intro": "Les réponses aux questions que nos clients posent le plus souvent. Vous ne trouvez pas la vôtre ? Contactez-nous.",
+    "groups": {
+      "before": "Avant l'achat",
+      "order": "Commande & paiement",
+      "delivery": "Livraison & pose",
+      "warranty": "Garantie & entretien"
+    }
+  },
+  "shipping": {
+    "eyebrow": "Service",
+    "title": "Livraison, pose & suivi.",
+    "intro": "Nous prenons en charge chaque étape, de la sortie d'atelier jusqu'à la mise en service chez vous.",
+    "step1": { "title": "1. Fabrication", "body": "3 à 5 semaines dans notre atelier de Vendée. Contrôle qualité au dixième, thermolaquage certifié Qualicoat." },
+    "step2": { "title": "2. Expédition", "body": "Prise de rendez-vous 48h avant la livraison. Camion adapté, hayon élévateur pour les grandes structures." },
+    "step3": { "title": "3. Pose", "body": "Notre équipe fixe, ajuste et met en service la pergola. Nettoyage complet du site avant départ." },
+    "step4": { "title": "4. Suivi", "body": "Un chef de studio dédié reste joignable pendant toute la garantie. Interventions sous 72h en France métropolitaine." },
+    "optionsEyebrow": "Options & tarifs",
+    "optionsTitle": "Un tarif clair, quel que soit votre projet.",
+    "standard": { "label": "France métropolitaine — standard", "delay": "4 à 6 semaines", "price": "Offert dès 2 000 €" },
+    "express": { "label": "France métropolitaine — express", "delay": "3 semaines", "price": "+ 299 €" },
+    "install": { "label": "Pose par nos équipes", "delay": "Ajouté au délai standard", "price": "à partir de 1 490 €" },
+    "beNlCh": { "label": "Belgique / Luxembourg / Suisse", "delay": "5 à 7 semaines", "price": "Sur devis" },
+    "outsideNotice": "Livraison dans les DOM-TOM et hors Europe possible sur devis. Contactez notre équipe pour un chiffrage précis selon votre destination."
+  },
+  "warranty": {
+    "eyebrow": "Engagement",
+    "title": "Une garantie, une équipe, un seul interlocuteur.",
+    "intro": "Nous concevons nos pergolas pour durer. Nos garanties couvrent la structure, les motorisations, les finitions et la pose.",
+    "guaranteeLabel": "Garantie",
+    "structure": { "title": "Structure porteuse", "body": "Traverses, chevrons, poteaux, sabots inox. Corrosion, déformation, rupture.", "years": "10 ans" },
+    "motors": { "title": "Motorisations & LED", "body": "Moteurs Somfy, cartes électroniques, bandeaux LED intégrés, capteurs pluie/vent.", "years": "5 ans" },
+    "finish": { "title": "Finitions Qualicoat", "body": "Thermolaquage, teintes RAL, aspects anodisés.", "years": "5 ans" },
+    "accessories": { "title": "Accessoires & pose", "body": "Zip screens, panneaux vitrés, main d'œuvre de nos équipes.", "years": "2 ans" },
+    "coveredEyebrow": "Ce qui est couvert",
+    "coveredTitle": "Nous prenons tout en charge.",
+    "coveredList": [
+      "Diagnostic à distance sous 24h ouvrées",
+      "Intervention sur site sous 72h en France métropolitaine",
+      "Pièces détachées d'origine, sans facturation",
+      "Main d'œuvre incluse pendant toute la durée de garantie",
+      "Réajustement annuel offert la 1ère année"
+    ],
+    "excludedEyebrow": "Ce qui n'est pas couvert",
+    "excludedTitle": "Les exceptions à connaître.",
+    "excludedList": [
+      "Dommages liés à un usage non conforme",
+      "Chocs, vandalisme, catastrophes naturelles (couverts par votre assurance habitation)",
+      "Modifications ou réparations effectuées par un tiers",
+      "Usure normale des joints d'étanchéité (remplacement tous les 5 ans conseillé)"
+    ]
+  },
+  "comingSoon": {
+    "eyebrow": "Nouvelle collection",
+    "launch": "Lancement prévu",
+    "emailPlaceholder": "Votre email pour être prévenu·e",
+    "notify": "M'avertir",
+    "meanwhile": "En attendant, découvrez nos pergolas",
+    "gazebos": {
+      "title": "Gazebos — L'art du rassemblement.",
+      "intro": "Une famille de gazebos hexagonaux et rectangulaires, en cèdre massif, avec panneaux d'intimité en aluminium découpé. Fabriqués dans notre atelier de Vendée.",
+      "launchDate": "Printemps 2026",
+      "bullets": [
+        "5 formats, du gazebo 3×3 m à la structure 6×4 m",
+        "Panneaux d'intimité bambou ou pebble, motifs signés Atelier Rivière",
+        "Options : éclairage LED, moustiquaires, rideaux zip",
+        "Livraison France entière, pose incluse en option"
+      ]
+    },
+    "carports": {
+      "title": "Carports — Discrets, structurels.",
+      "intro": "Une gamme de carports mono-voiture, double, ou intégrés à une pergola bioclimatique. Aluminium extrudé thermolaqué, cèdre massif, ou combinaison des deux.",
+      "launchDate": "Été 2026",
+      "bullets": [
+        "Mono-voiture (3×5 m), double (5,5×5 m) et adossé maison",
+        "Toits pleins, à lames orientables, ou en polycarbonate",
+        "Panneaux solaires intégrables (option)",
+        "Fondation micropieux ou plots béton"
+      ]
+    },
+    "kitchens": {
+      "title": "Cuisines d'extérieur — Le grand air à table.",
+      "intro": "Îlots modulaires, plans de travail en Dekton, plancha, grill, évier, cave à vin. Configurable au centimètre près, à intégrer sous votre pergola.",
+      "launchDate": "Été 2026",
+      "bullets": [
+        "Plans de travail Dekton, granit, ou inox brossé",
+        "Modules : plancha gaz, grill charbon, wok, teppanyaki, four à pizza",
+        "Évier, cave à vin ventilée, mini-frigo intégré",
+        "Configurateur dédié, prix et rendu 3D en direct"
+      ]
+    },
+    "accessories": {
+      "title": "Accessoires — L'attention au détail.",
+      "intro": "Éclairages LED périmétriques, capteurs pluie-vent, chauffages infrarouges, rideaux zip, mobilier assorti. Chaque accessoire dessiné pour dialoguer avec nos structures.",
+      "launchDate": "Automne 2026",
+      "bullets": [
+        "Bandeaux LED blanc chaud ou RGBW pilotable",
+        "Capteurs Somfy pluie-vent, télécommandes multi-canaux",
+        "Chauffages infrarouges IP65, télécommande",
+        "Fauteuils et tables assortis (édition limitée)"
+      ]
+    }
+  },
+  "notFound": {
+    "badge": "Erreur 404",
+    "title": "Cette page a filé au grand air.",
+    "body": "La page que vous cherchez n'existe pas ou a été déplacée. Revenez à l'accueil ou explorez nos coups de cœur ci-dessous.",
+    "backHome": "Retour à l'accueil",
+    "seeCollection": "Voir la collection",
+    "featuredEyebrow": "Nos coups de cœur",
+    "featuredTitle": "Peut-être cherchiez-vous ça."
+  },
   "footer": {
     "tagline": "Pergolas, gazebos et structures d'extérieur — dessinés à Paris, fabriqués en France.",
     "showroom": "Showroom Paris",
@@ -117,6 +613,66 @@
     "rights": "Tous droits réservés.",
     "legal": "Mentions légales",
     "privacy": "Confidentialité",
-    "terms": "CGV"
+    "terms": "CGV",
+    "columns": {
+      "collection": "Collections",
+      "collectionLinks": {
+        "pergolas": "Pergolas bioclimatiques",
+        "gazebos": "Gazebos",
+        "carports": "Carports",
+        "kitchens": "Cuisines d'extérieur",
+        "accessories": "Accessoires"
+      },
+      "house": "Maison",
+      "houseLinks": {
+        "about": "À propos",
+        "projects": "Nos réalisations",
+        "journal": "Journal",
+        "showroom": "Showroom"
+      },
+      "service": "Service",
+      "serviceLinks": {
+        "configurator": "Configurateur",
+        "shipping": "Livraison",
+        "warranty": "Garantie",
+        "faq": "FAQ",
+        "contact": "Contact"
+      }
+    }
+  },
+  "menu": {
+    "collection": "Collection",
+    "house": "Maison",
+    "service": "Service",
+    "clientArea": "Espace client",
+    "primaryCta": "Configurer ma pergola",
+    "signIn": "Se connecter",
+    "signUp": "Créer un compte",
+    "myAccount": "Mon compte",
+    "myWishlist": "Wishlist",
+    "allPergolas": "Toutes les pergolas",
+    "gazebos": "Gazebos",
+    "carports": "Carports",
+    "kitchens": "Cuisines d'extérieur",
+    "accessories": "Accessoires",
+    "about": "À propos",
+    "projects": "Réalisations",
+    "journal": "Journal",
+    "contact": "Contact & showroom",
+    "configurator": "Configurateur",
+    "shipping": "Livraison & pose",
+    "warranty": "Garantie 10 ans",
+    "faq": "FAQ"
+  },
+  "productCard": {
+    "materialLabel": {
+      "wood": "Cèdre massif",
+      "steel": "Acier galvanisé",
+      "aluminium": "Aluminium"
+    }
+  },
+  "newsletter": {
+    "successTitle": "Bienvenue chez Pergola FR",
+    "successBody": "Vous recevrez nos nouveautés et invitations privées."
   }
 }

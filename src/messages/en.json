@@ -14,26 +14,57 @@
     "journal": "Journal",
     "contact": "Contact"
   },
+  "common": {
+    "discover": "Discover",
+    "explore": "Explore",
+    "readMore": "Read more",
+    "seeAll": "See all",
+    "seeCollection": "See the collection",
+    "backToHome": "Back to home",
+    "loading": "Loading…",
+    "language": "Language",
+    "search": "Search",
+    "menu": "Menu",
+    "close": "Close",
+    "account": "Account",
+    "wishlist": "Wishlist",
+    "cart": "Cart",
+    "from": "From",
+    "product": "product",
+    "products": "products",
+    "required": "Required",
+    "included": "Included",
+    "free": "Free",
+    "customerRating": "Customer rating",
+    "search_placeholder": "Search a pergola, material, family…",
+    "noResults": "No results for",
+    "suggestions": "Suggestions",
+    "orLabel": "or",
+    "acceptTerms": "I accept the",
+    "and": "and"
+  },
   "home": {
     "heroEyebrow": "2026 Collection — Made in France",
     "heroTitle": "Outdoor living, redrawn.",
     "heroSubtitle": "Bioclimatic pergolas, gazebos and premium outdoor structures — designed in Paris, crafted in our Vendée workshops.",
     "heroCta": "Configure my pergola",
-    "heroCtaSecondary": "Browse our projects",
+    "heroCtaSecondary": "See the collection",
     "statYears": "Years of craft",
     "statInstalls": "Installations completed",
     "statAluminium": "Recyclable aluminium",
     "statWarranty": "Manufacturer warranty",
     "categories": {
-      "eyebrow": "Our collections",
-      "title": "Every structure, a bespoke piece.",
-      "subtitle": "Five product families, one uncompromising standard: noble materials, minimalist lines, meticulous installation.",
+      "eyebrow": "The 2026 collection",
+      "title": "Every pergola, a bespoke piece.",
+      "subtitle": "{count} models, from solid cedar to bioclimatic louvered aluminium — all made to order, delivered in 4–6 weeks.",
       "cta": "Explore the collection",
-      "bioclimatic": { "tag": "Signature", "name": "Bioclimatic pergolas" },
-      "aluminium": { "tag": "Contemporary", "name": "Aluminium pergolas" },
-      "wood": { "tag": "Classic", "name": "Wooden pergolas" },
-      "carport": { "tag": "Bespoke", "name": "Carports" },
-      "kitchen": { "tag": "New", "name": "Outdoor kitchens" }
+      "all": "All our pergolas",
+      "wood": "Cedar wood",
+      "louvered": "Louvered roof",
+      "wallmount": "Wall-mounted",
+      "aluminium": "Sail shade",
+      "cabana": "Corner cabana",
+      "productsCount": "{count, plural, =0 {no products} =1 {# product} other {# products}}"
     },
     "why": {
       "eyebrow": "Our commitment",
@@ -64,7 +95,30 @@
       "p2": "18 frame & roof colours, RAL and anodised",
       "p3": "Perimeter LED, rain & wind sensors",
       "p4": "Instant PDF quote by email",
-      "cta": "Open the configurator"
+      "cta": "Open the configurator",
+      "previewLabel": "Live preview",
+      "estimate": "Estimate",
+      "specWidth": "Width",
+      "specLength": "Length",
+      "specRoof": "Roof",
+      "specColor": "Frame colour",
+      "specLed": "Perimeter LED",
+      "specRoofSample": "Bioclimatic",
+      "specColorSample": "Anthracite RAL 7016",
+      "specLedSample": "Included"
+    },
+    "projects": {
+      "eyebrow": "Projects",
+      "title": "At our customers'.",
+      "subtitle": "Private residences, 5-star hotels, Michelin-starred restaurants, family pools — this is how our pergolas transform their outdoor spaces.",
+      "cta": "See all projects"
+    },
+    "journal": {
+      "eyebrow": "Journal",
+      "title": "Latest inspirations.",
+      "cta": "All articles",
+      "read": "Read",
+      "minutes": "min"
     },
     "testimonials": {
       "eyebrow": "They trusted us",
@@ -92,6 +146,463 @@
       "cta": "Book my visit"
     }
   },
+  "plp": {
+    "eyebrow": "Collection",
+    "title": "All our pergolas",
+    "intro": "Solid cedar, galvanised steel, louvered roof or sail shade — the structure that extends your home into the open air.",
+    "filters": {
+      "material": "Material",
+      "budget": "Budget",
+      "sortLabel": "Sort",
+      "reset": "Reset",
+      "upTo": "up to",
+      "sort": {
+        "featured": "Featured",
+        "priceAsc": "Price low to high",
+        "priceDesc": "Price high to low",
+        "sizeDesc": "Largest footprint"
+      },
+      "materials": {
+        "wood": "Cedar wood",
+        "steel": "Steel",
+        "aluminium": "Aluminium"
+      }
+    }
+  },
+  "pdp": {
+    "breadcrumbHome": "Home",
+    "breadcrumbCollection": "Pergolas",
+    "materialLabel": {
+      "wood": "Certified solid cedar",
+      "steel": "Thermo-lacquered galvanised steel",
+      "aluminium": "Extruded aluminium"
+    },
+    "priceEyebrow": "Price incl. VAT — free delivery in France",
+    "installments": "or 3× {amount} interest-free",
+    "specDim": "Dimensions",
+    "specFinish": "Finish",
+    "specWarranty": "Warranty",
+    "specShipping": "Delivery",
+    "warrantyYears": "10 years",
+    "shippingDelay": "4–6 weeks",
+    "finishDefault": "Natural cedar",
+    "ctaConfigure": "Configure & order",
+    "ctaQuote": "Request a custom quote",
+    "usps": [
+      "Made to order in our Vendée workshop",
+      "Installed by our team or self-install (detailed manual)",
+      "Secure payment via Stripe & PayPal"
+    ],
+    "specsEyebrow": "Specifications",
+    "specsTitle": "Built to last.",
+    "specsIntro": "Every component is selected for maximum longevity in maritime, alpine or Mediterranean climates.",
+    "specsRows": {
+      "sku": "SKU",
+      "material": "Material",
+      "structure": "Structure",
+      "roof": "Roof",
+      "footprint": "Footprint",
+      "fixation": "Fixation",
+      "wind": "Wind resistance",
+      "origin": "Origin"
+    },
+    "specsValues": {
+      "structureWood": "Cedar posts 145 mm",
+      "structureSteel": "Steel posts 100 mm",
+      "roofLouvered": "160° louvered slats",
+      "roofSail": "Woven sail shade",
+      "roofDefault": "Louvered rafters",
+      "fixation": "Steel base plates and brackets",
+      "wind": "Up to 160 km/h (wind tunnel tested)",
+      "origin": "Made in France"
+    },
+    "included": {
+      "eyebrow": "Delivered to you",
+      "title": "Everything included.",
+      "kit": {
+        "title": "Ready-to-install kit",
+        "body": "All pre-drilled and labelled parts, stainless steel hardware included."
+      },
+      "guide": {
+        "title": "Detailed manual",
+        "body": "Illustrated install guide + step-by-step YouTube videos."
+      },
+      "warranty": {
+        "title": "10-year warranty",
+        "body": "Structure, finishes and motors covered."
+      }
+    },
+    "downloads": {
+      "eyebrow": "Downloads",
+      "title": "Everything you need.",
+      "sheet": {
+        "title": "Product PDF",
+        "body": "Dimensions, materials, colours, pricing — 4 pages."
+      },
+      "plan": {
+        "title": "Technical drawing DWG / PDF",
+        "body": "Front, top, side views and fixation details."
+      },
+      "notice": {
+        "title": "Illustrated install manual",
+        "body": "Step-by-step guide with YouTube video access."
+      }
+    },
+    "reviews": {
+      "eyebrow": "Verified customer reviews",
+      "title": "Trust, felt.",
+      "count": "{count} customer reviews",
+      "outOf": "/ 5"
+    },
+    "related": {
+      "eyebrow": "You may also like",
+      "title": "In the same spirit",
+      "cta": "See the whole collection"
+    }
+  },
+  "cart": {
+    "eyebrow": "Cart",
+    "title": "Your cart",
+    "empty": "Your cart is empty.",
+    "emptyCta": "Explore the pergolas",
+    "quantityDown": "Decrease",
+    "quantityUp": "Increase",
+    "removeLine": "Remove",
+    "clear": "Empty cart",
+    "continue": "Continue shopping",
+    "summary": "Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shippingFree": "Free",
+    "total": "Total incl. VAT",
+    "checkoutCta": "Checkout",
+    "secure": "Secure payment via Stripe & PayPal"
+  },
+  "checkout": {
+    "eyebrow": "Order",
+    "title": "Complete your order",
+    "step1": "1. Contact details",
+    "step2": "2. Shipping address",
+    "step3": "3. Delivery",
+    "step4": "4. Payment",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phone": "Phone",
+    "street": "Address",
+    "street2": "Address line 2 (optional)",
+    "postal": "Postal code",
+    "city": "City",
+    "country": "Country",
+    "countryDefault": "France",
+    "shippingStandard": "Standard — 4 to 6 weeks",
+    "shippingExpress": "Express — 3 weeks",
+    "shippingWithPose": "Delivery + install (team appointment)",
+    "paymentCard": "Card",
+    "paymentCardHelper": "Visa, Mastercard, Amex",
+    "paymentPaypal": "PayPal",
+    "paymentPaypalHelper": "PayPal account",
+    "paymentSepa": "SEPA transfer",
+    "paymentSepaHelper": "No fees",
+    "encryptedNotice": "SSL-encrypted payment. No banking details are stored.",
+    "payCta": "Pay",
+    "summary": "Summary",
+    "articleSingular": "item",
+    "articlePlural": "items",
+    "subtotalHt": "Subtotal excl. VAT",
+    "vat": "VAT 20%",
+    "totalTtc": "Total incl. VAT",
+    "freeShipping": "Free shipping in France over €2,000",
+    "warranty": "10-year warranty",
+    "cartEmpty": "Cart is empty."
+  },
+  "confirmation": {
+    "badge": "Order confirmed",
+    "title": "Thank you Camille, your pergola is on its way.",
+    "intro": "A confirmation email has been sent to",
+    "orderRef": "Reference",
+    "orderTotal": "Total incl. VAT",
+    "orderPayment": "Payment",
+    "download": "Download invoice",
+    "track": "Track my order",
+    "nextEyebrow": "Next steps",
+    "nextTitle": "What to expect.",
+    "step": "Step",
+    "steps": {
+      "email": {
+        "title": "Email confirmation",
+        "body": "Within 15 minutes you receive an email with your PDF invoice and tracking link.",
+        "time": "0 – 15 min"
+      },
+      "engineering": {
+        "title": "Engineering review",
+        "body": "Our engineers verify the configuration and validate the technical plan.",
+        "time": "24 – 48h"
+      },
+      "manufacturing": {
+        "title": "Manufacturing",
+        "body": "Your pergola takes shape in our Vendée workshop.",
+        "time": "3 – 5 weeks"
+      },
+      "delivery": {
+        "title": "Delivery & install",
+        "body": "Our team contacts you 48h before to agree on a time slot.",
+        "time": "6 – 8 weeks"
+      }
+    }
+  },
+  "account": {
+    "eyebrow": "Client area",
+    "title": "Hello, Camille.",
+    "intro": "Track your ongoing orders, find your saved quotes and manage your account.",
+    "sidebar": {
+      "overview": "Overview",
+      "orders": "Orders",
+      "quotes": "Quotes",
+      "addresses": "Addresses",
+      "wishlist": "Wishlist",
+      "settings": "Settings",
+      "logout": "Sign out"
+    },
+    "ordersTitle": "Recent orders",
+    "quickTitle": "Quick actions",
+    "quoteCard": {
+      "title": "Open a new quote",
+      "body": "Configure your pergola and get a quote within 48h."
+    },
+    "savedCard": {
+      "title": "See my saved configurations",
+      "body": "Find all the compositions you have saved."
+    },
+    "continue": "Continue",
+    "orderStatusInAtelier": "In workshop",
+    "orderStatusDelivered": "Delivered"
+  },
+  "wishlistPage": {
+    "eyebrow": "Client area",
+    "title": "My wishlist",
+    "intro": "Save your favourites, compare, and find them again when you're ready.",
+    "empty": "Your wishlist is empty.",
+    "emptyBody": "Click the heart on a pergola to save it here. You can find it and order it later.",
+    "explore": "Explore the collection"
+  },
+  "auth": {
+    "loginEyebrow": "Client area",
+    "loginTitle": "Welcome back.",
+    "loginIntro": "Track your orders, find your quotes and saved configurations.",
+    "loginCta": "Sign in",
+    "loginNoAccount": "No account yet?",
+    "loginRegister": "Create account",
+    "forgotPassword": "Forgot password?",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithGitHub": "Continue with GitHub",
+    "signupWithGoogle": "Sign up with Google",
+    "signupWithGitHub": "Sign up with GitHub",
+    "registerEyebrow": "Create account",
+    "registerTitle": "Welcome to Pergola FR.",
+    "registerIntro": "A space to track your orders, save your configurations and get dedicated support.",
+    "registerCta": "Create my account",
+    "registerHaveAccount": "Already have an account?",
+    "registerLogin": "Sign in",
+    "termsBefore": "I accept the",
+    "termsLink": "terms and conditions",
+    "termsMiddle": "and the",
+    "privacyLink": "privacy policy",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "quote": "Camille & Antoine L. — Saint-Malo",
+    "quoteText": "« A stunning pergola, installed in a single morning. Even more beautiful than the configurator preview. »",
+    "madeIn": "Crafted in Vendée"
+  },
+  "contactPage": {
+    "eyebrow": "Contact us",
+    "title": "Let's talk about your project.",
+    "intro": "Our advisors welcome you, materials in hand, in our Paris Marais showroom. Costed quote within 48h.",
+    "showroom": "Paris showroom",
+    "hotline": "Hotline",
+    "hotlineHours": "Mon–Sat, 9am–7pm",
+    "email": "Email",
+    "whatsapp": "WhatsApp",
+    "whatsappHelper": "Express quote in 2h",
+    "openHours": "Open Tuesday to Saturday, 10am–7pm",
+    "form": {
+      "name": "First and last name",
+      "email": "Email",
+      "phone": "Phone",
+      "postal": "Postal code",
+      "projectLabel": "Your project",
+      "projectPlaceholder": "Pergola type considered, rough dimensions, site constraints…",
+      "submit": "Send my request",
+      "submitPending": "Sending…",
+      "consent": "By sending this form, you accept our privacy policy. We reply within 48 working hours.",
+      "successTitle": "Message sent",
+      "successBody": "Our team will reply within 48 working hours. A confirmation email has just been sent."
+    }
+  },
+  "about": {
+    "eyebrow": "The House",
+    "title": "Outdoor living, crafted in France.",
+    "intro": "Since 2014, we design in Paris and manufacture in Vendée outdoor structures built to last. Every piece is unique, every project supervised by a dedicated studio lead.",
+    "atelierEyebrow": "Vendée workshop",
+    "atelierTitle": "Every profile, extruded in-house.",
+    "atelierBody": "Our workshop in Les Herbiers works extruded aluminium, PEFC cedar and galvanised steel. CNC machines, tenth-of-a-mm quality control, Qualicoat-certified thermo-lacquering. Nothing leaves the workshop without going through the hands of our craftspeople.",
+    "statWorkshop": "Production workshop",
+    "statCompanions": "Craftspeople",
+    "statLeadtime": "Average bespoke leadtime",
+    "statMadeIn": "Made in France",
+    "commitmentsEyebrow": "Our commitments",
+    "commitmentsTitle": "One standard, every step.",
+    "design": { "title": "Designed in Paris", "body": "In-house design studio at our Marais showroom." },
+    "workshop": { "title": "Vendée workshop", "body": "Artisan manufacturing, CNC machines." },
+    "ecodesign": { "title": "Eco-designed", "body": "Recyclable aluminium, PEFC cedar, low-consumption LED." },
+    "awarded": { "title": "Award-winning", "body": "Janus de l'Industrie prize, referenced by Architectes du Patrimoine." }
+  },
+  "projectsPage": {
+    "eyebrow": "Projects",
+    "title": "Portfolio of our bespoke projects.",
+    "intro": "Residences, hotels, restaurants, poolsides — every project is unique, designed with a dedicated studio lead.",
+    "discover": "Discover the project",
+    "back": "Back to projects",
+    "detailProjectEyebrow": "The project",
+    "challenge": "The challenge",
+    "solution": "Our answer",
+    "materials": "Materials & options",
+    "ctaEyebrow": "A similar project?",
+    "ctaTitle": "Let's talk about your outdoor space.",
+    "ctaCta": "Request a quote",
+    "relatedEyebrow": "Other projects",
+    "relatedTitle": "Also worth discovering"
+  },
+  "journalPage": {
+    "eyebrow": "Journal",
+    "title": "Our inspirations and craft.",
+    "intro": "Materials guides, site reports, workshop news — the thinking behind each project.",
+    "readArticle": "Read the article",
+    "minutes": "min",
+    "backToJournal": "Back to journal",
+    "minutesReading": "min read",
+    "readyEyebrow": "Ready to act?",
+    "readyTitle": "Configure your pergola.",
+    "readyCta": "Open the configurator",
+    "relatedEyebrow": "You may also like",
+    "relatedTitle": "Keep reading"
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Frequently asked questions.",
+    "intro": "The answers to the questions our customers ask most often. Can't find yours? Contact us.",
+    "groups": {
+      "before": "Before buying",
+      "order": "Order & payment",
+      "delivery": "Delivery & install",
+      "warranty": "Warranty & maintenance"
+    }
+  },
+  "shipping": {
+    "eyebrow": "Service",
+    "title": "Delivery, install & follow-up.",
+    "intro": "We handle every step, from workshop shipping to full commissioning at your home.",
+    "step1": { "title": "1. Manufacturing", "body": "3 to 5 weeks in our Vendée workshop. Tenth-of-a-mm quality control, Qualicoat-certified thermo-lacquering." },
+    "step2": { "title": "2. Shipping", "body": "Appointment booked 48h before delivery. Suitable truck, tail lift for large structures." },
+    "step3": { "title": "3. Install", "body": "Our team fixes, adjusts and commissions the pergola. Full site cleaning before leaving." },
+    "step4": { "title": "4. Follow-up", "body": "A dedicated studio lead stays reachable during the full warranty. Interventions within 72h in mainland France." },
+    "optionsEyebrow": "Options & pricing",
+    "optionsTitle": "Clear pricing, whatever your project.",
+    "standard": { "label": "Mainland France — standard", "delay": "4 to 6 weeks", "price": "Free over €2,000" },
+    "express": { "label": "Mainland France — express", "delay": "3 weeks", "price": "+ €299" },
+    "install": { "label": "Install by our team", "delay": "Added to standard delay", "price": "from €1,490" },
+    "beNlCh": { "label": "Belgium / Luxembourg / Switzerland", "delay": "5 to 7 weeks", "price": "On quote" },
+    "outsideNotice": "Delivery to French overseas territories and outside Europe possible on quote. Contact our team for precise pricing based on your destination."
+  },
+  "warranty": {
+    "eyebrow": "Commitment",
+    "title": "One warranty, one team, one point of contact.",
+    "intro": "We design our pergolas to last. Our warranties cover structure, motors, finishes and installation.",
+    "guaranteeLabel": "Warranty",
+    "structure": { "title": "Load-bearing structure", "body": "Beams, rafters, posts, stainless steel brackets. Corrosion, deformation, breakage.", "years": "10 years" },
+    "motors": { "title": "Motors & LED", "body": "Somfy motors, electronic boards, integrated LED strips, rain/wind sensors.", "years": "5 years" },
+    "finish": { "title": "Qualicoat finishes", "body": "Thermo-lacquering, RAL tones, anodised looks.", "years": "5 years" },
+    "accessories": { "title": "Accessories & install", "body": "Zip screens, glass panels, our team's labour.", "years": "2 years" },
+    "coveredEyebrow": "What is covered",
+    "coveredTitle": "We handle everything.",
+    "coveredList": [
+      "Remote diagnostic within 24 working hours",
+      "On-site intervention within 72h in mainland France",
+      "Original spare parts, at no charge",
+      "Labour included for the full warranty period",
+      "Annual readjustment offered the 1st year"
+    ],
+    "excludedEyebrow": "What is not covered",
+    "excludedTitle": "Exceptions to know.",
+    "excludedList": [
+      "Damage due to non-compliant use",
+      "Impact, vandalism, natural disasters (covered by your home insurance)",
+      "Modifications or repairs performed by a third party",
+      "Normal wear of sealing joints (replacement every 5 years recommended)"
+    ]
+  },
+  "comingSoon": {
+    "eyebrow": "New collection",
+    "launch": "Launch scheduled",
+    "emailPlaceholder": "Your email to be notified",
+    "notify": "Notify me",
+    "meanwhile": "Meanwhile, explore our pergolas",
+    "gazebos": {
+      "title": "Gazebos — The art of gathering.",
+      "intro": "A family of hexagonal and rectangular gazebos in solid cedar, with laser-cut aluminium privacy panels. Crafted in our Vendée workshop.",
+      "launchDate": "Spring 2026",
+      "bullets": [
+        "5 sizes, from 3×3m gazebo to 6×4m structure",
+        "Bamboo or pebble privacy panels, patterns signed Atelier Rivière",
+        "Options: LED lighting, mosquito nets, zip curtains",
+        "Delivery across France, install available as an option"
+      ]
+    },
+    "carports": {
+      "title": "Carports — Discreet, structural.",
+      "intro": "A range of single-car, double, or bioclimatic-pergola-integrated carports. Extruded thermo-lacquered aluminium, solid cedar, or a combination.",
+      "launchDate": "Summer 2026",
+      "bullets": [
+        "Single-car (3×5m), double (5.5×5m) and wall-mounted",
+        "Solid, louvered or polycarbonate roofs",
+        "Solar panels integrable (option)",
+        "Micropile or concrete-pad foundation"
+      ]
+    },
+    "kitchens": {
+      "title": "Outdoor kitchens — The great outdoors, seated.",
+      "intro": "Modular islands, Dekton worktops, plancha, grill, sink, wine fridge. Configurable to the centimetre, designed to integrate under your pergola.",
+      "launchDate": "Summer 2026",
+      "bullets": [
+        "Worktops in Dekton, granite or brushed steel",
+        "Modules: gas plancha, charcoal grill, wok, teppanyaki, pizza oven",
+        "Sink, ventilated wine fridge, integrated mini-fridge",
+        "Dedicated configurator, live pricing and 3D preview"
+      ]
+    },
+    "accessories": {
+      "title": "Accessories — Attention to detail.",
+      "intro": "Perimeter LED lighting, rain-wind sensors, infrared heaters, zip curtains, matching furniture. Every accessory designed to dialogue with our structures.",
+      "launchDate": "Autumn 2026",
+      "bullets": [
+        "Warm white or programmable RGBW LED strips",
+        "Somfy rain-wind sensors, multi-channel remotes",
+        "IP65 infrared heaters, remote controls",
+        "Matching armchairs and tables (limited edition)"
+      ]
+    }
+  },
+  "notFound": {
+    "badge": "404 error",
+    "title": "This page took off into the open air.",
+    "body": "The page you're looking for doesn't exist or has been moved. Head back home or explore our favourites below.",
+    "backHome": "Back to home",
+    "seeCollection": "See the collection",
+    "featuredEyebrow": "Our favourites",
+    "featuredTitle": "Perhaps this is what you were after."
+  },
   "footer": {
     "tagline": "Pergolas, gazebos and outdoor structures — designed in Paris, crafted in France.",
     "showroom": "Paris showroom",
@@ -102,6 +613,66 @@
     "rights": "All rights reserved.",
     "legal": "Legal",
     "privacy": "Privacy",
-    "terms": "Terms"
+    "terms": "Terms",
+    "columns": {
+      "collection": "Collections",
+      "collectionLinks": {
+        "pergolas": "Bioclimatic pergolas",
+        "gazebos": "Gazebos",
+        "carports": "Carports",
+        "kitchens": "Outdoor kitchens",
+        "accessories": "Accessories"
+      },
+      "house": "House",
+      "houseLinks": {
+        "about": "About",
+        "projects": "Our projects",
+        "journal": "Journal",
+        "showroom": "Showroom"
+      },
+      "service": "Service",
+      "serviceLinks": {
+        "configurator": "Configurator",
+        "shipping": "Delivery",
+        "warranty": "Warranty",
+        "faq": "FAQ",
+        "contact": "Contact"
+      }
+    }
+  },
+  "menu": {
+    "collection": "Collection",
+    "house": "House",
+    "service": "Service",
+    "clientArea": "Client area",
+    "primaryCta": "Configure my pergola",
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "myAccount": "My account",
+    "myWishlist": "Wishlist",
+    "allPergolas": "All pergolas",
+    "gazebos": "Gazebos",
+    "carports": "Carports",
+    "kitchens": "Outdoor kitchens",
+    "accessories": "Accessories",
+    "about": "About",
+    "projects": "Projects",
+    "journal": "Journal",
+    "contact": "Contact & showroom",
+    "configurator": "Configurator",
+    "shipping": "Delivery & install",
+    "warranty": "10-year warranty",
+    "faq": "FAQ"
+  },
+  "productCard": {
+    "materialLabel": {
+      "wood": "Solid cedar",
+      "steel": "Galvanised steel",
+      "aluminium": "Aluminium"
+    }
+  },
+  "newsletter": {
+    "successTitle": "Welcome to Pergola FR",
+    "successBody": "You'll receive our new arrivals and private invitations."
   }
 }

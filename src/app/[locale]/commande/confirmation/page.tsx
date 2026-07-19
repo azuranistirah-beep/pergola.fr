@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import {
   Calendar,
   Check,
@@ -14,37 +14,15 @@ import { Button } from "@/components/ui/button";
 import { formatEUR } from "@/lib/utils";
 
 export const metadata = {
-  title: "Commande confirmée",
-  description: "Merci pour votre commande — voici les prochaines étapes.",
   robots: { index: false, follow: false },
 };
 
 const steps = [
-  {
-    Icon: Mail,
-    title: "Confirmation par email",
-    body: "Vous recevez sous 15 minutes un email avec votre facture PDF et un lien de suivi.",
-    time: "0 – 15 min",
-  },
-  {
-    Icon: Package,
-    title: "Validation du bureau d'études",
-    body: "Nos ingénieurs vérifient la configuration et valident le plan technique.",
-    time: "24 – 48h",
-  },
-  {
-    Icon: Calendar,
-    title: "Fabrication",
-    body: "Votre pergola prend forme dans notre atelier de Vendée.",
-    time: "3 – 5 semaines",
-  },
-  {
-    Icon: Truck,
-    title: "Livraison & pose",
-    body: "Notre équipe vous contacte 48h avant pour convenir d'un créneau.",
-    time: "6 – 8 semaines",
-  },
-];
+  { key: "email", Icon: Mail },
+  { key: "engineering", Icon: Package },
+  { key: "manufacturing", Icon: Calendar },
+  { key: "delivery", Icon: Truck },
+] as const;
 
 export default async function OrderConfirmationPage({
   params,
@@ -53,6 +31,8 @@ export default async function OrderConfirmationPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("confirmation");
+
   return (
     <div className="relative pt-32 pb-24 md:pt-40">
       <div
@@ -69,48 +49,43 @@ export default async function OrderConfirmationPage({
           <div className="border-accent/50 bg-accent/10 text-accent mx-auto inline-flex size-16 items-center justify-center rounded-full border">
             <Check className="size-7" />
           </div>
-          <Eyebrow className="mt-8">Commande confirmée</Eyebrow>
+          <Eyebrow className="mt-8">{t("badge")}</Eyebrow>
           <h1 className="mt-4 font-serif text-4xl leading-tight md:text-6xl">
-            Merci Camille, votre pergola est en route.
+            {t("title")}
           </h1>
           <p className="text-secondary mt-6 text-base">
-            Un email de confirmation vous a été envoyé à{" "}
-            <strong className="text-primary">c.riviere@example.fr</strong>. Voici
-            un récapitulatif de votre commande et les prochaines étapes.
+            {t("intro")}{" "}
+            <strong className="text-primary">c.riviere@example.fr</strong>.
           </p>
         </div>
 
         <div className="mx-auto mt-16 max-w-3xl">
           <div className="border-border/70 grid gap-6 rounded-[var(--radius-lg)] border p-8 md:grid-cols-3">
-            <Summary
-              label="Référence"
-              value="PGL-2026-00184"
-              mono
-            />
-            <Summary label="Total TTC" value={formatEUR(849000)} />
-            <Summary label="Paiement" value="Carte Visa •••• 4242" />
+            <Summary label={t("orderRef")} value="PGL-2026-00184" mono />
+            <Summary label={t("orderTotal")} value={formatEUR(849000)} />
+            <Summary label={t("orderPayment")} value="Visa •••• 4242" />
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <Button variant="primary" size="lg" className="w-full">
-              <Download /> Télécharger la facture
+              <Download /> {t("download")}
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full">
-              <Link href="/compte">Suivre ma commande</Link>
+              <Link href="/compte">{t("track")}</Link>
             </Button>
           </div>
         </div>
 
         <div className="mx-auto mt-24 max-w-4xl">
-          <Eyebrow>Prochaines étapes</Eyebrow>
+          <Eyebrow>{t("nextEyebrow")}</Eyebrow>
           <h2 className="mt-4 font-serif text-3xl leading-tight md:text-4xl">
-            Ce qui vous attend.
+            {t("nextTitle")}
           </h2>
 
           <ol className="border-border/60 mt-10 divide-border/60 divide-y overflow-hidden rounded-[var(--radius-lg)] border">
-            {steps.map(({ Icon, title, body, time }, i) => (
+            {steps.map(({ key, Icon }, i) => (
               <li
-                key={title}
+                key={key}
                 className="grid gap-4 p-6 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-8 md:p-8"
               >
                 <div className="border-accent/30 bg-accent/10 text-accent inline-flex size-12 items-center justify-center rounded-full border">
@@ -118,15 +93,17 @@ export default async function OrderConfirmationPage({
                 </div>
                 <div>
                   <div className="text-secondary text-[10px] uppercase tracking-[0.25em]">
-                    Étape {i + 1}
+                    {t("step")} {i + 1}
                   </div>
                   <h3 className="mt-1 font-serif text-lg leading-tight">
-                    {title}
+                    {t(`steps.${key}.title`)}
                   </h3>
-                  <p className="text-secondary mt-2 text-sm">{body}</p>
+                  <p className="text-secondary mt-2 text-sm">
+                    {t(`steps.${key}.body`)}
+                  </p>
                 </div>
                 <div className="text-accent text-xs font-medium uppercase tracking-[0.2em] md:text-right">
-                  {time}
+                  {t(`steps.${key}.time`)}
                 </div>
               </li>
             ))}

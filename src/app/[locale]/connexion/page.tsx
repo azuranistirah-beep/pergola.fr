@@ -1,12 +1,7 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { AuthShell } from "@/features/auth/auth-shell";
-
-export const metadata = {
-  title: "Connexion",
-  description: "Accédez à votre espace client Pergola FR.",
-};
 
 export default async function LoginPage({
   params,
@@ -15,49 +10,52 @@ export default async function LoginPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("auth");
+  const c = await getTranslations("common");
   return (
     <AuthShell
-      eyebrow="Espace client"
-      title="Content de vous revoir."
-      intro="Suivez vos commandes, retrouvez vos devis et vos configurations sauvegardées."
+      eyebrow={t("loginEyebrow")}
+      title={t("loginTitle")}
+      intro={t("loginIntro")}
       footer={
         <>
-          Pas encore de compte ?{" "}
+          {t("loginNoAccount")}{" "}
           <Link
             href="/inscription"
             className="text-primary font-medium underline underline-offset-4"
           >
-            Créer un compte
+            {t("loginRegister")}
           </Link>
         </>
       }
     >
       <div className="flex flex-col gap-3">
         <Button variant="outline" size="lg" className="w-full">
-          Continuer avec Google
+          {t("continueWithGoogle")}
         </Button>
         <Button variant="outline" size="lg" className="w-full">
-          Continuer avec GitHub
+          {t("continueWithGitHub")}
         </Button>
       </div>
 
       <div className="text-secondary my-8 flex items-center gap-4 text-[10px] uppercase tracking-[0.25em]">
-        <span className="bg-border h-px flex-1" /> ou <span className="bg-border h-px flex-1" />
+        <span className="bg-border h-px flex-1" /> {c("orLabel")}{" "}
+        <span className="bg-border h-px flex-1" />
       </div>
 
       <form className="flex flex-col gap-5">
-        <Field label="Email" name="email" type="email" required />
-        <Field label="Mot de passe" name="password" type="password" required />
+        <Field label={t("email")} name="email" type="email" required />
+        <Field label={t("password")} name="password" type="password" required />
         <div className="text-secondary flex justify-end text-xs">
           <Link
             href="/mot-de-passe-oublie"
             className="underline underline-offset-4"
           >
-            Mot de passe oublié ?
+            {t("forgotPassword")}
           </Link>
         </div>
         <Button variant="primary" size="lg" className="mt-2 w-full">
-          Se connecter
+          {t("loginCta")}
         </Button>
       </form>
     </AuthShell>
@@ -88,7 +86,7 @@ function Field({
         name={name}
         type={type}
         required={required}
-        className="border-border focus:border-primary bg-transparent border-b py-3 text-sm outline-none"
+        className="border-border focus:border-primary border-b bg-transparent py-3 text-sm outline-none"
       />
     </div>
   );

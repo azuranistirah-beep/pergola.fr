@@ -1,12 +1,7 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { AuthShell } from "@/features/auth/auth-shell";
-
-export const metadata = {
-  title: "Créer un compte",
-  description: "Rejoignez Pergola FR pour suivre vos commandes et devis.",
-};
 
 export default async function RegisterPage({
   params,
@@ -15,66 +10,68 @@ export default async function RegisterPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("auth");
+  const c = await getTranslations("common");
   return (
     <AuthShell
-      eyebrow="Créer un compte"
-      title="Bienvenue chez Pergola FR."
-      intro="Un espace pour suivre vos commandes, sauvegarder vos configurations et bénéficier d'un accompagnement dédié."
+      eyebrow={t("registerEyebrow")}
+      title={t("registerTitle")}
+      intro={t("registerIntro")}
       footer={
         <>
-          Vous avez déjà un compte ?{" "}
+          {t("registerHaveAccount")}{" "}
           <Link
             href="/connexion"
             className="text-primary font-medium underline underline-offset-4"
           >
-            Se connecter
+            {t("registerLogin")}
           </Link>
         </>
       }
     >
       <div className="flex flex-col gap-3">
         <Button variant="outline" size="lg" className="w-full">
-          S&apos;inscrire avec Google
+          {t("signupWithGoogle")}
         </Button>
         <Button variant="outline" size="lg" className="w-full">
-          S&apos;inscrire avec GitHub
+          {t("signupWithGitHub")}
         </Button>
       </div>
 
       <div className="text-secondary my-8 flex items-center gap-4 text-[10px] uppercase tracking-[0.25em]">
-        <span className="bg-border h-px flex-1" /> ou <span className="bg-border h-px flex-1" />
+        <span className="bg-border h-px flex-1" /> {c("orLabel")}{" "}
+        <span className="bg-border h-px flex-1" />
       </div>
 
       <form className="flex flex-col gap-5">
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Prénom" name="first" required />
-          <Field label="Nom" name="last" required />
+          <Field label={t("firstName")} name="first" required />
+          <Field label={t("lastName")} name="last" required />
         </div>
-        <Field label="Email" name="email" type="email" required />
-        <Field label="Mot de passe" name="password" type="password" required />
+        <Field label={t("email")} name="email" type="email" required />
+        <Field label={t("password")} name="password" type="password" required />
         <label className="text-secondary mt-2 flex items-start gap-3 text-xs">
-          <input
-            type="checkbox"
-            required
-            className="accent-primary mt-0.5"
-          />
+          <input type="checkbox" required className="accent-primary mt-0.5" />
           <span>
-            J&apos;accepte les{" "}
-            <Link href="/cgv" className="text-primary underline underline-offset-4">
-              conditions générales de vente
+            {t("termsBefore")}{" "}
+            <Link
+              href="/cgv"
+              className="text-primary underline underline-offset-4"
+            >
+              {t("termsLink")}
             </Link>{" "}
-            et la{" "}
+            {t("termsMiddle")}{" "}
             <Link
               href="/confidentialite"
               className="text-primary underline underline-offset-4"
             >
-              politique de confidentialité
+              {t("privacyLink")}
             </Link>
             .
           </span>
         </label>
         <Button variant="primary" size="lg" className="w-full">
-          Créer mon compte
+          {t("registerCta")}
         </Button>
       </form>
     </AuthShell>
@@ -105,7 +102,7 @@ function Field({
         name={name}
         type={type}
         required={required}
-        className="border-border focus:border-primary bg-transparent border-b py-3 text-sm outline-none"
+        className="border-border focus:border-primary border-b bg-transparent py-3 text-sm outline-none"
       />
     </div>
   );

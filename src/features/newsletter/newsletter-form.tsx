@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function NewsletterForm({ placeholder, submitLabel }: Props) {
+  const t = useTranslations("newsletter");
   const [pending, setPending] = React.useState(false);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -16,13 +18,10 @@ export function NewsletterForm({ placeholder, submitLabel }: Props) {
     const email = new FormData(e.currentTarget).get("email")?.toString().trim();
     if (!email) return;
     setPending(true);
-    // Placeholder — wire to InsForge functions/table when auth is ready.
     await new Promise((r) => setTimeout(r, 600));
     e.currentTarget.reset();
     setPending(false);
-    toast.success("Bienvenue chez Pergola FR", {
-      description: "Vous recevrez nos nouveautés et invitations privées.",
-    });
+    toast.success(t("successTitle"), { description: t("successBody") });
   };
 
   return (

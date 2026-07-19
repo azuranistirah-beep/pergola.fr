@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { ArrowRight, Bell } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
@@ -5,22 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 
 interface Props {
-  eyebrow: string;
-  title: string;
-  intro: string;
+  slug: "gazebos" | "carports" | "kitchens" | "accessories";
   gradient: string;
-  bullets: string[];
-  launchDate: string;
 }
 
-export function ComingSoon({
-  eyebrow,
-  title,
-  intro,
-  gradient,
-  bullets,
-  launchDate,
-}: Props) {
+export function ComingSoon({ slug, gradient }: Props) {
+  const t = useTranslations(`comingSoon.${slug}`);
+  const common = useTranslations("comingSoon");
+  const bullets = t.raw("bullets") as string[];
+
   return (
     <div className="relative overflow-hidden">
       <div
@@ -28,17 +24,14 @@ export function ComingSoon({
         className="absolute inset-0 -z-10"
         style={{ background: gradient }}
       />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 bg-black/30"
-      />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-black/30" />
       <Container className="relative flex min-h-[92vh] flex-col justify-center py-32 text-white">
         <div className="max-w-2xl">
-          <Eyebrow className="text-accent">{eyebrow}</Eyebrow>
+          <Eyebrow className="text-accent">{common("eyebrow")}</Eyebrow>
           <h1 className="mt-4 font-serif text-5xl leading-[1.05] md:text-7xl">
-            {title}
+            {t("title")}
           </h1>
-          <p className="mt-8 max-w-xl text-lg text-white/80">{intro}</p>
+          <p className="mt-8 max-w-xl text-lg text-white/80">{t("intro")}</p>
 
           <ul className="mt-10 space-y-3 text-sm">
             {bullets.map((b) => (
@@ -51,7 +44,7 @@ export function ComingSoon({
 
           <div className="mt-12 flex flex-col gap-4 border-t border-white/15 pt-8">
             <div className="text-xs uppercase tracking-[0.25em] text-white/50">
-              Lancement prévu — {launchDate}
+              {common("launch")} — {t("launchDate")}
             </div>
             <form className="flex flex-col gap-3 sm:flex-row">
               <div className="border-accent/60 flex flex-1 items-center gap-3 border-b py-3">
@@ -59,7 +52,7 @@ export function ComingSoon({
                 <input
                   type="email"
                   required
-                  placeholder="Votre email pour être prévenu·e"
+                  placeholder={common("emailPlaceholder")}
                   className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/40"
                 />
               </div>
@@ -69,7 +62,7 @@ export function ComingSoon({
                 type="submit"
                 className="w-full sm:w-auto"
               >
-                M&apos;avertir <ArrowRight />
+                {common("notify")} <ArrowRight />
               </Button>
             </form>
           </div>
@@ -78,7 +71,7 @@ export function ComingSoon({
             href="/pergolas"
             className="text-accent mt-10 inline-block text-sm font-medium underline underline-offset-4"
           >
-            En attendant, découvrez nos pergolas →
+            {common("meanwhile")} →
           </Link>
         </div>
       </Container>

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { ArrowLeft, ArrowRight, Calendar, MapPin } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
@@ -18,12 +18,16 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const project = getProjectBySlug(slug);
   if (!project) return {};
-  return { title: project.title, description: project.hero };
+  const en = locale === "en";
+  return {
+    title: en ? project.title_en : project.title,
+    description: en ? project.hero_en : project.hero,
+  };
 }
 
 export default async function ProjectDetailPage({
@@ -35,17 +39,18 @@ export default async function ProjectDetailPage({
   setRequestLocale(locale);
   const project = getProjectBySlug(slug);
   if (!project) notFound();
-
+  const t = await getTranslations("projectsPage");
+  const en = locale === "en";
   const related = projects.filter((p) => p.slug !== project.slug).slice(0, 3);
+  const materials = en ? project.materials_en : project.materials;
 
   return (
     <>
-      {/* Hero */}
       <section className="relative pt-32 pb-24 md:pt-40 md:pb-32">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={projectPhoto[project.slug]}
-          alt={project.title}
+          alt=""
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/25 to-black/70" />
@@ -54,15 +59,15 @@ export default async function ProjectDetailPage({
             href="/realisations"
             className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-white/70 hover:text-white"
           >
-            <ArrowLeft className="size-3" /> Retour aux réalisations
+            <ArrowLeft className="size-3" /> {t("back")}
           </Link>
           <div className="mt-8">
             <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.25em] backdrop-blur">
-              {project.tag}
+              {en ? project.tag_en : project.tag}
             </span>
           </div>
           <h1 className="mt-6 max-w-4xl font-serif text-4xl leading-[1.05] md:text-7xl">
-            {project.title}
+            {en ? project.title_en : project.title}
           </h1>
           <div className="mt-8 flex items-center gap-6 text-sm text-white/70">
             <span className="inline-flex items-center gap-2">
@@ -75,15 +80,14 @@ export default async function ProjectDetailPage({
         </Container>
       </section>
 
-      {/* Numbers */}
       <section className="border-border/60 border-b py-16">
         <Container>
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            {project.numbers.map(([k, v]) => (
-              <div key={v}>
+            {project.numbers.map(([k, fr, enLabel]) => (
+              <div key={k}>
                 <div className="font-serif text-4xl md:text-5xl">{k}</div>
                 <div className="text-secondary mt-2 text-xs uppercase tracking-[0.2em]">
-                  {v}
+                  {en ? enLabel : fr}
                 </div>
               </div>
             ))}
@@ -91,43 +95,39 @@ export default async function ProjectDetailPage({
         </Container>
       </section>
 
-      {/* Story */}
       <section className="py-24 md:py-32">
         <Container className="max-w-3xl">
-          <Eyebrow>Le projet</Eyebrow>
+          <Eyebrow>{t("detailProjectEyebrow")}</Eyebrow>
           <p className="text-primary mt-6 font-serif text-2xl leading-[1.35] md:text-3xl">
-            {project.hero}
+            {en ? project.hero_en : project.hero}
           </p>
 
           <div className="mt-16 grid gap-14 md:grid-cols-2">
             <div>
               <div className="text-accent text-[10px] uppercase tracking-[0.25em]">
-                Le défi
+                {t("challenge")}
               </div>
               <p className="text-secondary mt-3 text-[15px] leading-[1.75]">
-                {project.challenge}
+                {en ? project.challenge_en : project.challenge}
               </p>
             </div>
             <div>
               <div className="text-accent text-[10px] uppercase tracking-[0.25em]">
-                Notre réponse
+                {t("solution")}
               </div>
               <p className="text-secondary mt-3 text-[15px] leading-[1.75]">
-                {project.solution}
+                {en ? project.solution_en : project.solution}
               </p>
             </div>
           </div>
 
           <div className="mt-16">
             <div className="text-accent text-[10px] uppercase tracking-[0.25em]">
-              Matériaux & options
+              {t("materials")}
             </div>
             <ul className="border-border/60 mt-4 divide-border/60 divide-y border-t border-b">
-              {project.materials.map((m) => (
-                <li
-                  key={m}
-                  className="text-primary py-4 text-sm"
-                >
+              {materials.map((m) => (
+                <li key={m} className="text-primary py-4 text-sm">
                   {m}
                 </li>
               ))}
@@ -136,31 +136,29 @@ export default async function ProjectDetailPage({
         </Container>
       </section>
 
-      {/* CTA */}
       <section className="bg-primary text-primary-foreground py-24 md:py-32">
         <Container>
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
             <div className="max-w-2xl">
-              <Eyebrow className="text-accent">Un projet similaire ?</Eyebrow>
+              <Eyebrow className="text-accent">{t("ctaEyebrow")}</Eyebrow>
               <h2 className="mt-4 font-serif text-3xl leading-tight md:text-5xl">
-                Parlons de votre extérieur.
+                {t("ctaTitle")}
               </h2>
             </div>
             <Button asChild variant="accent" size="lg">
               <Link href="/contact">
-                Demander un devis <ArrowRight />
+                {t("ctaCta")} <ArrowRight />
               </Link>
             </Button>
           </div>
         </Container>
       </section>
 
-      {/* Related */}
       <section className="py-24 md:py-32">
         <Container>
-          <Eyebrow>Autres réalisations</Eyebrow>
+          <Eyebrow>{t("relatedEyebrow")}</Eyebrow>
           <h2 className="mt-4 font-serif text-3xl leading-tight md:text-4xl">
-            À découvrir également
+            {t("relatedTitle")}
           </h2>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {related.map((p) => (
@@ -172,16 +170,16 @@ export default async function ProjectDetailPage({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={projectPhoto[p.slug]}
-                  alt={p.title}
+                  alt=""
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 <div className="relative flex h-full flex-col justify-end p-6 text-white">
                   <span className="text-[10px] uppercase tracking-[0.25em] text-white/70">
-                    {p.tag}
+                    {en ? p.tag_en : p.tag}
                   </span>
                   <h3 className="mt-2 font-serif text-lg leading-tight">
-                    {p.title}
+                    {en ? p.title_en : p.title}
                   </h3>
                 </div>
               </Link>

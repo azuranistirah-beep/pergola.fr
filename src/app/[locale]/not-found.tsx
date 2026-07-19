@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { ProductCard } from "@/features/products/product-card";
 import { listProducts } from "@/repositories/product-repository";
 
 export default async function NotFound() {
+  const t = await getTranslations("notFound");
   const catalog = await listProducts().catch(() => []);
   const featured = catalog.filter((p) => p.featured).slice(0, 3);
 
@@ -22,19 +24,15 @@ export default async function NotFound() {
           }}
         />
         <Container className="text-white">
-          <Eyebrow className="text-accent">Erreur 404</Eyebrow>
+          <Eyebrow className="text-accent">{t("badge")}</Eyebrow>
           <h1 className="mt-4 max-w-3xl font-serif text-6xl leading-tight md:text-8xl">
-            Cette page a filé
-            <br /> au grand air.
+            {t("title")}
           </h1>
-          <p className="mt-8 max-w-lg text-white/70">
-            La page que vous cherchez n&apos;existe pas ou a été déplacée.
-            Revenez à l&apos;accueil ou explorez nos coups de cœur ci-dessous.
-          </p>
+          <p className="mt-8 max-w-lg text-white/70">{t("body")}</p>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="accent" size="lg">
               <Link href="/">
-                Retour à l&apos;accueil <ArrowRight />
+                {t("backHome")} <ArrowRight />
               </Link>
             </Button>
             <Button
@@ -43,7 +41,7 @@ export default async function NotFound() {
               size="lg"
               className="border-white/30 bg-transparent text-white hover:border-white hover:bg-white hover:text-primary"
             >
-              <Link href="/pergolas">Voir la collection</Link>
+              <Link href="/pergolas">{t("seeCollection")}</Link>
             </Button>
           </div>
         </Container>
@@ -52,9 +50,9 @@ export default async function NotFound() {
       {featured.length > 0 && (
         <section className="py-24 md:py-32">
           <Container>
-            <Eyebrow>Nos coups de cœur</Eyebrow>
+            <Eyebrow>{t("featuredEyebrow")}</Eyebrow>
             <h2 className="mt-4 font-serif text-3xl leading-tight md:text-4xl">
-              Peut-être cherchiez-vous ça.
+              {t("featuredTitle")}
             </h2>
             <div className="mt-12 grid gap-6 md:grid-cols-3">
               {featured.map((p) => (

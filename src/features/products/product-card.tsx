@@ -1,16 +1,15 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { ProductImage } from "@/components/ui/product-image";
 import { formatEUR } from "@/lib/utils";
 import type { PergolaProduct } from "./types";
 
-const materialLabel: Record<PergolaProduct["material"], string> = {
-  wood: "Cèdre massif",
-  steel: "Acier galvanisé",
-  aluminium: "Aluminium",
-};
-
 export function ProductCard({ product }: { product: PergolaProduct }) {
+  const t = useTranslations("productCard");
+  const c = useTranslations("common");
   return (
     <Link
       href={`/pergolas/${product.slug}`}
@@ -32,7 +31,7 @@ export function ProductCard({ product }: { product: PergolaProduct }) {
       <div className="flex flex-1 flex-col justify-between gap-6 p-6">
         <div>
           <div className="text-accent text-[10px] font-medium uppercase tracking-[0.25em]">
-            {materialLabel[product.material]}
+            {t(`materialLabel.${product.material}`)}
           </div>
           <h3 className="mt-3 font-serif text-xl leading-tight">
             {product.name}
@@ -44,14 +43,14 @@ export function ProductCard({ product }: { product: PergolaProduct }) {
         <div className="flex items-end justify-between">
           <div>
             <div className="text-secondary text-[10px] uppercase tracking-[0.2em]">
-              À partir de
+              {c("from")}
             </div>
             <div className="mt-1 font-serif text-2xl">
               {formatEUR(product.priceCents)}
             </div>
           </div>
           <div className="text-primary flex items-center gap-1 text-xs font-medium">
-            Découvrir
+            {c("discover")}
             <ArrowUpRight className="size-3.5 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" />
           </div>
         </div>

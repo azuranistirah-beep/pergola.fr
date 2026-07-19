@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { ProductCard } from "@/features/products/product-card";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -10,24 +11,20 @@ import type {
   ProductCategory,
 } from "@/features/products/types";
 
-interface CategoryDef {
-  code: "all" | ProductCategory;
-  label: string;
-}
-
-const categories: CategoryDef[] = [
-  { code: "all", label: "Toutes nos pergolas" },
-  { code: "pergola-bois", label: "Bois cèdre" },
-  { code: "pergola-lame-orientable", label: "Lames orientables" },
-  { code: "pergola-adossee", label: "Adossée mur" },
-  { code: "pergola-aluminium", label: "Voile d'ombrage" },
-  { code: "pergola-cabana", label: "Cabana d'angle" },
+const categoryDefs: { code: "all" | ProductCategory; labelKey: string }[] = [
+  { code: "all", labelKey: "all" },
+  { code: "pergola-bois", labelKey: "wood" },
+  { code: "pergola-lame-orientable", labelKey: "louvered" },
+  { code: "pergola-adossee", labelKey: "wallmount" },
+  { code: "pergola-aluminium", labelKey: "aluminium" },
+  { code: "pergola-cabana", labelKey: "cabana" },
 ];
 
 export function CategoryStrip({ products }: { products: PergolaProduct[] }) {
-  const [active, setActive] = React.useState<CategoryDef["code"]>("all");
+  const t = useTranslations("home.categories");
+  const [active, setActive] = React.useState<"all" | ProductCategory>("all");
 
-  const filtered = React.useMemo<PergolaProduct[]>(() => {
+  const filtered = React.useMemo(() => {
     if (active === "all") return products;
     return products.filter((p) => p.category === active);
   }, [active, products]);
@@ -37,19 +34,18 @@ export function CategoryStrip({ products }: { products: PergolaProduct[] }) {
       <Container>
         <div className="mb-10 flex flex-col justify-between gap-6 md:mb-14 md:flex-row md:items-end">
           <div>
-            <Eyebrow>La collection 2026</Eyebrow>
+            <Eyebrow>{t("eyebrow")}</Eyebrow>
             <h2 className="mt-4 max-w-2xl font-serif text-4xl leading-tight md:text-6xl">
-              Chaque pergola, une pièce singulière.
+              {t("title")}
             </h2>
           </div>
           <p className="text-secondary max-w-md text-sm md:text-right">
-            {products.length} modèles, du cèdre massif au bioclimatique à lames
-            orientables — tous fabriqués sur commande, livrés en 4 à 6 semaines.
+            {t("subtitle", { count: products.length })}
           </p>
         </div>
 
         <div className="border-border/60 mb-10 flex flex-wrap items-center gap-2 border-b pb-6">
-          {categories.map((c) => {
+          {categoryDefs.map((c) => {
             const count =
               c.code === "all"
                 ? products.length
@@ -66,7 +62,7 @@ export function CategoryStrip({ products }: { products: PergolaProduct[] }) {
                     : "border-border text-primary hover:border-primary",
                 )}
               >
-                {c.label}
+                {t(c.labelKey)}
                 <span
                   className={cn(
                     "ml-2 text-[10px]",
@@ -83,7 +79,7 @@ export function CategoryStrip({ products }: { products: PergolaProduct[] }) {
         </div>
 
         <div className="text-secondary mb-6 text-xs">
-          {filtered.length} produit{filtered.length > 1 ? "s" : ""}
+          {t("productsCount", { count: filtered.length })}
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

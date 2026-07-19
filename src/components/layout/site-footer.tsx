@@ -6,35 +6,35 @@ import { NewsletterForm } from "@/features/newsletter/newsletter-form";
 
 const columns = [
   {
-    title: "Collections",
+    title: "collection",
     links: [
-      { label: "Pergolas bioclimatiques", href: "/pergolas" },
-      { label: "Gazebos", href: "/gazebos" },
-      { label: "Carports", href: "/carports" },
-      { label: "Cuisines d'extérieur", href: "/cuisines-exterieur" },
-      { label: "Accessoires", href: "/accessoires" },
+      { key: "pergolas", href: "/pergolas" },
+      { key: "gazebos", href: "/gazebos" },
+      { key: "carports", href: "/carports" },
+      { key: "kitchens", href: "/cuisines-exterieur" },
+      { key: "accessories", href: "/accessoires" },
     ],
   },
   {
-    title: "Maison",
+    title: "house",
     links: [
-      { label: "À propos", href: "/a-propos" },
-      { label: "Nos réalisations", href: "/realisations" },
-      { label: "Journal", href: "/journal" },
-      { label: "Showroom", href: "/contact" },
+      { key: "about", href: "/a-propos" },
+      { key: "projects", href: "/realisations" },
+      { key: "journal", href: "/journal" },
+      { key: "showroom", href: "/contact" },
     ],
   },
   {
-    title: "Service",
+    title: "service",
     links: [
-      { label: "Configurateur", href: "/configurateur" },
-      { label: "Livraison", href: "/livraison" },
-      { label: "Garantie", href: "/garantie" },
-      { label: "FAQ", href: "/faq" },
-      { label: "Contact", href: "/contact" },
+      { key: "configurator", href: "/configurateur" },
+      { key: "shipping", href: "/livraison" },
+      { key: "warranty", href: "/garantie" },
+      { key: "faq", href: "/faq" },
+      { key: "contact", href: "/contact" },
     ],
   },
-];
+] as const;
 
 export function SiteFooter() {
   const t = useTranslations("footer");
@@ -62,7 +62,7 @@ export function SiteFooter() {
             {columns.map((col) => (
               <div key={col.title}>
                 <Eyebrow className="text-primary-foreground/50 mb-5">
-                  {col.title}
+                  {t(`columns.${col.title}`)}
                 </Eyebrow>
                 <ul className="flex flex-col gap-3">
                   {col.links.map((l) => (
@@ -71,7 +71,7 @@ export function SiteFooter() {
                         href={l.href}
                         className="text-primary-foreground/85 hover:text-accent text-sm transition-colors"
                       >
-                        {l.label}
+                        {t(`columns.${col.title}Links.${l.key}`)}
                       </Link>
                     </li>
                   ))}

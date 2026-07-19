@@ -1,3 +1,4 @@
+import { useTranslations, useLocale } from "next-intl";
 import { ArrowRight, MapPin } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
@@ -7,25 +8,25 @@ import { projects } from "@/features/projects/projects-data";
 import { projectPhoto } from "@/lib/imagery";
 
 export function CustomerProjects() {
+  const t = useTranslations("home.projects");
+  const locale = useLocale();
   const featured = projects.slice(0, 4);
   return (
     <section className="bg-muted py-24 md:py-32">
       <Container>
         <div className="mb-14 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
-            <Eyebrow>Réalisations</Eyebrow>
+            <Eyebrow>{t("eyebrow")}</Eyebrow>
             <h2 className="mt-4 max-w-2xl font-serif text-4xl leading-tight md:text-6xl">
-              Chez nos clients.
+              {t("title")}
             </h2>
             <p className="text-secondary mt-6 max-w-lg text-base">
-              Résidences privées, hôtels 5 étoiles, restaurants étoilés,
-              piscines familiales — voici comment nos pergolas transforment leurs
-              extérieurs.
+              {t("subtitle")}
             </p>
           </div>
           <Button asChild variant="primary" size="lg">
             <Link href="/realisations">
-              Voir toutes les réalisations <ArrowRight />
+              {t("cta")} <ArrowRight />
             </Link>
           </Button>
         </div>
@@ -40,17 +41,17 @@ export function CustomerProjects() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={projectPhoto[p.slug]}
-                alt={p.title}
+                alt={locale === "en" ? p.title_en : p.title}
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
               <div className="relative flex h-full flex-col justify-between p-6 text-white">
                 <span className="w-fit rounded-full bg-white/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.25em] backdrop-blur">
-                  {p.tag}
+                  {locale === "en" ? p.tag_en : p.tag}
                 </span>
                 <div>
                   <h3 className="font-serif text-xl leading-tight md:text-2xl">
-                    {p.title}
+                    {locale === "en" ? p.title_en : p.title}
                   </h3>
                   <div className="mt-2 flex items-center gap-3 text-xs text-white/75">
                     <span className="inline-flex items-center gap-1">

@@ -2,36 +2,28 @@
 
 import * as React from "react";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn, formatEUR } from "@/lib/utils";
 import type { PergolaProduct, ProductMaterial } from "./types";
-
-type Facet = { key: string; label: string; count: number };
 
 interface Props {
   products: PergolaProduct[];
   onFilteredChange: (filtered: PergolaProduct[]) => void;
 }
 
-const materialLabel: Record<ProductMaterial, string> = {
-  wood: "Bois cèdre",
-  steel: "Acier",
-  aluminium: "Aluminium",
-};
-
-const sortOptions = [
-  { value: "featured", label: "Sélection" },
-  { value: "price-asc", label: "Prix croissant" },
-  { value: "price-desc", label: "Prix décroissant" },
-  { value: "size-desc", label: "Plus grande surface" },
+const sortValues = [
+  "featured",
+  "priceAsc",
+  "priceDesc",
+  "sizeDesc",
 ] as const;
 
 export function ProductFilters({ products, onFilteredChange }: Props) {
+  const t = useTranslations("plp.filters");
+
   const priceBounds = React.useMemo(() => {
     const prices = products.map((p) => p.priceCents);
-    return {
-      min: Math.min(...prices),
-      max: Math.max(...prices),
-    };
+    return { min: Math.min(...prices), max: Math.max(...prices) };
   }, [products]);
 
   const [materials, setMaterials] = React.useState<Set<ProductMaterial>>(
@@ -39,20 +31,16 @@ export function ProductFilters({ products, onFilteredChange }: Props) {
   );
   const [maxPrice, setMaxPrice] = React.useState(priceBounds.max);
   const [sort, setSort] =
-    React.useState<(typeof sortOptions)[number]["value"]>("featured");
+    React.useState<(typeof sortValues)[number]>("featured");
 
-  const materialFacets: Facet[] = React.useMemo(() => {
+  const materialFacets = React.useMemo(() => {
     const counts = new Map<ProductMaterial, number>();
     products.forEach((p) =>
       counts.set(p.material, (counts.get(p.material) ?? 0) + 1),
     );
     return (["wood", "steel", "aluminium"] as ProductMaterial[])
       .filter((m) => counts.has(m))
-      .map((m) => ({
-        key: m,
-        label: materialLabel[m],
-        count: counts.get(m) ?? 0,
-      }));
+      .map((m) => ({ key: m, count: counts.get(m) ?? 0 }));
   }, [products]);
 
   const filtered = React.useMemo(() => {
@@ -60,10 +48,10 @@ export function ProductFilters({ products, onFilteredChange }: Props) {
     if (materials.size) out = out.filter((p) => materials.has(p.material));
     out = out.filter((p) => p.priceCents <= maxPrice);
     const sorted = [...out];
-    if (sort === "price-asc") sorted.sort((a, b) => a.priceCents - b.priceCents);
-    else if (sort === "price-desc")
+    if (sort === "priceAsc") sorted.sort((a, b) => a.priceCents - b.priceCents);
+    else if (sort === "priceDesc")
       sorted.sort((a, b) => b.priceCents - a.priceCents);
-    else if (sort === "size-desc")
+    else if (sort === "sizeDesc")
       sorted.sort(
         (a, b) => b.widthFt * b.lengthFt - a.widthFt * a.lengthFt,
       );
@@ -89,18 +77,17 @@ export function ProductFilters({ products, onFilteredChange }: Props) {
 
   return (
     <div className="border-border/60 flex flex-col gap-6 border-b pb-8">
-      {/* Row 1 : material + sort */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-secondary text-[10px] uppercase tracking-[0.25em]">
-            Matériau
+            {t("material")}
           </span>
           {materialFacets.map((f) => {
-            const active = materials.has(f.key as ProductMaterial);
+            const active = materials.has(f.key);
             return (
               <button
                 key={f.key}
-                onClick={() => toggleMaterial(f.key as ProductMaterial)}
+                onClick={() => toggleMaterial(f.key)}
                 className={cn(
                   "rounded-full border px-4 py-1.5 text-xs font-medium transition-colors",
                   active
@@ -108,7 +95,7 @@ export function ProductFilters({ products, onFilteredChange }: Props) {
                     : "border-border text-primary hover:border-primary",
                 )}
               >
-                {f.label}
+                {t(`materials.${f.key}`)}
                 <span className="text-secondary ml-1.5 text-[10px]">
                   ({f.count})
                 </span>
@@ -119,26 +106,25 @@ export function ProductFilters({ products, onFilteredChange }: Props) {
 
         <div className="flex items-center gap-3">
           <span className="text-secondary text-[10px] uppercase tracking-[0.25em]">
-            Trier
+            {t("sortLabel")}
           </span>
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as typeof sort)}
             className="border-border focus:border-primary rounded-full border bg-transparent px-4 py-1.5 text-xs font-medium outline-none"
           >
-            {sortOptions.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
+            {sortValues.map((v) => (
+              <option key={v} value={v}>
+                {t(`sort.${v}`)}
               </option>
             ))}
           </select>
         </div>
       </div>
 
-      {/* Row 2 : price range */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
         <span className="text-secondary text-[10px] uppercase tracking-[0.25em] md:min-w-[70px]">
-          Budget
+          {t("budget")}
         </span>
         <input
           type="range"
@@ -150,7 +136,7 @@ export function ProductFilters({ products, onFilteredChange }: Props) {
           className="accent-accent flex-1"
         />
         <div className="text-primary text-xs">
-          jusqu&apos;à{" "}
+          {t("upTo")}{" "}
           <span className="font-medium">{formatEUR(maxPrice)}</span>
         </div>
         {anyActive && (
@@ -161,7 +147,7 @@ export function ProductFilters({ products, onFilteredChange }: Props) {
             }}
             className="text-secondary hover:text-primary inline-flex items-center gap-1 text-xs underline underline-offset-4"
           >
-            <X className="size-3" /> Réinitialiser
+            <X className="size-3" /> {t("reset")}
           </button>
         )}
       </div>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations, useLocale } from "next-intl";
 import { Star } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -8,27 +11,39 @@ const reviews = [
     location: "Saint-Malo (35)",
     avatar: "linear-gradient(140deg, #a17a4b, #5c3e1d)",
     rating: 5,
-    date: "12 mars 2026",
-    title: "Installation impeccable, esthétique bluffante.",
-    body: "La pergola est plus belle qu'à l'écran, l'équipe de pose est arrivée pile à l'heure et a laissé le chantier nickel. Nous en profitons tous les soirs depuis un mois.",
+    date: "2026-03-12",
+    title_fr: "Installation impeccable, esthétique bluffante.",
+    title_en: "Flawless install, stunning look.",
+    body_fr:
+      "La pergola est plus belle qu'à l'écran, l'équipe de pose est arrivée pile à l'heure et a laissé le chantier nickel. Nous en profitons tous les soirs depuis un mois.",
+    body_en:
+      "The pergola is more beautiful than on screen, the install team arrived exactly on time and left the site spotless. We enjoy it every evening.",
   },
   {
     author: "Hélène R.",
     location: "Bordeaux (33)",
     avatar: "linear-gradient(140deg, #c8a46b, #7d5a2b)",
     rating: 5,
-    date: "28 février 2026",
-    title: "Un vrai bijou d'artisanat.",
-    body: "Les finitions au dixième, les LED intégrées invisibles, l'application Somfy qui pilote tout... rien à redire. Le SAV est également très réactif.",
+    date: "2026-02-28",
+    title_fr: "Un vrai bijou d'artisanat.",
+    title_en: "A true craft jewel.",
+    body_fr:
+      "Les finitions au dixième, les LED intégrées invisibles, l'application Somfy qui pilote tout... rien à redire. Le SAV est également très réactif.",
+    body_en:
+      "Tenth-of-a-mm finishes, invisible integrated LEDs, the Somfy app controlling everything… nothing to complain about. The after-sales team is also very responsive.",
   },
   {
     author: "Marc D.",
     location: "Nice (06)",
     avatar: "linear-gradient(140deg, #2b2b2b, #6a6a6a)",
     rating: 5,
-    date: "10 février 2026",
-    title: "Doublé notre capacité de terrasse.",
-    body: "Nous sommes restaurant étoilé, nous avons besoin de fiabilité. Un an d'usage intensif et zéro incident. Les couverts en terrasse ont doublé grâce à la pergola.",
+    date: "2026-02-10",
+    title_fr: "Doublé notre capacité de terrasse.",
+    title_en: "Doubled our terrace capacity.",
+    body_fr:
+      "Nous sommes restaurant étoilé, nous avons besoin de fiabilité. Un an d'usage intensif et zéro incident. Les couverts en terrasse ont doublé grâce à la pergola.",
+    body_en:
+      "We're a Michelin-starred restaurant, we need reliability. A year of intensive use and zero incidents. Terrace covers have doubled thanks to the pergola.",
   },
 ];
 
@@ -42,17 +57,20 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
-
 export function ProductReviews() {
+  const t = useTranslations("pdp.reviews");
+  const locale = useLocale();
+  const en = locale === "en";
+  const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
+
   return (
     <section className="py-24 md:py-32">
       <Container>
         <div className="mb-14 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
-            <Eyebrow>Avis clients vérifiés</Eyebrow>
+            <Eyebrow>{t("eyebrow")}</Eyebrow>
             <h2 className="mt-4 font-serif text-3xl leading-tight md:text-5xl">
-              La confiance, ressentie.
+              {t("title")}
             </h2>
           </div>
           <div className="flex items-center gap-4">
@@ -63,9 +81,9 @@ export function ProductReviews() {
             </div>
             <div className="text-primary">
               <span className="font-serif text-2xl">{avg}</span>
-              <span className="text-secondary text-sm"> / 5</span>
+              <span className="text-secondary text-sm"> {t("outOf")}</span>
               <div className="text-secondary text-xs">
-                {reviews.length * 47} avis clients
+                {t("count", { count: reviews.length * 47 })}
               </div>
             </div>
           </div>
@@ -82,9 +100,11 @@ export function ProductReviews() {
                   <Star key={i} className="size-4 fill-current" />
                 ))}
               </div>
-              <h3 className="mt-6 font-serif text-lg leading-snug">{r.title}</h3>
+              <h3 className="mt-6 font-serif text-lg leading-snug">
+                {en ? r.title_en : r.title_fr}
+              </h3>
               <blockquote className="text-secondary mt-3 text-sm leading-relaxed">
-                « {r.body} »
+                « {en ? r.body_en : r.body_fr} »
               </blockquote>
               <figcaption className="border-border/60 mt-6 flex items-center gap-3 border-t pt-5">
                 <div
@@ -97,7 +117,11 @@ export function ProductReviews() {
                 <div className="text-xs">
                   <div className="text-primary font-medium">{r.author}</div>
                   <div className="text-secondary">
-                    {r.location} · {r.date}
+                    {r.location} ·{" "}
+                    {new Date(r.date).toLocaleDateString(
+                      en ? "en-GB" : "fr-FR",
+                      { day: "numeric", month: "long", year: "numeric" },
+                    )}
                   </div>
                 </div>
               </figcaption>
