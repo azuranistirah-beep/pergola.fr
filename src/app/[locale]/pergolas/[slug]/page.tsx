@@ -15,15 +15,16 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { Link } from "@/i18n/navigation";
 import { formatEUR } from "@/lib/utils";
 import {
-  catalog,
   getProductBySlug,
-  getRelatedProducts,
-} from "@/features/products/catalog";
+  listProductSlugs,
+  listRelatedProducts,
+} from "@/repositories/product-repository";
 import { ProductGallery } from "@/features/products/product-gallery";
 import { ProductCard } from "@/features/products/product-card";
 
-export function generateStaticParams() {
-  return catalog.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const slugs = await listProductSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -32,7 +33,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return {};
   return {
     title: product.name,
@@ -53,9 +54,9 @@ export default async function ProductDetailPage({
 }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
-  const related = getRelatedProducts(product);
+  const related = await listRelatedProducts(product);
 
   return (
     <>

@@ -2,12 +2,15 @@ import { setRequestLocale } from "next-intl/server";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { ProductGrid } from "@/features/products/product-grid";
+import { listProducts } from "@/repositories/product-repository";
 
 export const metadata = {
   title: "Pergolas — Collection complète",
   description:
     "Découvrez toutes nos pergolas en cèdre, acier et à lames orientables. Fabrication soignée, livraison France entière.",
 };
+
+export const revalidate = 300;
 
 export default async function PergolasPage({
   params,
@@ -16,6 +19,8 @@ export default async function PergolasPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const products = await listProducts();
+
   return (
     <>
       <section className="bg-muted pt-32 pb-16 md:pt-40 md:pb-24">
@@ -33,7 +38,7 @@ export default async function PergolasPage({
       </section>
       <section className="py-16 md:py-24">
         <Container>
-          <ProductGrid />
+          <ProductGrid products={products} />
         </Container>
       </section>
     </>

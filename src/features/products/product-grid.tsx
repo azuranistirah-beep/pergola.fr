@@ -1,13 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { catalog } from "./catalog";
 import { ProductCard } from "./product-card";
 import { ProductFilters } from "./product-filters";
 import type { PergolaProduct } from "./types";
 
-export function ProductGrid() {
-  const [filtered, setFiltered] = React.useState<PergolaProduct[]>(catalog);
+export function ProductGrid({ products }: { products: PergolaProduct[] }) {
+  const [filtered, setFiltered] = React.useState<PergolaProduct[]>(products);
   const handleChange = React.useCallback(
     (next: PergolaProduct[]) => setFiltered(next),
     [],
@@ -15,7 +14,7 @@ export function ProductGrid() {
 
   return (
     <div className="flex flex-col gap-10">
-      <ProductFilters products={catalog} onFilteredChange={handleChange} />
+      <ProductFilters products={products} onFilteredChange={handleChange} />
       <div className="text-secondary text-xs">
         {filtered.length} produit{filtered.length > 1 ? "s" : ""}
       </div>

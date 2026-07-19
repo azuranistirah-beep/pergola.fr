@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { catalog } from "@/features/products/catalog";
 import { ProductCard } from "@/features/products/product-card";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -14,7 +13,6 @@ import type {
 interface CategoryDef {
   code: "all" | ProductCategory;
   label: string;
-  helper?: string;
 }
 
 const categories: CategoryDef[] = [
@@ -26,13 +24,13 @@ const categories: CategoryDef[] = [
   { code: "pergola-cabana", label: "Cabana d'angle" },
 ];
 
-export function CategoryStrip() {
+export function CategoryStrip({ products }: { products: PergolaProduct[] }) {
   const [active, setActive] = React.useState<CategoryDef["code"]>("all");
 
-  const products = React.useMemo<PergolaProduct[]>(() => {
-    if (active === "all") return catalog;
-    return catalog.filter((p) => p.category === active);
-  }, [active]);
+  const filtered = React.useMemo<PergolaProduct[]>(() => {
+    if (active === "all") return products;
+    return products.filter((p) => p.category === active);
+  }, [active, products]);
 
   return (
     <section id="collection" className="scroll-mt-24 py-16 md:py-24">
@@ -45,18 +43,17 @@ export function CategoryStrip() {
             </h2>
           </div>
           <p className="text-secondary max-w-md text-sm md:text-right">
-            29 modèles, du cèdre massif au bioclimatique à lames orientables —
-            tous fabriqués sur commande, livrés en 4 à 6 semaines.
+            {products.length} modèles, du cèdre massif au bioclimatique à lames
+            orientables — tous fabriqués sur commande, livrés en 4 à 6 semaines.
           </p>
         </div>
 
-        {/* Category chips */}
         <div className="border-border/60 mb-10 flex flex-wrap items-center gap-2 border-b pb-6">
           {categories.map((c) => {
             const count =
               c.code === "all"
-                ? catalog.length
-                : catalog.filter((p) => p.category === c.code).length;
+                ? products.length
+                : products.filter((p) => p.category === c.code).length;
             const isActive = active === c.code;
             return (
               <button
@@ -86,11 +83,11 @@ export function CategoryStrip() {
         </div>
 
         <div className="text-secondary mb-6 text-xs">
-          {products.length} produit{products.length > 1 ? "s" : ""}
+          {filtered.length} produit{filtered.length > 1 ? "s" : ""}
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {products.map((p) => (
+          {filtered.map((p) => (
             <ProductCard key={p.slug} product={p} />
           ))}
         </div>

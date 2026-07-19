@@ -1,4 +1,6 @@
-// Pergola FR — Prisma schema (MySQL / Hostinger)
+// Pergola FR — Prisma schema (PostgreSQL)
+// Dev: local Docker (okkarhys-postgres @ localhost:55432)
+// Prod: self-hosted Postgres on Hostinger VPS
 // Money stored as integer cents (Int). Currency defaults to EUR.
 // Multilingual content: base row + *Translation join on (id, locale).
 
@@ -7,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -277,7 +279,7 @@ model ProductTranslation {
   locale       String  @db.VarChar(8)
   name         String
   shortDesc    String? @db.Text
-  description  String? @db.LongText
+  description  String? @db.Text
   featuresJson Json?
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -604,7 +606,7 @@ model BlogPostTranslation {
   locale     String  @db.VarChar(8)
   title      String
   excerpt    String? @db.Text
-  contentMdx String  @db.LongText
+  contentMdx String  @db.Text
 
   post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
 
@@ -633,7 +635,7 @@ model ProjectTranslation {
   projectId   String
   locale      String  @db.VarChar(8)
   title       String
-  description String? @db.LongText
+  description String? @db.Text
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
@@ -679,7 +681,7 @@ model Faq {
   categoryId String?
   locale     String  @db.VarChar(8)
   question   String
-  answer     String  @db.LongText
+  answer     String  @db.Text
   order      Int     @default(0)
 
   category FaqCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)

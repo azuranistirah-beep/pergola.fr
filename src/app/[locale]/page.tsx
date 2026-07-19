@@ -5,6 +5,9 @@ import { WhyChooseUs } from "@/features/home/why-choose-us";
 import { ConfiguratorTeaser } from "@/features/home/configurator-teaser";
 import { Testimonials } from "@/features/home/testimonials";
 import { CtaShowroom } from "@/features/home/cta-showroom";
+import { listProducts } from "@/repositories/product-repository";
+
+export const revalidate = 300;
 
 export default async function HomePage({
   params,
@@ -13,11 +16,12 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const products = await listProducts();
 
   return (
     <>
       <Hero />
-      <CategoryStrip />
+      <CategoryStrip products={products} />
       <ConfiguratorTeaser />
       <WhyChooseUs />
       <Testimonials />
