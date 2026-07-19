@@ -6,7 +6,7 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 
 const categories = [
   {
-    slug: "pergolas-bioclimatiques",
+    slug: "pergolas",
     key: "bioclimatic",
     gradient:
       "linear-gradient(135deg, #2a2620 0%, #4d4335 55%, #7a6446 100%)",
