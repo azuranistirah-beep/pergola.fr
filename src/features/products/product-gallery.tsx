@@ -7,22 +7,14 @@ import type { PergolaProduct } from "./types";
 
 export function ProductGallery({ product }: { product: PergolaProduct }) {
   const [active, setActive] = React.useState(0);
-  const images = React.useMemo(() => {
-    if (product.heroUrl) {
-      // Placeholder gallery: repeat the hero URL with varying crop widths so
-      // each thumb reads as distinct. Replace with real gallery when the user
-      // drops per-slug images under public/images/products/<slug>/.
-      const widths = [1600, 1200, 1400];
-      return widths.map((w, i) => ({
-        src: product.heroUrl!.replace(/width=\d+/, `width=${w}`),
+  const images = React.useMemo(
+    () =>
+      Array.from({ length: Math.max(product.imageCount, 3) }, (_, i) => ({
+        src: `/images/products/${product.slug}/${i + 1}.jpg`,
         alt: `${product.name} — vue ${i + 1}`,
-      }));
-    }
-    return Array.from({ length: product.imageCount }, (_, i) => ({
-      src: `/images/products/${product.slug}/${i + 1}.jpg`,
-      alt: `${product.name} — vue ${i + 1}`,
-    }));
-  }, [product]);
+      })),
+    [product],
+  );
 
   const current = images[active] ?? images[0]!;
 
