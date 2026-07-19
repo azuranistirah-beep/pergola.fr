@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Menu, Search, ShoppingBag, User } from "lucide-react";
+import { Heart, Menu, Search, ShoppingBag, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
@@ -75,12 +75,20 @@ export function SiteHeader() {
           >
             <Search className="size-[18px]" />
           </button>
-          <button
-            aria-label="Account"
+          <Link
+            href="/wishlist"
+            aria-label="Wishlist"
+            className="hover:bg-foreground/5 hidden rounded-full p-2.5 transition-colors md:block"
+          >
+            <Heart className="size-[18px]" />
+          </Link>
+          <Link
+            href="/connexion"
+            aria-label="Compte"
             className="hover:bg-foreground/5 hidden rounded-full p-2.5 transition-colors md:block"
           >
             <User className="size-[18px]" />
-          </button>
+          </Link>
           <Link
             href="/panier"
             aria-label="Panier"

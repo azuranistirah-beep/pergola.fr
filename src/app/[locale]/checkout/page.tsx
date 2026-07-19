@@ -4,6 +4,7 @@ import { CreditCard, Lock, Truck, Shield } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import { useCart } from "@/features/cart/cart-store";
 import { formatEUR } from "@/lib/utils";
 
@@ -108,8 +109,10 @@ export default function CheckoutPage() {
               </div>
             </section>
 
-            <Button variant="primary" size="lg" className="w-full" type="button">
-              <CreditCard className="size-4" /> Payer {formatEUR(totalCents)}
+            <Button asChild variant="primary" size="lg" className="w-full">
+              <Link href="/commande/confirmation">
+                <CreditCard className="size-4" /> Payer {formatEUR(totalCents)}
+              </Link>
             </Button>
           </form>
 
