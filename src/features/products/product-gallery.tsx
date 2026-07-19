@@ -7,14 +7,20 @@ import type { PergolaProduct } from "./types";
 
 export function ProductGallery({ product }: { product: PergolaProduct }) {
   const [active, setActive] = React.useState(0);
-  const images = React.useMemo(
-    () =>
-      Array.from({ length: Math.max(product.imageCount, 3) }, (_, i) => ({
-        src: `/images/products/${product.slug}/${i + 1}.jpg`,
+  const images = React.useMemo(() => {
+    // If catalog gave us a hero URL (from InsForge Storage), use it for every
+    // slide until per-slug gallery photos land in the bucket.
+    if (product.heroUrl) {
+      return Array.from({ length: 3 }, (_, i) => ({
+        src: product.heroUrl!,
         alt: `${product.name} — vue ${i + 1}`,
-      })),
-    [product],
-  );
+      }));
+    }
+    return Array.from({ length: Math.max(product.imageCount, 3) }, (_, i) => ({
+      src: `/images/products/${product.slug}/${i + 1}.jpg`,
+      alt: `${product.name} — vue ${i + 1}`,
+    }));
+  }, [product]);
 
   const current = images[active] ?? images[0]!;
 

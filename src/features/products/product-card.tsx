@@ -19,7 +19,7 @@ export function ProductCard({ product }: { product: PergolaProduct }) {
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
           <ProductImage
-            src={`/images/products/${product.slug}/cover.jpg`}
+            src={product.heroUrl ?? `/images/products/${product.slug}/cover.jpg`}
             alt={product.name}
             colorway={product.colorway}
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"

@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "cdn.pergolafr.com" },
+      { protocol: "https", hostname: "maa37bw9.eu-central.insforge.app" },
+      { protocol: "https", hostname: "cdn.insforge.dev" },
     ],
   },
   experimental: {
