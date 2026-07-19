@@ -7,6 +7,8 @@ import { routing } from "@/i18n/routing";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { CartProvider } from "@/features/cart/cart-store";
+import { listProducts } from "@/repositories/product-repository";
+import { Toaster } from "@/components/ui/toaster";
 import "../globals.css";
 
 const inter = Inter({
@@ -59,6 +61,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
+  const catalog = await listProducts().catch(() => []);
 
   return (
     <html
@@ -68,9 +71,10 @@ export default async function LocaleLayout({
       <body className="bg-background text-foreground min-h-full font-sans">
         <NextIntlClientProvider>
           <CartProvider>
-            <SiteHeader />
+            <SiteHeader catalog={catalog} />
             <main>{children}</main>
             <SiteFooter />
+            <Toaster />
           </CartProvider>
         </NextIntlClientProvider>
       </body>

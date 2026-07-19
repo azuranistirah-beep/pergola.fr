@@ -2,7 +2,7 @@ import { setRequestLocale } from "next-intl/server";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
-import { Button } from "@/components/ui/button";
+import { ContactForm } from "@/features/contact/contact-form";
 
 export const metadata = {
   title: "Contact — Showroom Paris",
@@ -31,33 +31,7 @@ export default async function ContactPage({
               showroom parisien du Marais. Devis chiffré sous 48h.
             </p>
 
-            <form className="mt-12 grid gap-5">
-              <Field label="Prénom et nom" name="name" required />
-              <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Email" type="email" name="email" required />
-                <Field label="Téléphone" type="tel" name="phone" />
-              </div>
-              <Field label="Code postal" name="postal" />
-              <div className="flex flex-col gap-2">
-                <label className="text-secondary text-[10px] uppercase tracking-[0.25em]">
-                  Votre projet
-                </label>
-                <textarea
-                  name="message"
-                  rows={5}
-                  required
-                  placeholder="Type de pergola envisagée, dimensions approximatives, contraintes du site…"
-                  className="border-border focus:border-primary bg-transparent border-b py-3 text-sm outline-none placeholder:text-secondary/50 resize-none"
-                />
-              </div>
-              <Button variant="primary" size="lg" className="w-full sm:w-auto">
-                Envoyer ma demande
-              </Button>
-              <p className="text-secondary text-xs">
-                En envoyant ce formulaire, vous acceptez notre politique de
-                confidentialité. Nous vous répondons sous 48h ouvrées.
-              </p>
-            </form>
+            <ContactForm />
           </div>
 
           <aside className="space-y-6">
@@ -88,50 +62,21 @@ export default async function ContactPage({
           </aside>
         </div>
 
-        {/* Map placeholder */}
-        <div
-          className="mt-16 aspect-[16/6] w-full overflow-hidden rounded-[var(--radius-lg)]"
-          style={{
-            background:
-              "linear-gradient(135deg, #e4dcc9 0%, #b8a582 60%, #7a6446 100%)",
-          }}
-          aria-label="Localisation showroom"
-        />
+        {/* Showroom map */}
+        <div className="mt-16 aspect-[16/6] w-full overflow-hidden rounded-[var(--radius-lg)]">
+          <iframe
+            title="Localisation showroom Pergola FR — 12 rue de Rivoli, 75004 Paris"
+            src="https://www.openstreetmap.org/export/embed.html?bbox=2.3552%2C48.8546%2C2.3620%2C48.8582&layer=mapnik&marker=48.8564%2C2.3586"
+            className="h-full w-full grayscale-[0.4]"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
       </Container>
     </div>
   );
 }
 
-function Field({
-  label,
-  name,
-  type = "text",
-  required,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  required?: boolean;
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <label
-        htmlFor={name}
-        className="text-secondary text-[10px] uppercase tracking-[0.25em]"
-      >
-        {label}
-        {required && " *"}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        required={required}
-        className="border-border focus:border-primary bg-transparent border-b py-3 text-sm outline-none placeholder:text-secondary/50"
-      />
-    </div>
-  );
-}
 
 function InfoCard({
   Icon,

@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
+import { NewsletterForm } from "@/features/newsletter/newsletter-form";
 
 const columns = [
   {
@@ -86,19 +87,10 @@ export function SiteFooter() {
             <p className="text-primary-foreground/70 text-sm">
               {t("newsletterCopy")}
             </p>
-            <form className="border-primary-foreground/20 focus-within:border-accent mt-5 flex items-center border-b py-3 transition-colors">
-              <input
-                type="email"
-                placeholder={t("emailPlaceholder")}
-                className="placeholder:text-primary-foreground/40 flex-1 bg-transparent text-sm outline-none"
-              />
-              <button
-                type="submit"
-                className="text-accent text-xs font-medium uppercase tracking-[0.2em]"
-              >
-                {t("subscribe")}
-              </button>
-            </form>
+            <NewsletterForm
+              placeholder={t("emailPlaceholder")}
+              submitLabel={t("subscribe")}
+            />
           </div>
         </div>
 

@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { PageHeader } from "@/components/layout/page-header";
 import { Container } from "@/components/ui/container";
 import { projects } from "@/features/projects/projects-data";
+import { projectPhoto } from "@/lib/imagery";
 
 export const metadata = {
   title: "Réalisations — Nos projets sur-mesure",
@@ -33,10 +34,15 @@ export default async function ProjectsPage({
               <Link
                 key={p.slug}
                 href={`/realisations/${p.slug}`}
-                className={`group relative overflow-hidden rounded-[var(--radius-lg)] ${p.span ?? ""}`}
-                style={{ background: p.gradient }}
+                className={`group relative overflow-hidden rounded-[var(--radius-lg)] bg-muted ${p.span ?? ""}`}
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={projectPhoto[p.slug]}
+                  alt={p.title}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
                 <div className="relative flex h-full flex-col justify-between p-8 text-white">
                   <span className="w-fit rounded-full bg-white/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.25em] backdrop-blur">
                     {p.tag}

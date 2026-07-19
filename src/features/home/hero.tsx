@@ -4,45 +4,48 @@ import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
+import { editorialPhoto } from "@/lib/imagery";
 
 export function Hero() {
   const t = useTranslations("home");
   return (
-    <section className="relative flex min-h-[62vh] items-end overflow-hidden pt-24 md:min-h-[68vh]">
+    <section className="relative flex min-h-[72vh] items-end overflow-hidden pt-24 md:min-h-[80vh]">
+      {/* Photo backdrop */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={editorialPhoto.homeHero}
+        alt="Pergola bioclimatique Sarasota au bord d'une piscine"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      {/* Warm cinematic wash */}
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(120% 80% at 70% 20%, rgba(200,164,107,0.35) 0%, rgba(17,17,17,0) 50%), linear-gradient(180deg, #14100b 0%, #1c1a17 45%, #0f0d0a 100%)",
+            "linear-gradient(180deg, rgba(20,16,11,0.55) 0%, rgba(20,16,11,0.25) 40%, rgba(20,16,11,0.85) 100%)",
         }}
       />
       <div
         aria-hidden
-        className="absolute inset-0 opacity-[0.06] mix-blend-overlay"
+        className="absolute inset-0 mix-blend-multiply"
         style={{
-          backgroundImage:
-            "radial-gradient(#ffffff 1px, transparent 1px), radial-gradient(#ffffff 1px, transparent 1px)",
-          backgroundSize: "40px 40px, 40px 40px",
-          backgroundPosition: "0 0, 20px 20px",
+          background:
+            "radial-gradient(70% 60% at 80% 30%, rgba(200,164,107,0.28) 0%, rgba(0,0,0,0) 55%)",
         }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent"
       />
 
-      <Container className="relative z-10 pb-14 md:pb-20">
+      <Container className="relative z-10 pb-16 md:pb-24">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-end">
           <div>
             <Eyebrow className="text-accent">{t("heroEyebrow")}</Eyebrow>
-            <h1 className="mt-4 font-serif text-[42px] leading-[1.05] text-white md:text-[72px]">
+            <h1 className="mt-4 font-serif text-[44px] leading-[1.02] text-white md:text-[80px]">
               {t("heroTitle")}
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70">
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/80 md:text-lg">
               {t("heroSubtitle")}
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Button asChild variant="accent" size="lg">
                 <Link href="/configurateur">
                   {t("heroCta")} <ArrowRight />
@@ -52,14 +55,14 @@ export function Hero() {
                 asChild
                 variant="outline"
                 size="lg"
-                className="border-white/30 bg-transparent text-white hover:border-white hover:bg-white hover:text-primary"
+                className="border-white/40 bg-white/10 text-white backdrop-blur hover:border-white hover:bg-white hover:text-primary"
               >
                 <Link href="#collection">{t("heroCtaSecondary")}</Link>
               </Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 border-l border-white/10 pl-8 text-white/70 md:gap-8">
+          <div className="grid grid-cols-2 gap-6 border-l border-white/15 pl-8 text-white/70 md:gap-8">
             {[
               { k: "12+", v: t("statYears") },
               { k: "3 500+", v: t("statInstalls") },

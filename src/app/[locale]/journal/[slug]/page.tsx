@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Button } from "@/components/ui/button";
 import { journalPosts, getPostBySlug } from "@/features/journal/journal-data";
+import { journalPhoto } from "@/lib/imagery";
 
 export function generateStaticParams() {
   return journalPosts.map((p) => ({ slug: p.slug }));
@@ -37,11 +38,14 @@ export default async function JournalArticlePage({
   return (
     <>
       {/* Hero */}
-      <section
-        className="relative pt-32 pb-20 md:pt-40 md:pb-28"
-        style={{ background: post.gradient }}
-      >
-        <div className="absolute inset-0 bg-black/25" />
+      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={journalPhoto[post.slug]}
+          alt={post.title}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/70" />
         <Container className="relative text-white">
           <Link
             href="/journal"
@@ -129,10 +133,14 @@ export default async function JournalArticlePage({
                   href={`/journal/${p.slug}`}
                   className="group"
                 >
-                  <div
-                    className="aspect-[16/10] overflow-hidden rounded-[var(--radius-lg)]"
-                    style={{ background: p.gradient }}
-                  />
+                  <div className="aspect-[16/10] overflow-hidden rounded-[var(--radius-lg)] bg-muted">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={journalPhoto[p.slug]}
+                      alt={p.title}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
                   <div className="pt-5">
                     <div className="text-accent text-[10px] uppercase tracking-[0.25em]">
                       {p.category}

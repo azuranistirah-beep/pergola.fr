@@ -9,6 +9,7 @@ import {
   getProjectBySlug,
   projects,
 } from "@/features/projects/projects-data";
+import { projectPhoto } from "@/lib/imagery";
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
@@ -40,11 +41,14 @@ export default async function ProjectDetailPage({
   return (
     <>
       {/* Hero */}
-      <section
-        className="relative pt-32 pb-24 md:pt-40 md:pb-32"
-        style={{ background: project.gradient }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/25 to-black/40" />
+      <section className="relative pt-32 pb-24 md:pt-40 md:pb-32">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={projectPhoto[project.slug]}
+          alt={project.title}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/25 to-black/70" />
         <Container className="relative text-white">
           <Link
             href="/realisations"
@@ -163,10 +167,15 @@ export default async function ProjectDetailPage({
               <Link
                 key={p.slug}
                 href={`/realisations/${p.slug}`}
-                className="group relative aspect-[4/5] overflow-hidden rounded-[var(--radius-lg)]"
-                style={{ background: p.gradient }}
+                className="group relative aspect-[4/5] overflow-hidden rounded-[var(--radius-lg)] bg-muted"
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={projectPhoto[p.slug]}
+                  alt={p.title}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 <div className="relative flex h-full flex-col justify-end p-6 text-white">
                   <span className="text-[10px] uppercase tracking-[0.25em] text-white/70">
                     {p.tag}

@@ -21,6 +21,8 @@ import {
 } from "@/repositories/product-repository";
 import { ProductGallery } from "@/features/products/product-gallery";
 import { ProductCard } from "@/features/products/product-card";
+import { ProductReviews } from "@/features/products/product-reviews";
+import { ProductDownloads } from "@/features/products/product-downloads";
 
 export async function generateStaticParams() {
   const slugs = await listProductSlugs();
@@ -206,6 +208,9 @@ export default async function ProductDetailPage({
           </div>
         </Container>
       </section>
+
+      <ProductDownloads />
+      <ProductReviews />
 
       {/* Related */}
       {related.length > 0 && (

@@ -2,26 +2,23 @@
 
 import * as React from "react";
 import { ProductImage } from "@/components/ui/product-image";
+import { galleryFor } from "@/lib/imagery";
 import { cn } from "@/lib/utils";
 import type { PergolaProduct } from "./types";
 
 export function ProductGallery({ product }: { product: PergolaProduct }) {
-  const [active, setActive] = React.useState(0);
   const images = React.useMemo(() => {
-    // If catalog gave us a hero URL (from InsForge Storage), use it for every
-    // slide until per-slug gallery photos land in the bucket.
-    if (product.heroUrl) {
-      return Array.from({ length: 3 }, (_, i) => ({
-        src: product.heroUrl!,
-        alt: `${product.name} — vue ${i + 1}`,
-      }));
-    }
-    return Array.from({ length: Math.max(product.imageCount, 3) }, (_, i) => ({
-      src: `/images/products/${product.slug}/${i + 1}.jpg`,
-      alt: `${product.name} — vue ${i + 1}`,
+    const urls = galleryFor(product.slug, product.family, 4);
+    return urls.map((src, i) => ({
+      src,
+      alt:
+        i === 0
+          ? `${product.name} — vue principale`
+          : `${product.name} — inspiration ${i}`,
     }));
   }, [product]);
 
+  const [active, setActive] = React.useState(0);
   const current = images[active] ?? images[0]!;
 
   return (
@@ -29,7 +26,7 @@ export function ProductGallery({ product }: { product: PergolaProduct }) {
       <div className="flex flex-row gap-3 md:flex-col">
         {images.map((img, i) => (
           <button
-            key={img.src}
+            key={i}
             onClick={() => setActive(i)}
             aria-label={`Aperçu ${i + 1}`}
             className={cn(

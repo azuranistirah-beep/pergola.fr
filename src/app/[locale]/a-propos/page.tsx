@@ -2,6 +2,7 @@ import { setRequestLocale } from "next-intl/server";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Award, Factory, Leaf, MapPin } from "lucide-react";
+import { editorialPhoto } from "@/lib/imagery";
 
 export const metadata = {
   title: "Maison Pergola FR — Notre histoire",
@@ -35,13 +36,14 @@ export default async function AboutPage({
       <section className="py-24 md:py-32">
         <Container>
           <div className="grid gap-16 md:grid-cols-2 md:items-center">
-            <div
-              className="aspect-[4/5] rounded-[var(--radius-lg)]"
-              style={{
-                background:
-                  "linear-gradient(140deg, #3b2a1a 0%, #6a4a2c 55%, #a17a4b 110%)",
-              }}
-            />
+            <div className="aspect-[4/5] overflow-hidden rounded-[var(--radius-lg)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={editorialPhoto.aboutAtelier}
+                alt="Atelier Pergola FR en Vendée"
+                className="h-full w-full object-cover"
+              />
+            </div>
             <div>
               <Eyebrow>Atelier Vendée</Eyebrow>
               <h2 className="mt-4 font-serif text-4xl leading-tight md:text-5xl">

@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
+import { editorialPhoto } from "@/lib/imagery";
 
 export function ConfiguratorTeaser() {
   const t = useTranslations("home.configurator");
@@ -55,13 +56,14 @@ export function ConfiguratorTeaser() {
                   <span>Aperçu live</span>
                   <span className="text-accent">SKU-PGL-4030-BC</span>
                 </div>
-                <div
-                  className="mt-6 aspect-square w-full rounded-2xl"
-                  style={{
-                    background:
-                      "linear-gradient(160deg, #d8d3c8 0%, #b7b0a1 55%, #83786a 100%)",
-                  }}
-                />
+                <div className="mt-6 aspect-square w-full overflow-hidden rounded-2xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={editorialPhoto.configuratorTeaser}
+                    alt="Aperçu configurateur"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
                 <div className="text-primary-foreground/70 mt-6 space-y-3 text-xs">
                   <Row label="Largeur" value="4,00 m" />
                   <Row label="Longueur" value="3,00 m" />

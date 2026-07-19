@@ -1,0 +1,101 @@
+/**
+ * Central catalogue of the 29 pergola photos we host on InsForge Storage.
+ * Everywhere the design needs a real photo (hero, category card, article
+ * cover, project cover, …) reference one of these keys instead of hardcoding
+ * a URL. If we ever swap the storage provider this stays a one-line edit.
+ */
+
+const STORAGE_BASE =
+  "https://maa37bw9.eu-central.insforge.app/api/storage/buckets/products/objects";
+
+export const photoBySlug = (slug: string, file: string = "cover.jpg") =>
+  `${STORAGE_BASE}/${slug}%2F${file}`;
+
+/** Curated photo pointers for editorial surfaces. */
+export const editorialPhoto = {
+  homeHero: photoBySlug("sarasota-14x10"),
+  aboutAtelier: photoBySlug("beaumont-14x12"),
+  configuratorTeaser: photoBySlug("sarasota-16x10"),
+  showroomCta: photoBySlug("windham-14x12"),
+} as const;
+
+export const categoryPhoto: Record<string, string> = {
+  bioclimatic: photoBySlug("sarasota-14x10"),
+  aluminium: photoBySlug("windham-14x10"),
+  wood: photoBySlug("beaumont-14x12"),
+  carport: photoBySlug("evanston-14x10"),
+  kitchen: photoBySlug("tuscany-corner"),
+};
+
+export const journalPhoto: Record<string, string> = {
+  "choisir-pergola-bioclimatique": photoBySlug("sarasota-18x10"),
+  "cedre-vs-aluminium": photoBySlug("ashland-14x10"),
+  "installation-hiver": photoBySlug("beaumont-20x12"),
+  "eclairage-led-perimetrique": photoBySlug("sarasota-20x10"),
+};
+
+export const projectPhoto: Record<string, string> = {
+  "villa-saint-tropez": photoBySlug("sarasota-16x10"),
+  "hotel-marais": photoBySlug("evanston-14x10"),
+  "restaurant-nice": photoBySlug("sarasota-20x10"),
+  "piscine-bordeaux": photoBySlug("windham-14x12"),
+  "chalet-megeve": photoBySlug("beaumont-24x12"),
+  "commerce-lyon": photoBySlug("evanston-18x10"),
+};
+
+/**
+ * Pergola slugs grouped by family. Used to source distinct gallery slides
+ * for a PDP (slide 1 = self, slides 2-3 = other members of the family).
+ */
+export const familySlugs: Record<string, string[]> = {
+  beaumont: [
+    "beaumont-10x10",
+    "beaumont-12x10",
+    "beaumont-12x12",
+    "beaumont-14x10",
+    "beaumont-14x12",
+    "beaumont-16x12",
+    "beaumont-20x12",
+    "beaumont-24x12",
+  ],
+  ashland: ["ashland-14x10"],
+  somerville: ["somerville-14x10-barnwood", "somerville-14x10-walnut"],
+  delray: ["delray-14x10"],
+  brendan: ["brendan-12x10"],
+  sarasota: [
+    "sarasota-10x10",
+    "sarasota-12x10",
+    "sarasota-14x10",
+    "sarasota-16x10",
+    "sarasota-18x10",
+    "sarasota-20x10",
+  ],
+  evanston: [
+    "evanston-10x10",
+    "evanston-12x10",
+    "evanston-14x10",
+    "evanston-16x10",
+    "evanston-18x10",
+    "evanston-20x10",
+  ],
+  windham: ["windham-14x10", "windham-14x12"],
+  tuscany: ["tuscany-corner"],
+  verona: ["verona-corner"],
+};
+
+/** Return N distinct photo URLs for a PDP gallery. */
+export function galleryFor(
+  slug: string,
+  family: string,
+  count = 3,
+): string[] {
+  const siblings = familySlugs[family] ?? [];
+  const pool = [slug, ...siblings.filter((s) => s !== slug)];
+  const out: string[] = [];
+  for (let i = 0; out.length < count; i++) {
+    const pick = pool[i % pool.length];
+    if (pick) out.push(photoBySlug(pick));
+    if (i > 20) break;
+  }
+  return out;
+}

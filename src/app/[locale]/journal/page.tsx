@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { PageHeader } from "@/components/layout/page-header";
 import { Container } from "@/components/ui/container";
 import { journalPosts } from "@/features/journal/journal-data";
+import { journalPhoto } from "@/lib/imagery";
 
 export const metadata = {
   title: "Journal — Inspirations et savoir-faire",
@@ -36,17 +37,16 @@ export default async function BlogPage({
                 href={`/journal/${p.slug}`}
                 className="group flex flex-col overflow-hidden rounded-[var(--radius-lg)]"
               >
-                <div
-                  className="relative aspect-[16/10] overflow-hidden"
-                  style={{ background: p.gradient }}
-                >
+                <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={journalPhoto[p.slug]}
+                    alt={p.title}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
                   <div
                     aria-hidden
-                    className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                    style={{
-                      background:
-                        "radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,0.12) 0%, rgba(0,0,0,0) 70%)",
-                    }}
+                    className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/50 to-transparent"
                   />
                 </div>
                 <div className="pt-6">
