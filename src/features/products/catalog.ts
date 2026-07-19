@@ -8,6 +8,7 @@ export const catalog: PergolaProduct[] = [
   // ── Beaumont — cedar classic ──────────────────────────────────
   {
     slug: "beaumont-10x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/1505513B-10x10-Pergola-HERO.jpg?v=1742402045&width=1600",
     sku: "BMT-10X10",
     family: "beaumont",
     material: "wood",
@@ -24,6 +25,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "beaumont-12x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/SIZE_12x10_Beaumont-LB_Hero_V1.jpg?v=1773164872&width=1600",
     sku: "BMT-12X10",
     family: "beaumont",
     material: "wood",
@@ -40,6 +42,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "beaumont-12x12",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/2405028-12x12-Beaumont-Hero.jpg?v=1736198498&width=1600",
     sku: "BMT-12X12",
     family: "beaumont",
     material: "wood",
@@ -57,6 +60,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "beaumont-14x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/14x10-Pergola-B-Main-2.jpg?v=1742401393&width=1600",
     sku: "BMT-14X10",
     family: "beaumont",
     material: "wood",
@@ -74,6 +78,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "beaumont-14x12",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/products/P1-14x12BeaumontMaincopy.jpg?v=1643047397&width=1600",
     sku: "BMT-14X12",
     family: "beaumont",
     material: "wood",
@@ -90,6 +95,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "beaumont-16x12",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/2101562_HERO.jpg?v=1709743189&width=1600",
     sku: "BMT-16X12",
     family: "beaumont",
     material: "wood",
@@ -106,6 +112,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "beaumont-20x12",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/2101579_HERO.jpg?v=1709743496&width=1600",
     sku: "BMT-20X12",
     family: "beaumont",
     material: "wood",
@@ -122,6 +129,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "beaumont-24x12",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/2405035-24x12-Beaumont-Hero.jpg?v=1736362093&width=1600",
     sku: "BMT-24X12",
     family: "beaumont",
     material: "wood",
@@ -140,6 +148,7 @@ export const catalog: PergolaProduct[] = [
   // ── Ashland — trellis roof, rustic charm ─────────────────────
   {
     slug: "ashland-14x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/products/Ashland-Pergola-Maincopy.jpg?v=1660860268&width=1600",
     sku: "ASH-14X10",
     family: "ashland",
     material: "wood",
@@ -159,6 +168,7 @@ export const catalog: PergolaProduct[] = [
   // ── Somerville — classic detail ──────────────────────────────
   {
     slug: "somerville-14x10-barnwood",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/products/SomervilleNewElectric.jpg?v=1648042563&width=1600",
     sku: "SVL-14X10-BW",
     family: "somerville",
     material: "wood",
@@ -176,6 +186,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "somerville-14x10-walnut",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/products/Somerville-Main.jpg?v=1624653905&width=1600",
     sku: "SVL-14X10-WN",
     family: "somerville",
     material: "wood",
@@ -195,6 +206,7 @@ export const catalog: PergolaProduct[] = [
   // ── Delray — wide purlin canopy ──────────────────────────────
   {
     slug: "delray-14x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/products/DelRay_14x10_Pergola_6936b4d9-21b0-4aaa-b8b1-4706a4ea9248.jpg?v=1691510223&width=1600",
     sku: "DEL-14X10",
     family: "delray",
     material: "wood",
@@ -213,6 +225,7 @@ export const catalog: PergolaProduct[] = [
   // ── Brendan — sail shade, entry-level ────────────────────────
   {
     slug: "brendan-12x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/2305076-HERO.jpg?v=1726074211&width=1600",
     sku: "BRD-12X10",
     family: "brendan",
     material: "wood",
@@ -231,6 +244,7 @@ export const catalog: PergolaProduct[] = [
   // ── Sarasota — steel louvered, modern ────────────────────────
   {
     slug: "sarasota-10x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/SIZE_10x10_SarasotaPergola_Hero_v1.jpg?v=1758054317&width=1600",
     sku: "SRT-10X10",
     family: "sarasota",
     material: "steel",
@@ -247,6 +261,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "sarasota-12x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/2407046-HERO-02.jpg?v=1720559867&width=1600",
     sku: "SRT-12X10",
     family: "sarasota",
     material: "steel",
@@ -263,6 +278,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "sarasota-14x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/backyard-discovery-hero-1-open-roof_be55bc11-c969-444f-94f9-d02f0d3c93d7.jpg?v=1705419092&width=1600",
     sku: "SRT-14X10",
     family: "sarasota",
     material: "steel",
@@ -280,6 +296,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "sarasota-16x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/2305113-SARASOTA16X10-HERO-OPEN.jpg?v=1709312773&width=1600",
     sku: "SRT-16X10",
     family: "sarasota",
     material: "steel",
@@ -296,6 +313,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "sarasota-18x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/2407145B-18x10-Sarasota-Hero.jpg?v=1734718303&width=1600",
     sku: "SRT-18X10",
     family: "sarasota",
     material: "steel",
@@ -312,6 +330,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "sarasota-20x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/2305120-HERO-01.jpg?v=1719248981&width=1600",
     sku: "SRT-20X10",
     family: "sarasota",
     material: "steel",
@@ -330,6 +349,7 @@ export const catalog: PergolaProduct[] = [
   // ── Evanston — wall-mounted louvered ─────────────────────────
   {
     slug: "evanston-10x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/10x10_Evanston__Pergola_Hero_V2.jpg?v=1753904398&width=1600",
     sku: "EVN-10X10",
     family: "evanston",
     material: "steel",
@@ -346,6 +366,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "evanston-12x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/12x10_Evanston_Pergola_Hero_V2.jpg?v=1753907676&width=1600",
     sku: "EVN-12X10",
     family: "evanston",
     material: "steel",
@@ -362,6 +383,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "evanston-14x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/14x10_Evanston_Pergola_Hero_V2.jpg?v=1753907868&width=1600",
     sku: "EVN-14X10",
     family: "evanston",
     material: "steel",
@@ -379,6 +401,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "evanston-16x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/16x10_Evanston_Pergola_Hero_V2.jpg?v=1753908049&width=1600",
     sku: "EVN-16X10",
     family: "evanston",
     material: "steel",
@@ -395,6 +418,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "evanston-18x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/18x10_Evanston_Pergola_Hero_V2.jpg?v=1753908197&width=1600",
     sku: "EVN-18X10",
     family: "evanston",
     material: "steel",
@@ -411,6 +435,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "evanston-20x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/20x10_Evanston_Pergola_Hero_V2.jpg?v=1753908351&width=1600",
     sku: "EVN-20X10",
     family: "evanston",
     material: "steel",
@@ -429,6 +454,7 @@ export const catalog: PergolaProduct[] = [
   // ── Windham — white galvanized steel ─────────────────────────
   {
     slug: "windham-14x10",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/products/ModernPergolaMediumWhite.jpg?v=1651772226&width=1600",
     sku: "WDH-14X10",
     family: "windham",
     material: "steel",
@@ -445,6 +471,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "windham-14x12",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/files/2105522_HERO.jpg?v=1742845381&width=1600",
     sku: "WDH-14X12",
     family: "windham",
     material: "steel",
@@ -463,6 +490,7 @@ export const catalog: PergolaProduct[] = [
   // ── Cabana corner ────────────────────────────────────────────
   {
     slug: "tuscany-corner",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/products/TuscanyBambooIndigo2.jpg?v=1649268747&width=1600",
     sku: "TSC-CORNER",
     family: "tuscany",
     material: "wood",
@@ -480,6 +508,7 @@ export const catalog: PergolaProduct[] = [
   },
   {
     slug: "verona-corner",
+    heroUrl: "https://www.backyarddiscovery.com/cdn/shop/products/VeronaMainBamboo.jpg?v=1649269222&width=1600",
     sku: "VRN-CORNER",
     family: "verona",
     material: "wood",

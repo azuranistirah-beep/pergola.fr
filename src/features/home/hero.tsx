@@ -8,8 +8,7 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 export function Hero() {
   const t = useTranslations("home");
   return (
-    <section className="relative flex min-h-[100svh] items-end overflow-hidden">
-      {/* Layered atmosphere — replaces video for scaffold */}
+    <section className="relative flex min-h-[62vh] items-end overflow-hidden pt-24 md:min-h-[68vh]">
       <div
         aria-hidden
         className="absolute inset-0"
@@ -30,54 +29,51 @@ export function Hero() {
       />
       <div
         aria-hidden
-        className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent"
+        className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent"
       />
 
-      <Container className="relative z-10 pb-24 pt-40 md:pb-32">
-        <div className="max-w-3xl">
-          <Eyebrow className="text-accent">
-            {t("heroEyebrow")}
-          </Eyebrow>
-          <h1 className="mt-6 font-serif text-[52px] leading-[1.05] text-white md:text-[88px]">
-            {t("heroTitle")}
-          </h1>
-          <p className="mt-8 max-w-xl text-lg leading-relaxed text-white/70">
-            {t("heroSubtitle")}
-          </p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <Button asChild variant="accent" size="lg">
-              <Link href="/configurateur">
-                {t("heroCta")}
-                <ArrowRight />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-white/30 bg-transparent text-white hover:border-white hover:bg-white hover:text-primary"
-            >
-              <Link href="/realisations">{t("heroCtaSecondary")}</Link>
-            </Button>
-          </div>
-        </div>
-
-        <div className="mt-24 grid grid-cols-2 gap-8 border-t border-white/10 pt-10 text-white/70 md:grid-cols-4">
-          {[
-            { k: "12+", v: t("statYears") },
-            { k: "3 500+", v: t("statInstalls") },
-            { k: "100%", v: t("statAluminium") },
-            { k: "10 ans", v: t("statWarranty") },
-          ].map((s) => (
-            <div key={s.v}>
-              <div className="font-serif text-3xl text-white md:text-4xl">
-                {s.k}
-              </div>
-              <div className="mt-2 text-xs uppercase tracking-[0.2em] text-white/50">
-                {s.v}
-              </div>
+      <Container className="relative z-10 pb-14 md:pb-20">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-end">
+          <div>
+            <Eyebrow className="text-accent">{t("heroEyebrow")}</Eyebrow>
+            <h1 className="mt-4 font-serif text-[42px] leading-[1.05] text-white md:text-[72px]">
+              {t("heroTitle")}
+            </h1>
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70">
+              {t("heroSubtitle")}
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button asChild variant="accent" size="lg">
+                <Link href="/configurateur">
+                  {t("heroCta")} <ArrowRight />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-white/30 bg-transparent text-white hover:border-white hover:bg-white hover:text-primary"
+              >
+                <Link href="#collection">{t("heroCtaSecondary")}</Link>
+              </Button>
             </div>
-          ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-6 border-l border-white/10 pl-8 text-white/70 md:gap-8">
+            {[
+              { k: "12+", v: t("statYears") },
+              { k: "3 500+", v: t("statInstalls") },
+              { k: "100%", v: t("statAluminium") },
+              { k: "10 ans", v: t("statWarranty") },
+            ].map((s) => (
+              <div key={s.v}>
+                <div className="font-serif text-3xl text-white">{s.k}</div>
+                <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/50">
+                  {s.v}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </Container>
     </section>

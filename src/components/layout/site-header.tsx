@@ -5,21 +5,21 @@ import { Menu, Search, ShoppingBag, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
+import { useCart } from "@/features/cart/cart-store";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { key: "pergolas", href: "/pergolas" },
-  { key: "gazebos", href: "/gazebos" },
-  { key: "carports", href: "/carports" },
-  { key: "outdoorKitchens", href: "/cuisines-exterieur" },
   { key: "projects", href: "/realisations" },
   { key: "about", href: "/a-propos" },
+  { key: "journal", href: "/journal", label: "Journal" },
   { key: "contact", href: "/contact" },
 ] as const;
 
 export function SiteHeader() {
   const t = useTranslations("nav");
   const [scrolled, setScrolled] = React.useState(false);
+  const { count } = useCart();
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -58,7 +58,7 @@ export function SiteHeader() {
                 scrolled ? "text-primary" : "text-white",
               )}
             >
-              {t(item.key)}
+              {"label" in item ? item.label : t(item.key)}
             </Link>
           ))}
         </nav>
@@ -81,12 +81,18 @@ export function SiteHeader() {
           >
             <User className="size-[18px]" />
           </button>
-          <button
-            aria-label="Cart"
-            className="hover:bg-foreground/5 rounded-full p-2.5 transition-colors"
+          <Link
+            href="/panier"
+            aria-label="Panier"
+            className="hover:bg-foreground/5 relative rounded-full p-2.5 transition-colors"
           >
             <ShoppingBag className="size-[18px]" />
-          </button>
+            {count > 0 && (
+              <span className="bg-accent text-accent-foreground absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-medium">
+                {count}
+              </span>
+            )}
+          </Link>
           <button
             aria-label="Menu"
             className="hover:bg-foreground/5 rounded-full p-2.5 transition-colors lg:hidden"

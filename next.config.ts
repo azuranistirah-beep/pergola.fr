@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "cdn.pergolafr.com" },
+      // NOTE: Placeholder source during development only — replace with
+      // in-house photography before launch.
+      { protocol: "https", hostname: "www.backyarddiscovery.com" },
     ],
   },
   experimental: {

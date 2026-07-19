@@ -1,6 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import { Hero } from "@/features/home/hero";
-import { FeaturedCategories } from "@/features/home/featured-categories";
+import { CategoryStrip } from "@/features/home/category-strip";
 import { WhyChooseUs } from "@/features/home/why-choose-us";
 import { ConfiguratorTeaser } from "@/features/home/configurator-teaser";
 import { Testimonials } from "@/features/home/testimonials";
@@ -17,9 +17,9 @@ export default async function HomePage({
   return (
     <>
       <Hero />
-      <FeaturedCategories />
-      <WhyChooseUs />
+      <CategoryStrip />
       <ConfiguratorTeaser />
+      <WhyChooseUs />
       <Testimonials />
       <CtaShowroom />
     </>

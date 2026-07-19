@@ -1,0 +1,395 @@
+"use client";
+
+import * as React from "react";
+import { AlertTriangle, Check, ChevronRight, Ruler } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
+import { Eyebrow } from "@/components/ui/eyebrow";
+import { cn, formatEUR } from "@/lib/utils";
+import {
+  buildSku,
+  computeAreaSqm,
+  computeConflicts,
+  computePrice,
+  getSelectedValue,
+  initialSelection,
+  isValueDisabled,
+} from "./engine";
+import type { ProductConfigurator, Selection } from "./config-types";
+
+export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
+  const [selection, setSelection] = React.useState<Selection>(() =>
+    initialSelection(cfg),
+  );
+
+  const conflicts = React.useMemo(
+    () => computeConflicts(cfg, selection),
+    [cfg, selection],
+  );
+  const price = React.useMemo(
+    () => computePrice(cfg, selection),
+    [cfg, selection],
+  );
+  const sku = React.useMemo(() => buildSku(cfg, selection), [cfg, selection]);
+  const area = React.useMemo(() => computeAreaSqm(cfg, selection), [cfg, selection]);
+
+  const pick = (optionCode: string, value: string | number) =>
+    setSelection((prev) => ({ ...prev, [optionCode]: value }));
+
+  const frameColor =
+    getSelectedValue(cfg.options.find((o) => o.code === "frame_color")!, selection)
+      ?.swatch ?? "#3a3d40";
+  const roofColorValue = getSelectedValue(
+    cfg.options.find((o) => o.code === "roof_color")!,
+    selection,
+  );
+  const roofColor = roofColorValue?.code === "identique" ? frameColor : roofColorValue?.swatch ?? frameColor;
+
+  return (
+    <div className="bg-muted min-h-screen pt-28 pb-24 md:pt-32">
+      <Container>
+        <div className="mb-10 flex flex-col gap-3">
+          <Eyebrow>Configurateur</Eyebrow>
+          <h1 className="font-serif text-4xl leading-tight md:text-6xl">
+            Dessinez votre pergola bioclimatique.
+          </h1>
+          <p className="text-secondary max-w-2xl text-base">
+            Chaque choix met à jour le prix, la référence SKU et l&apos;aperçu
+            en temps réel. Sauvegardez, demandez un devis ou commandez
+            directement en ligne.
+          </p>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+          {/* Options column */}
+          <div className="space-y-8">
+            {cfg.options.map((opt) => (
+              <div
+                key={opt.code}
+                className="bg-background border-border/70 rounded-[var(--radius-lg)] border p-6 md:p-8"
+              >
+                <div className="mb-5 flex items-baseline justify-between gap-4">
+                  <div>
+                    <h3 className="font-serif text-lg">{opt.label}</h3>
+                    {opt.helper && (
+                      <p className="text-secondary mt-1 text-xs">{opt.helper}</p>
+                    )}
+                  </div>
+                  {opt.required && (
+                    <span className="text-accent text-[10px] uppercase tracking-[0.25em]">
+                      Requis
+                    </span>
+                  )}
+                </div>
+
+                {opt.type === "dimension" ? (
+                  <DimensionSlider
+                    option={opt}
+                    value={(selection[opt.code] as number) ?? 0}
+                    onChange={(v) => pick(opt.code, v)}
+                  />
+                ) : opt.type === "frame-color" || opt.type === "roof-color" ? (
+                  <SwatchGrid
+                    option={opt}
+                    selection={selection}
+                    conflicts={conflicts}
+                    onPick={pick}
+                  />
+                ) : (
+                  <OptionCards
+                    option={opt}
+                    selection={selection}
+                    conflicts={conflicts}
+                    onPick={pick}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Summary column */}
+          <aside className="lg:sticky lg:top-32 lg:self-start">
+            <div className="bg-primary text-primary-foreground overflow-hidden rounded-[var(--radius-lg)]">
+              {/* Live preview */}
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <PergolaPreview frameColor={frameColor} roofColor={roofColor} />
+                <div className="absolute inset-x-0 bottom-0 p-5">
+                  <div className="text-[10px] uppercase tracking-[0.3em] text-white/60">
+                    Référence
+                  </div>
+                  <div className="text-accent mt-1 font-mono text-sm">
+                    {sku}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-5 p-6 md:p-8">
+                <SummaryRow
+                  label="Emprise au sol"
+                  value={`${area.toFixed(2)} m²`}
+                />
+                <SummaryRow
+                  label="Largeur × Longueur"
+                  value={`${(((selection.width as number) ?? 0) / 1000).toFixed(2)} × ${(((selection.length as number) ?? 0) / 1000).toFixed(2)} m`}
+                />
+                <SummaryRow
+                  label="Prix de base"
+                  value={formatEUR(price.baseCents)}
+                />
+                {price.lines.length > 0 && (
+                  <div className="border-primary-foreground/10 border-t pt-5">
+                    <div className="mb-3 text-[10px] uppercase tracking-[0.25em] text-white/50">
+                      Ajustements
+                    </div>
+                    {price.lines.map((l) => (
+                      <div
+                        key={l.code + l.label}
+                        className="text-primary-foreground/80 flex justify-between gap-4 py-1 text-xs"
+                      >
+                        <span className="truncate">{l.label}</span>
+                        <span className="whitespace-nowrap">
+                          +{formatEUR(l.amountCents)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="border-primary-foreground/10 border-t pt-5">
+                  <div className="text-[10px] uppercase tracking-[0.25em] text-white/50">
+                    Total TTC
+                  </div>
+                  <div className="mt-1 flex items-baseline justify-between">
+                    <span className="font-serif text-4xl">
+                      {formatEUR(price.totalCents)}
+                    </span>
+                    <span className="text-xs text-white/60">
+                      3× {formatEUR(Math.round(price.totalCents / 3))}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex flex-col gap-2">
+                  <Button variant="accent" size="lg" className="w-full">
+                    Ajouter au panier
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full border-white/30 bg-transparent text-white hover:border-white hover:bg-white hover:text-primary"
+                  >
+                    Demander un devis PDF
+                  </Button>
+                </div>
+
+                <div className="text-primary-foreground/60 flex items-center gap-2 pt-2 text-xs">
+                  <Ruler className="text-accent size-3.5" /> Livraison estimée : 4–6 semaines
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </Container>
+    </div>
+  );
+}
+
+function SummaryRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3">
+      <span className="text-primary-foreground/60 text-xs uppercase tracking-[0.2em]">
+        {label}
+      </span>
+      <span className="text-sm">{value}</span>
+    </div>
+  );
+}
+
+function DimensionSlider({
+  option,
+  value,
+  onChange,
+}: {
+  option: import("./config-types").ConfigOption;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  const v = option.values[0];
+  if (!v || v.minMm === undefined || v.maxMm === undefined || v.stepMm === undefined)
+    return null;
+  const min = v.minMm;
+  const max = v.maxMm;
+  const step = v.stepMm;
+  const current = value || v.defaultMm || min;
+  return (
+    <div>
+      <div className="flex items-baseline justify-between">
+        <span className="font-serif text-3xl">
+          {(current / 1000).toFixed(2)}{" "}
+          <span className="text-secondary text-sm">m</span>
+        </span>
+        <span className="text-secondary text-xs">
+          {(min / 1000).toFixed(1)} m – {(max / 1000).toFixed(1)} m
+        </span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={current}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="accent-accent mt-5 w-full"
+      />
+    </div>
+  );
+}
+
+function OptionCards({
+  option,
+  selection,
+  conflicts,
+  onPick,
+}: {
+  option: import("./config-types").ConfigOption;
+  selection: Selection;
+  conflicts: import("./engine").RuleConflict[];
+  onPick: (opt: string, v: string) => void;
+}) {
+  const currentCode = selection[option.code];
+  return (
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      {option.values.map((v) => {
+        const disabled = isValueDisabled(option.code, v.code, conflicts);
+        const active = currentCode === v.code && !disabled;
+        return (
+          <button
+            key={v.code}
+            disabled={disabled}
+            onClick={() => onPick(option.code, v.code)}
+            className={cn(
+              "group relative flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
+              active
+                ? "border-primary bg-primary/5"
+                : "border-border hover:border-primary/50",
+              disabled && "cursor-not-allowed opacity-40",
+            )}
+          >
+            <div className="flex w-full items-start justify-between gap-2">
+              <div>
+                <div className="text-sm font-medium">{v.label}</div>
+                <div className="text-secondary mt-1 text-xs">
+                  {v.priceCents === 0
+                    ? "Inclus"
+                    : `+${formatEUR(v.priceCents)}${v.priceKind === "per_sqm" ? "/m²" : v.priceKind === "per_linear_m" ? "/ml" : ""}`}
+                </div>
+              </div>
+              <div
+                className={cn(
+                  "flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors",
+                  active
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border",
+                )}
+              >
+                {active && <Check className="size-3" />}
+              </div>
+            </div>
+            {disabled && (
+              <div className="text-accent flex items-center gap-1 text-[10px]">
+                <AlertTriangle className="size-3" /> Incompatible avec vos choix
+              </div>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function SwatchGrid({
+  option,
+  selection,
+  conflicts,
+  onPick,
+}: {
+  option: import("./config-types").ConfigOption;
+  selection: Selection;
+  conflicts: import("./engine").RuleConflict[];
+  onPick: (opt: string, v: string) => void;
+}) {
+  const currentCode = selection[option.code];
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      {option.values.map((v) => {
+        const disabled = isValueDisabled(option.code, v.code, conflicts);
+        const active = currentCode === v.code && !disabled;
+        return (
+          <button
+            key={v.code}
+            disabled={disabled}
+            onClick={() => onPick(option.code, v.code)}
+            className={cn(
+              "group flex items-center gap-3 rounded-2xl border p-3 text-left transition-all",
+              active
+                ? "border-primary"
+                : "border-border hover:border-primary/50",
+              disabled && "cursor-not-allowed opacity-40",
+            )}
+          >
+            <span
+              className="ring-border/50 size-8 shrink-0 rounded-full ring-1"
+              style={{ background: v.swatch ?? "#ccc" }}
+            />
+            <span className="min-w-0">
+              <span className="block truncate text-xs font-medium">{v.label}</span>
+              {v.priceCents > 0 && (
+                <span className="text-secondary block text-[10px]">
+                  +{formatEUR(v.priceCents)}
+                </span>
+              )}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Simple SVG that shows the current color combination. */
+function PergolaPreview({
+  frameColor,
+  roofColor,
+}: {
+  frameColor: string;
+  roofColor: string;
+}) {
+  return (
+    <div className="relative h-full w-full bg-gradient-to-b from-[#1c1a17] to-[#0f0d0a]">
+      {/* soft ground */}
+      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
+      <svg
+        viewBox="0 0 320 240"
+        className="absolute inset-0 h-full w-full"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        {/* roof */}
+        {Array.from({ length: 12 }).map((_, i) => (
+          <rect
+            key={i}
+            x={40 + i * 20}
+            y={64}
+            width={12}
+            height={90}
+            fill={roofColor}
+            style={{ transition: "fill 300ms" }}
+          />
+        ))}
+        <rect x={30} y={64} width={260} height={10} fill={frameColor} style={{ transition: "fill 300ms" }} />
+        <rect x={30} y={148} width={260} height={10} fill={frameColor} style={{ transition: "fill 300ms" }} />
+        {/* posts */}
+        <rect x={34} y={74} width={10} height={124} fill={frameColor} style={{ transition: "fill 300ms" }} />
+        <rect x={276} y={74} width={10} height={124} fill={frameColor} style={{ transition: "fill 300ms" }} />
+      </svg>
+    </div>
+  );
+}

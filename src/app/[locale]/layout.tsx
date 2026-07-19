@@ -6,6 +6,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { CartProvider } from "@/features/cart/cart-store";
 import "../globals.css";
 
 const inter = Inter({
@@ -66,9 +67,11 @@ export default async function LocaleLayout({
     >
       <body className="bg-background text-foreground min-h-full font-sans">
         <NextIntlClientProvider>
-          <SiteHeader />
-          <main>{children}</main>
-          <SiteFooter />
+          <CartProvider>
+            <SiteHeader />
+            <main>{children}</main>
+            <SiteFooter />
+          </CartProvider>
         </NextIntlClientProvider>
       </body>
     </html>

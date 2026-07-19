@@ -34,6 +34,8 @@ export interface PergolaProduct {
   priceCents: number;
   compareAtCents?: number;
   imageCount: number;
+  /** Remote placeholder URL — used until user drops local `cover.jpg`. */
+  heroUrl?: string;
   featured?: boolean;
   finish?: string;
   colorway: "warm-cedar" | "walnut" | "barnwood" | "black" | "white";

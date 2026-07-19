@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const gradientByColorway: Record<string, string> = {
@@ -20,11 +19,15 @@ export interface ProductImageProps {
   className?: string;
   sizes?: string;
   priority?: boolean;
-  fill?: boolean;
-  width?: number;
-  height?: number;
 }
 
+/**
+ * Renders the colorway gradient as a permanent background, with the actual
+ * <img> fading in on top when it successfully loads. When the file is missing
+ * (404), the img simply never fades in and the gradient stays visible with a
+ * discreet "Visuel à venir" caption. This avoids next/image's inconsistent
+ * onError behaviour with Turbopack on missing files.
+ */
 export function ProductImage({
   src,
   alt,
@@ -32,36 +35,45 @@ export function ProductImage({
   className,
   sizes,
   priority,
-  fill = true,
-  width,
-  height,
 }: ProductImageProps) {
-  const [errored, setErrored] = React.useState(false);
+  const [loaded, setLoaded] = React.useState(false);
+  const [failed, setFailed] = React.useState(false);
 
-  if (errored) {
-    return (
-      <div
-        role="img"
-        aria-label={alt}
-        className={cn("relative h-full w-full", className)}
-        style={{ background: gradientByColorway[colorway] }}
-      >
-        <div className="absolute inset-x-0 bottom-0 flex items-center justify-center p-4 text-[10px] uppercase tracking-[0.3em] text-white/70">
+  return (
+    <div
+      className={cn("relative h-full w-full overflow-hidden", className)}
+      style={{ background: gradientByColorway[colorway] }}
+    >
+      {!failed && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt={alt}
+          sizes={sizes}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
+          onLoad={() => setLoaded(true)}
+          onError={() => setFailed(true)}
+          className={cn(
+            "absolute inset-0 h-full w-full object-cover transition-opacity duration-500",
+            loaded ? "opacity-100" : "opacity-0",
+          )}
+        />
+      )}
+      {(failed || !loaded) && (
+        <div
+          aria-hidden
+          className={cn(
+            "absolute inset-x-0 bottom-0 flex items-center justify-center p-4 text-[10px] uppercase tracking-[0.3em] transition-opacity duration-500",
+            colorway === "white" || colorway === "warm-cedar"
+              ? "text-primary/40"
+              : "text-white/60",
+            failed ? "opacity-100" : "opacity-60",
+          )}
+        >
           Visuel à venir
         </div>
-      </div>
-    );
-  }
-
-  const commonProps = {
-    src,
-    alt,
-    onError: () => setErrored(true),
-    priority,
-    sizes,
-    className: cn("object-cover", className),
-  } as const;
-
-  if (fill) return <Image {...commonProps} fill />;
-  return <Image {...commonProps} width={width ?? 800} height={height ?? 800} />;
+      )}
+    </div>
+  );
 }
