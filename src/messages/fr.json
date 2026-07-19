@@ -10,12 +10,112 @@
     "carports": "Carports",
     "outdoorKitchens": "Cuisines d'extérieur",
     "projects": "Réalisations",
-    "about": "À propos",
+    "about": "Maison",
     "contact": "Contact"
   },
   "home": {
-    "heroTitle": "L'art de vivre dehors",
-    "heroSubtitle": "Pergolas bioclimatiques et structures d'extérieur sur mesure.",
-    "heroCta": "Configurer ma pergola"
+    "heroEyebrow": "Collection 2026 — Fabrication française",
+    "heroTitle": "L'art de vivre dehors, redessiné.",
+    "heroSubtitle": "Pergolas bioclimatiques, gazebos et structures d'extérieur haut de gamme, dessinées à Paris et fabriquées dans nos ateliers en Vendée.",
+    "heroCta": "Configurer ma pergola",
+    "heroCtaSecondary": "Voir nos réalisations",
+    "statYears": "Ans de savoir-faire",
+    "statInstalls": "Installations réalisées",
+    "statAluminium": "Aluminium recyclable",
+    "statWarranty": "Garantie constructeur",
+    "categories": {
+      "eyebrow": "Nos collections",
+      "title": "Chaque structure, une pièce sur mesure.",
+      "subtitle": "Cinq familles de produits, une même exigence : matériaux nobles, lignes minimalistes, installation soignée.",
+      "cta": "Découvrir la collection",
+      "bioclimatic": {
+        "tag": "Signature",
+        "name": "Pergolas bioclimatiques"
+      },
+      "aluminium": {
+        "tag": "Contemporain",
+        "name": "Pergolas aluminium"
+      },
+      "wood": {
+        "tag": "Classique",
+        "name": "Pergolas bois"
+      },
+      "carport": {
+        "tag": "Sur-mesure",
+        "name": "Carports"
+      },
+      "kitchen": {
+        "tag": "Nouveau",
+        "name": "Cuisines d'extérieur"
+      }
+    },
+    "why": {
+      "eyebrow": "Notre engagement",
+      "title": "Une exigence, à chaque étape.",
+      "subtitle": "De la première esquisse à la pose finale, nous prenons en charge chaque détail comme s'il s'agissait de notre propre jardin.",
+      "craft": {
+        "title": "Fabrication française",
+        "body": "Ateliers en Vendée, aluminium extrudé et thermolaqué, tolérances contrôlées au dixième."
+      },
+      "warranty": {
+        "title": "Garantie 10 ans",
+        "body": "Motorisations, coloris et structure porteuse couverts pendant une décennie."
+      },
+      "sustainable": {
+        "title": "Durable et recyclable",
+        "body": "Aluminium 100 % recyclable, bois certifié PEFC, LED basse consommation."
+      },
+      "awarded": {
+        "title": "Distingué",
+        "body": "Prix Janus de l'Industrie et référencé Architectes du Patrimoine."
+      }
+    },
+    "configurator": {
+      "eyebrow": "Configurateur premium",
+      "title": "Dessinez votre pergola, en temps réel.",
+      "subtitle": "Dimensions, coloris, motorisation, éclairage LED, panneaux zip screen — tout se compose en direct, avec un prix et un aperçu qui se mettent à jour à chaque choix.",
+      "p1": "Dimensions au centimètre près",
+      "p2": "18 coloris cadre & toit, RAL et anodisés",
+      "p3": "LED périmétrique, capteurs pluie / vent",
+      "p4": "Devis PDF envoyé instantanément",
+      "cta": "Ouvrir le configurateur"
+    },
+    "testimonials": {
+      "eyebrow": "Ils nous ont fait confiance",
+      "title": "L'exigence, ressentie.",
+      "t1": {
+        "quote": "Une pergola magnifique, installée en une matinée. Le rendu est plus beau que sur les visuels du configurateur.",
+        "name": "Camille & Antoine L.",
+        "location": "Saint-Malo"
+      },
+      "t2": {
+        "quote": "Le sur-mesure est irréprochable, l'équipe d'un professionnalisme rare. Notre restaurant a doublé sa capacité en terrasse.",
+        "name": "Chef Marc D.",
+        "location": "Restaurant Le Bord de Mer, Nice"
+      },
+      "t3": {
+        "quote": "Le configurateur est bluffant, on visualise tout avant de commander. Livraison et pose parfaites.",
+        "name": "Hélène R.",
+        "location": "Bordeaux"
+      }
+    },
+    "cta": {
+      "eyebrow": "Prendre rendez-vous",
+      "title": "Passez au showroom.",
+      "subtitle": "Nos conseillers vous accompagnent, matières en main, dans notre showroom parisien du Marais.",
+      "cta": "Réserver ma visite"
+    }
+  },
+  "footer": {
+    "tagline": "Pergolas, gazebos et structures d'extérieur — dessinés à Paris, fabriqués en France.",
+    "showroom": "Showroom Paris",
+    "newsletter": "Newsletter",
+    "newsletterCopy": "Recevez nos nouveautés, projets et invitations privées.",
+    "emailPlaceholder": "Votre email",
+    "subscribe": "S'abonner",
+    "rights": "Tous droits réservés.",
+    "legal": "Mentions légales",
+    "privacy": "Confidentialité",
+    "terms": "CGV"
   }
 }

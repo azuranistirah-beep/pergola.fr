@@ -10,12 +10,97 @@
     "carports": "Carports",
     "outdoorKitchens": "Outdoor kitchens",
     "projects": "Projects",
-    "about": "About",
+    "about": "House",
     "contact": "Contact"
   },
   "home": {
-    "heroTitle": "The art of outdoor living",
-    "heroSubtitle": "Bespoke bioclimatic pergolas and outdoor structures.",
-    "heroCta": "Configure my pergola"
+    "heroEyebrow": "2026 Collection — Made in France",
+    "heroTitle": "Outdoor living, redrawn.",
+    "heroSubtitle": "Bioclimatic pergolas, gazebos and premium outdoor structures — designed in Paris, crafted in our Vendée workshops.",
+    "heroCta": "Configure my pergola",
+    "heroCtaSecondary": "Browse our projects",
+    "statYears": "Years of craft",
+    "statInstalls": "Installations completed",
+    "statAluminium": "Recyclable aluminium",
+    "statWarranty": "Manufacturer warranty",
+    "categories": {
+      "eyebrow": "Our collections",
+      "title": "Every structure, a bespoke piece.",
+      "subtitle": "Five product families, one uncompromising standard: noble materials, minimalist lines, meticulous installation.",
+      "cta": "Explore the collection",
+      "bioclimatic": { "tag": "Signature", "name": "Bioclimatic pergolas" },
+      "aluminium": { "tag": "Contemporary", "name": "Aluminium pergolas" },
+      "wood": { "tag": "Classic", "name": "Wooden pergolas" },
+      "carport": { "tag": "Bespoke", "name": "Carports" },
+      "kitchen": { "tag": "New", "name": "Outdoor kitchens" }
+    },
+    "why": {
+      "eyebrow": "Our commitment",
+      "title": "One standard, every step.",
+      "subtitle": "From the first sketch to final installation, we handle every detail as if it were our own garden.",
+      "craft": {
+        "title": "Made in France",
+        "body": "Workshops in Vendée, extruded and thermo-lacquered aluminium, tenth-of-a-millimetre tolerances."
+      },
+      "warranty": {
+        "title": "10-year warranty",
+        "body": "Motors, finishes and load-bearing structure covered for a decade."
+      },
+      "sustainable": {
+        "title": "Sustainable & recyclable",
+        "body": "100% recyclable aluminium, PEFC-certified wood, low-consumption LED."
+      },
+      "awarded": {
+        "title": "Award-winning",
+        "body": "Janus de l'Industrie prize, referenced by Architectes du Patrimoine."
+      }
+    },
+    "configurator": {
+      "eyebrow": "Premium configurator",
+      "title": "Design your pergola, live.",
+      "subtitle": "Dimensions, colours, motorisation, LED lighting, zip screens — everything updates in real time, with price and preview refreshing at every choice.",
+      "p1": "Dimensions to the centimetre",
+      "p2": "18 frame & roof colours, RAL and anodised",
+      "p3": "Perimeter LED, rain & wind sensors",
+      "p4": "Instant PDF quote by email",
+      "cta": "Open the configurator"
+    },
+    "testimonials": {
+      "eyebrow": "They trusted us",
+      "title": "Standard, felt.",
+      "t1": {
+        "quote": "A stunning pergola, installed in a single morning. Even more beautiful than the configurator preview.",
+        "name": "Camille & Antoine L.",
+        "location": "Saint-Malo"
+      },
+      "t2": {
+        "quote": "Faultless bespoke work, a rare level of professionalism. Our terrace capacity has doubled.",
+        "name": "Chef Marc D.",
+        "location": "Le Bord de Mer, Nice"
+      },
+      "t3": {
+        "quote": "The configurator is stunning — you see everything before you order. Delivery and installation flawless.",
+        "name": "Hélène R.",
+        "location": "Bordeaux"
+      }
+    },
+    "cta": {
+      "eyebrow": "Book an appointment",
+      "title": "Visit our showroom.",
+      "subtitle": "Our advisors welcome you, materials in hand, in our Marais showroom in Paris.",
+      "cta": "Book my visit"
+    }
+  },
+  "footer": {
+    "tagline": "Pergolas, gazebos and outdoor structures — designed in Paris, crafted in France.",
+    "showroom": "Paris showroom",
+    "newsletter": "Newsletter",
+    "newsletterCopy": "New collections, projects and private invitations.",
+    "emailPlaceholder": "Your email",
+    "subscribe": "Subscribe",
+    "rights": "All rights reserved.",
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms"
   }
 }
