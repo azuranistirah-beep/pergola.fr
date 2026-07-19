@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+/*
+ * Pergola FR — Design tokens (Tahap 4 will expand this).
+ * Palette:
+ *   primary    #111111
+ *   secondary  #555555
+ *   accent     #C8A46B
+ *   background #FAFAFA
+ */
+
+@theme {
+  --color-background: #fafafa;
+  --color-foreground: #111111;
+  --color-primary: #111111;
+  --color-primary-foreground: #fafafa;
+  --color-secondary: #555555;
+  --color-accent: #c8a46b;
+  --color-accent-foreground: #ffffff;
+  --color-muted: #f2f2f2;
+  --color-border: #e5e5e5;
+
+  --radius-sm: 8px;
+  --radius: 16px;
+  --radius-lg: 24px;
+
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-serif), ui-serif, Georgia, serif;
+
+  --container-container: 1440px;
+
+  --shadow-soft: 0 4px 24px -8px rgb(0 0 0 / 0.08);
+  --shadow-elevated: 0 20px 60px -20px rgb(0 0 0 / 0.15);
+}
+
+@layer base {
+  html {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+  }
+}

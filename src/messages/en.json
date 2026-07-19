@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "siteName": "Pergola FR",
+    "defaultTitle": "Pergola FR — Premium outdoor pergolas and garden structures",
+    "defaultDescription": "Bioclimatic pergolas, gazebos, carports and outdoor kitchens, designed and crafted to last."
+  },
+  "nav": {
+    "pergolas": "Pergolas",
+    "gazebos": "Gazebos",
+    "carports": "Carports",
+    "outdoorKitchens": "Outdoor kitchens",
+    "projects": "Projects",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "home": {
+    "heroTitle": "The art of outdoor living",
+    "heroSubtitle": "Bespoke bioclimatic pergolas and outdoor structures.",
+    "heroCta": "Configure my pergola"
+  }
+}

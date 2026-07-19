@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "siteName": "Pergola FR",
+    "defaultTitle": "Pergola FR — Pergolas et structures d'extérieur haut de gamme",
+    "defaultDescription": "Pergolas bioclimatiques, gazebos, carports et cuisines d'extérieur haut de gamme, conçus et fabriqués pour durer."
+  },
+  "nav": {
+    "pergolas": "Pergolas",
+    "gazebos": "Gazebos",
+    "carports": "Carports",
+    "outdoorKitchens": "Cuisines d'extérieur",
+    "projects": "Réalisations",
+    "about": "À propos",
+    "contact": "Contact"
+  },
+  "home": {
+    "heroTitle": "L'art de vivre dehors",
+    "heroSubtitle": "Pergolas bioclimatiques et structures d'extérieur sur mesure.",
+    "heroCta": "Configurer ma pergola"
+  }
+}
