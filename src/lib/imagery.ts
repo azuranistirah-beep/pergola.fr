@@ -83,19 +83,41 @@ export const familySlugs: Record<string, string[]> = {
   verona: ["verona-corner"],
 };
 
+// Fallback pool when a family only ships one product — mixes lifestyle shots
+// from adjacent families so the gallery still reads as 4 distinct slides.
+const lifestylePool = [
+  "sarasota-14x10",
+  "sarasota-16x10",
+  "sarasota-18x10",
+  "evanston-14x10",
+  "evanston-16x10",
+  "windham-14x12",
+  "beaumont-14x12",
+  "beaumont-16x12",
+  "beaumont-20x12",
+  "tuscany-corner",
+  "verona-corner",
+];
+
 /** Return N distinct photo URLs for a PDP gallery. */
 export function galleryFor(
   slug: string,
   family: string,
-  count = 3,
+  count = 4,
 ): string[] {
-  const siblings = familySlugs[family] ?? [];
-  const pool = [slug, ...siblings.filter((s) => s !== slug)];
+  const siblings = (familySlugs[family] ?? []).filter((s) => s !== slug);
+  const backfill = lifestylePool.filter(
+    (s) => s !== slug && !siblings.includes(s),
+  );
+  const pool = [slug, ...siblings, ...backfill];
+
   const out: string[] = [];
-  for (let i = 0; out.length < count; i++) {
-    const pick = pool[i % pool.length];
-    if (pick) out.push(photoBySlug(pick));
-    if (i > 20) break;
+  const seen = new Set<string>();
+  for (const s of pool) {
+    if (seen.has(s)) continue;
+    seen.add(s);
+    out.push(photoBySlug(s));
+    if (out.length >= count) break;
   }
   return out;
 }

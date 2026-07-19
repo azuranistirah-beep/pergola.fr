@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Heart, Menu, Search, ShoppingBag, User } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { useCart } from "@/features/cart/cart-store";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
@@ -11,6 +11,18 @@ import { MobileMenu } from "@/components/layout/mobile-menu";
 import { SearchDialog } from "@/components/layout/search-dialog";
 import { cn } from "@/lib/utils";
 import type { PergolaProduct } from "@/features/products/types";
+
+// Pages whose top section is a dark, full-bleed photo — the header can stay
+// transparent until the user scrolls past it. Every other route uses a solid
+// header from the first pixel so the nav is never invisible on white.
+const darkHeroRoutes = new Set([
+  "/",
+  "/gazebos",
+  "/carports",
+  "/cuisines-exterieur",
+  "/accessoires",
+  "/commande/confirmation",
+]);
 
 const navItems = [
   { key: "pergolas", href: "/pergolas" },
@@ -22,10 +34,13 @@ const navItems = [
 
 export function SiteHeader({ catalog }: { catalog: PergolaProduct[] }) {
   const t = useTranslations("nav");
+  const pathname = usePathname();
+  const isDarkHero = darkHeroRoutes.has(pathname);
   const [scrolled, setScrolled] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [searchOpen, setSearchOpen] = React.useState(false);
   const { count } = useCart();
+  const overPhoto = isDarkHero && !scrolled;
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -50,9 +65,9 @@ export function SiteHeader({ catalog }: { catalog: PergolaProduct[] }) {
       <header
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-all duration-500",
-          scrolled
-            ? "bg-background/90 border-border/60 border-b backdrop-blur-md"
-            : "bg-transparent",
+          overPhoto
+            ? "bg-transparent"
+            : "bg-background/90 border-border/60 border-b backdrop-blur-md",
         )}
       >
         <Container className="flex h-20 items-center justify-between md:h-24">
@@ -60,7 +75,7 @@ export function SiteHeader({ catalog }: { catalog: PergolaProduct[] }) {
             href="/"
             className={cn(
               "font-serif text-2xl tracking-tight transition-colors",
-              scrolled ? "text-primary" : "text-white",
+              overPhoto ? "text-white" : "text-primary",
             )}
           >
             Pergola<span className="text-accent">.</span>fr
@@ -73,7 +88,7 @@ export function SiteHeader({ catalog }: { catalog: PergolaProduct[] }) {
                 href={item.href}
                 className={cn(
                   "text-[13px] font-medium tracking-wide transition-colors hover:opacity-70",
-                  scrolled ? "text-primary" : "text-white",
+                  overPhoto ? "text-white" : "text-primary",
                 )}
               >
                 {"label" in item ? item.label : t(item.key)}
@@ -84,7 +99,7 @@ export function SiteHeader({ catalog }: { catalog: PergolaProduct[] }) {
           <div
             className={cn(
               "flex items-center gap-1 transition-colors",
-              scrolled ? "text-primary" : "text-white",
+              overPhoto ? "text-white" : "text-primary",
             )}
           >
             <button
@@ -95,7 +110,7 @@ export function SiteHeader({ catalog }: { catalog: PergolaProduct[] }) {
               <Search className="size-[18px]" />
             </button>
             <div className="hidden md:block">
-              <LanguageSwitcher dark={!scrolled} />
+              <LanguageSwitcher dark={overPhoto} />
             </div>
             <Link
               href="/wishlist"

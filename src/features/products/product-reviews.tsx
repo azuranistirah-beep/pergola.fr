@@ -6,6 +6,7 @@ const reviews = [
   {
     author: "Camille & Antoine L.",
     location: "Saint-Malo (35)",
+    avatar: "linear-gradient(140deg, #a17a4b, #5c3e1d)",
     rating: 5,
     date: "12 mars 2026",
     title: "Installation impeccable, esthétique bluffante.",
@@ -14,6 +15,7 @@ const reviews = [
   {
     author: "Hélène R.",
     location: "Bordeaux (33)",
+    avatar: "linear-gradient(140deg, #c8a46b, #7d5a2b)",
     rating: 5,
     date: "28 février 2026",
     title: "Un vrai bijou d'artisanat.",
@@ -22,12 +24,23 @@ const reviews = [
   {
     author: "Marc D.",
     location: "Nice (06)",
+    avatar: "linear-gradient(140deg, #2b2b2b, #6a6a6a)",
     rating: 5,
     date: "10 février 2026",
     title: "Doublé notre capacité de terrasse.",
     body: "Nous sommes restaurant étoilé, nous avons besoin de fiabilité. Un an d'usage intensif et zéro incident. Les couverts en terrasse ont doublé grâce à la pergola.",
   },
 ];
+
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter((w) => w && !w.includes(".") && !w.includes("&"))
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
 
 const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
 
@@ -74,7 +87,13 @@ export function ProductReviews() {
                 « {r.body} »
               </blockquote>
               <figcaption className="border-border/60 mt-6 flex items-center gap-3 border-t pt-5">
-                <div className="from-accent/30 to-accent/70 size-10 rounded-full bg-gradient-to-br" />
+                <div
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full font-serif text-xs text-white"
+                  style={{ background: r.avatar }}
+                  aria-hidden
+                >
+                  {initials(r.author)}
+                </div>
                 <div className="text-xs">
                   <div className="text-primary font-medium">{r.author}</div>
                   <div className="text-secondary">
