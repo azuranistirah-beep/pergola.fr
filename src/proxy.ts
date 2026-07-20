@@ -7,8 +7,9 @@ export const config = {
   matcher: [
     // Match all pathnames except:
     // - Next internals (_next, _vercel)
+    // - Admin routes (single-locale internal tool)
     // - Static assets with a file extension
     // - API routes handled separately
-    "/((?!api|_next|_vercel|.*\\..*).*)",
+    "/((?!api|admin|_next|_vercel|.*\\..*).*)",
   ],
 };

@@ -1,21 +1,39 @@
 "use client";
 
 import * as React from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { submitContactMessage } from "@/actions/public-actions";
 
 export function ContactForm() {
   const t = useTranslations("contactPage.form");
+  const locale = useLocale();
   const [pending, setPending] = React.useState(false);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     setPending(true);
-    await new Promise((r) => setTimeout(r, 800));
-    e.currentTarget.reset();
-    setPending(false);
-    toast.success(t("successTitle"), { description: t("successBody") });
+    try {
+      await submitContactMessage({
+        name: fd.get("name")?.toString() ?? "",
+        email: fd.get("email")?.toString() ?? "",
+        phone: fd.get("phone")?.toString() || undefined,
+        postal: fd.get("postal")?.toString() || undefined,
+        message: fd.get("message")?.toString() ?? "",
+        locale,
+      });
+      form.reset();
+      toast.success(t("successTitle"), { description: t("successBody") });
+    } catch (err) {
+      toast.error("Error", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    } finally {
+      setPending(false);
+    }
   };
 
   return (

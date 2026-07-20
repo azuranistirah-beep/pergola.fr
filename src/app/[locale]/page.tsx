@@ -8,6 +8,7 @@ import { Testimonials } from "@/features/home/testimonials";
 import { LatestJournal } from "@/features/home/latest-journal";
 import { CtaShowroom } from "@/features/home/cta-showroom";
 import { listProducts } from "@/repositories/product-repository";
+import { getContent } from "@/repositories/settings-repository";
 
 export const revalidate = 300;
 
@@ -18,11 +19,11 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const products = await listProducts();
+  const [products, content] = await Promise.all([listProducts(), getContent()]);
 
   return (
     <>
-      <Hero />
+      <Hero content={content} />
       <CategoryStrip products={products} />
       <ConfiguratorTeaser />
       <WhyChooseUs />

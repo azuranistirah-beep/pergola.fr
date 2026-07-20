@@ -1,23 +1,28 @@
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { editorialPhoto } from "@/lib/imagery";
+import type { ContentSettings } from "@/repositories/settings-repository";
 
-export function Hero() {
+export function Hero({ content }: { content: ContentSettings }) {
   const t = useTranslations("home");
+  const locale = useLocale();
+  const en = locale === "en";
+  const eyebrow = en ? content.heroEyebrowEn : content.heroEyebrowFr;
+  const title = en ? content.heroTitleEn : content.heroTitleFr;
+  const subtitle = en ? content.heroSubtitleEn : content.heroSubtitleFr;
+
   return (
     <section className="relative flex min-h-[72vh] items-end overflow-hidden pt-24 md:min-h-[80vh]">
-      {/* Photo backdrop */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={editorialPhoto.homeHero}
-        alt="Pergola bioclimatique Sarasota au bord d'une piscine"
+        alt=""
         className="absolute inset-0 h-full w-full object-cover"
       />
-      {/* Warm cinematic wash */}
       <div
         aria-hidden
         className="absolute inset-0"
@@ -38,12 +43,12 @@ export function Hero() {
       <Container className="relative z-10 pb-16 md:pb-24">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-end">
           <div>
-            <Eyebrow className="text-accent">{t("heroEyebrow")}</Eyebrow>
+            <Eyebrow className="text-accent">{eyebrow}</Eyebrow>
             <h1 className="mt-4 font-serif text-[44px] leading-[1.02] text-white md:text-[80px]">
-              {t("heroTitle")}
+              {title}
             </h1>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-white/80 md:text-lg">
-              {t("heroSubtitle")}
+              {subtitle}
             </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Button asChild variant="accent" size="lg">

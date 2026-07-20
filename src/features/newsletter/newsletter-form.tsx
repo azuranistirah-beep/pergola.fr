@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { subscribeNewsletter } from "@/actions/public-actions";
 
 interface Props {
   placeholder: string;
@@ -11,17 +12,26 @@ interface Props {
 
 export function NewsletterForm({ placeholder, submitLabel }: Props) {
   const t = useTranslations("newsletter");
+  const locale = useLocale();
   const [pending, setPending] = React.useState(false);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const email = new FormData(e.currentTarget).get("email")?.toString().trim();
     if (!email) return;
+    const form = e.currentTarget;
     setPending(true);
-    await new Promise((r) => setTimeout(r, 600));
-    e.currentTarget.reset();
-    setPending(false);
-    toast.success(t("successTitle"), { description: t("successBody") });
+    try {
+      await subscribeNewsletter(email, locale);
+      form.reset();
+      toast.success(t("successTitle"), { description: t("successBody") });
+    } catch (err) {
+      toast.error("Error", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    } finally {
+      setPending(false);
+    }
   };
 
   return (

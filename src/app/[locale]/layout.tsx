@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { CartProvider } from "@/features/cart/cart-store";
 import { listProducts } from "@/repositories/product-repository";
+import { getTheme } from "@/repositories/settings-repository";
 import { Toaster } from "@/components/ui/toaster";
 import "../globals.css";
 
@@ -61,13 +62,24 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const catalog = await listProducts().catch(() => []);
+  const [catalog, theme] = await Promise.all([
+    listProducts().catch(() => []),
+    getTheme().catch(() => null),
+  ]);
+  const themeCss = theme
+    ? `:root{--color-primary:${theme.primary};--color-primary-foreground:${theme.background};--color-accent:${theme.accent};--color-background:${theme.background};--color-foreground:${theme.foreground};--color-secondary:${theme.secondary};--radius:${theme.radius}px;}`
+    : "";
 
   return (
     <html
       lang={locale}
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
+      <head>
+        {themeCss && (
+          <style dangerouslySetInnerHTML={{ __html: themeCss }} />
+        )}
+      </head>
       <body className="bg-background text-foreground min-h-full font-sans">
         <NextIntlClientProvider>
           <CartProvider>
