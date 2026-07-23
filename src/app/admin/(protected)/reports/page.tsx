@@ -37,6 +37,7 @@ interface OrderRow {
   customer_email: string | null;
   status: string;
   total_cents: number;
+  currency: string;
   items_count: number;
   created_at: string;
 }

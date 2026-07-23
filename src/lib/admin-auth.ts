@@ -15,12 +15,12 @@ const BCRYPT_COST = 12;
 
 const secret = process.env.ADMIN_SESSION_SECRET;
 
-// Allow ±1 step of clock drift (30s window on each side).
-const TOTP_TOLERANCE = 1;
+// Allow ±30s of clock drift.
+const TOTP_TOLERANCE_SECONDS = 30;
 
 function totpVerify(token: string, secret: string): boolean {
   try {
-    const r = verifySync({ token, secret, tolerance: TOTP_TOLERANCE });
+    const r = verifySync({ token, secret, epochTolerance: TOTP_TOLERANCE_SECONDS });
     return r?.valid === true;
   } catch {
     return false;

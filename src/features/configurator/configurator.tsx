@@ -112,7 +112,12 @@ export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
             <div className="bg-primary text-primary-foreground overflow-hidden rounded-[var(--radius-lg)]">
               {/* Live preview */}
               <div className="relative aspect-[4/3] overflow-hidden">
-                <PergolaPreview frameColor={frameColor} roofColor={roofColor} />
+                <PergolaPreview
+                  frameColor={frameColor}
+                  roofColor={roofColor}
+                  widthMm={(selection.width as number) ?? 4000}
+                  lengthMm={(selection.length as number) ?? 3000}
+                />
                 <div className="absolute inset-x-0 bottom-0 p-5">
                   <div className="text-[10px] uppercase tracking-[0.3em] text-white/60">
                     Référence
@@ -355,14 +360,50 @@ function SwatchGrid({
   );
 }
 
-/** Simple SVG that shows the current color combination. */
+/**
+ * SVG preview that scales with the selected width & length.
+ * We map real millimetres to viewBox pixels around a reference (4000×3000 mm),
+ * so the pergola visually grows/shrinks as the sliders move.
+ */
 function PergolaPreview({
   frameColor,
   roofColor,
+  widthMm,
+  lengthMm,
 }: {
   frameColor: string;
   roofColor: string;
+  widthMm: number;
+  lengthMm: number;
 }) {
+  // Reference dimensions that fill the "default" layout below.
+  const REF_W = 4000;
+  const REF_L = 3000;
+  const REF_PIX_W = 260; // pixels the pergola frame occupies horizontally at REF_W
+  const REF_PIX_H = 100; // vertical projection of the roof depth at REF_L
+
+  // Scale independently — width controls horizontal extent (façade),
+  // length controls apparent depth (projection).
+  const widthScale = widthMm / REF_W;
+  const depthScale = lengthMm / REF_L;
+
+  const frameW = Math.max(140, Math.min(300, REF_PIX_W * widthScale));
+  const frameH = Math.max(60, Math.min(140, REF_PIX_H * depthScale));
+
+  const cx = 160; // horizontal centre of viewBox 0..320
+  const roofY = 74; // top of the roof beam
+  const groundY = 210; // where posts touch the floor
+  const x0 = cx - frameW / 2;
+  const x1 = cx + frameW / 2;
+  const beamThickness = 10;
+  const roofBottomY = roofY + frameH;
+  const postW = 10;
+
+  // Roof slats — number scales with width so density stays consistent.
+  const slatCount = Math.max(6, Math.round(12 * widthScale));
+  const slatGap = frameW / slatCount;
+  const slatW = Math.max(6, Math.min(14, slatGap * 0.55));
+
   return (
     <div className="relative h-full w-full bg-gradient-to-b from-[#1c1a17] to-[#0f0d0a]">
       {/* soft ground */}
@@ -372,24 +413,57 @@ function PergolaPreview({
         className="absolute inset-0 h-full w-full"
         preserveAspectRatio="xMidYMid meet"
       >
-        {/* roof */}
-        {Array.from({ length: 12 }).map((_, i) => (
+        {/* roof slats */}
+        {Array.from({ length: slatCount }).map((_, i) => (
           <rect
             key={i}
-            x={40 + i * 20}
-            y={64}
-            width={12}
-            height={90}
+            x={x0 + beamThickness + i * slatGap + (slatGap - slatW) / 2}
+            y={roofY - 10}
+            width={slatW}
+            height={frameH + 4}
             fill={roofColor}
-            style={{ transition: "fill 300ms" }}
+            style={{ transition: "fill 300ms, height 250ms, x 250ms" }}
           />
         ))}
-        <rect x={30} y={64} width={260} height={10} fill={frameColor} style={{ transition: "fill 300ms" }} />
-        <rect x={30} y={148} width={260} height={10} fill={frameColor} style={{ transition: "fill 300ms" }} />
+        {/* top & bottom roof beams (frame) */}
+        <rect
+          x={x0}
+          y={roofY - 10}
+          width={frameW}
+          height={beamThickness}
+          fill={frameColor}
+          style={{ transition: "fill 300ms, x 250ms, width 250ms" }}
+        />
+        <rect
+          x={x0}
+          y={roofBottomY - 6}
+          width={frameW}
+          height={beamThickness}
+          fill={frameColor}
+          style={{ transition: "fill 300ms, x 250ms, width 250ms, y 250ms" }}
+        />
         {/* posts */}
-        <rect x={34} y={74} width={10} height={124} fill={frameColor} style={{ transition: "fill 300ms" }} />
-        <rect x={276} y={74} width={10} height={124} fill={frameColor} style={{ transition: "fill 300ms" }} />
+        <rect
+          x={x0 + 4}
+          y={roofY}
+          width={postW}
+          height={groundY - roofY}
+          fill={frameColor}
+          style={{ transition: "fill 300ms, x 250ms" }}
+        />
+        <rect
+          x={x1 - postW - 4}
+          y={roofY}
+          width={postW}
+          height={groundY - roofY}
+          fill={frameColor}
+          style={{ transition: "fill 300ms, x 250ms" }}
+        />
       </svg>
+      {/* size chip */}
+      <div className="absolute right-3 top-3 rounded-full bg-black/40 px-3 py-1 font-mono text-[10px] text-white/80 backdrop-blur">
+        {(widthMm / 1000).toFixed(2)} × {(lengthMm / 1000).toFixed(2)} m
+      </div>
     </div>
   );
 }
