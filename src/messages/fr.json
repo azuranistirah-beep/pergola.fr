@@ -335,7 +335,18 @@
     "shipping": "Livraison",
     "freeShipping": "Livraison France offerte dès 2 000 €",
     "warranty": "Garantie 10 ans",
-    "cartEmpty": "Panier vide."
+    "cartEmpty": "Panier vide.",
+    "quoteEyebrow": "Demande de devis",
+    "quoteTitle": "Finalisez votre demande de devis",
+    "quoteIntro": "Confirmez vos coordonnées : notre équipe vous recontacte sous 48 h avec un devis détaillé (paiement par virement bancaire à réception).",
+    "quoteCta": "Envoyer ma demande de devis",
+    "quoteSubmitting": "Envoi en cours…",
+    "quoteNotice": "Aucun paiement en ligne. Un conseiller vous recontacte pour finaliser.",
+    "quoteNotesTitle": "Précisions (optionnel)",
+    "quoteNotesHelper": "Contraintes de pose, calendrier souhaité, adresse alternative…",
+    "configurationLabel": "Voir la configuration",
+    "cartEmptyCta": "Explorer les pergolas",
+    "submitError": "Impossible d’envoyer la demande. Réessayez ou contactez-nous."
   },
   "confirmation": {
     "badge": "Commande confirmée",

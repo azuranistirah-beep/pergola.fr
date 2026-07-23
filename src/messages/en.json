@@ -335,7 +335,18 @@
     "shipping": "Shipping",
     "freeShipping": "Free shipping in France over €2,000",
     "warranty": "10-year warranty",
-    "cartEmpty": "Cart is empty."
+    "cartEmpty": "Cart is empty.",
+    "quoteEyebrow": "Quote request",
+    "quoteTitle": "Complete your quote request",
+    "quoteIntro": "Confirm your details: our team gets back within 48 hours with a detailed quote (bank transfer on approval).",
+    "quoteCta": "Send my quote request",
+    "quoteSubmitting": "Sending…",
+    "quoteNotice": "No online payment. An advisor will contact you to finalise.",
+    "quoteNotesTitle": "Additional notes (optional)",
+    "quoteNotesHelper": "Install constraints, preferred timeline, alternate address…",
+    "configurationLabel": "View configuration",
+    "cartEmptyCta": "Explore pergolas",
+    "submitError": "Could not send the request. Try again or contact us."
   },
   "confirmation": {
     "badge": "Order confirmed",
