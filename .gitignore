@@ -34,11 +34,6 @@ yarn-error.log*
 .env*
 !.env.example
 
-# Placeholder product photos (regenerate with `npm run seed:images`)
-/public/images/products/*/cover.jpg
-/public/images/products/*/[0-9].jpg
-
-
 # vercel
 .vercel
 
