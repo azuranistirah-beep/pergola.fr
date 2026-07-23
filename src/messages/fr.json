@@ -487,10 +487,22 @@
     "statMadeIn": "Fabriqué en France",
     "commitmentsEyebrow": "Nos engagements",
     "commitmentsTitle": "Une exigence, à chaque étape.",
-    "design": { "title": "Dessin à Paris", "body": "Studio de design intégré au showroom du Marais." },
-    "workshop": { "title": "Atelier Vendée", "body": "Fabrication artisanale, machines à commande numérique." },
-    "ecodesign": { "title": "Éco-conçu", "body": "Aluminium recyclable, cèdre PEFC, LED basse consommation." },
-    "awarded": { "title": "Distingué", "body": "Prix Janus de l'Industrie, référencé Architectes du Patrimoine." }
+    "design": {
+      "title": "Dessin à Paris",
+      "body": "Studio de design intégré au showroom du Marais."
+    },
+    "workshop": {
+      "title": "Atelier Vendée",
+      "body": "Fabrication artisanale, machines à commande numérique."
+    },
+    "ecodesign": {
+      "title": "Éco-conçu",
+      "body": "Aluminium recyclable, cèdre PEFC, LED basse consommation."
+    },
+    "awarded": {
+      "title": "Distingué",
+      "body": "Prix Janus de l'Industrie, référencé Architectes du Patrimoine."
+    }
   },
   "projectsPage": {
     "eyebrow": "Réalisations",
@@ -537,16 +549,44 @@
     "eyebrow": "Service",
     "title": "Livraison, pose & suivi.",
     "intro": "Nous prenons en charge chaque étape, de la sortie d'atelier jusqu'à la mise en service chez vous.",
-    "step1": { "title": "1. Fabrication", "body": "3 à 5 semaines dans notre atelier de Vendée. Contrôle qualité au dixième, thermolaquage certifié Qualicoat." },
-    "step2": { "title": "2. Expédition", "body": "Prise de rendez-vous 48h avant la livraison. Camion adapté, hayon élévateur pour les grandes structures." },
-    "step3": { "title": "3. Pose", "body": "Notre équipe fixe, ajuste et met en service la pergola. Nettoyage complet du site avant départ." },
-    "step4": { "title": "4. Suivi", "body": "Un chef de studio dédié reste joignable pendant toute la garantie. Interventions sous 72h en France métropolitaine." },
+    "step1": {
+      "title": "1. Fabrication",
+      "body": "3 à 5 semaines dans notre atelier de Vendée. Contrôle qualité au dixième, thermolaquage certifié Qualicoat."
+    },
+    "step2": {
+      "title": "2. Expédition",
+      "body": "Prise de rendez-vous 48h avant la livraison. Camion adapté, hayon élévateur pour les grandes structures."
+    },
+    "step3": {
+      "title": "3. Pose",
+      "body": "Notre équipe fixe, ajuste et met en service la pergola. Nettoyage complet du site avant départ."
+    },
+    "step4": {
+      "title": "4. Suivi",
+      "body": "Un chef de studio dédié reste joignable pendant toute la garantie. Interventions sous 72h en France métropolitaine."
+    },
     "optionsEyebrow": "Options & tarifs",
     "optionsTitle": "Un tarif clair, quel que soit votre projet.",
-    "standard": { "label": "France métropolitaine — standard", "delay": "4 à 6 semaines", "price": "Offert dès 2 000 €" },
-    "express": { "label": "France métropolitaine — express", "delay": "3 semaines", "price": "+ 299 €" },
-    "install": { "label": "Pose par nos équipes", "delay": "Ajouté au délai standard", "price": "à partir de 1 490 €" },
-    "beNlCh": { "label": "Belgique / Luxembourg / Suisse", "delay": "5 à 7 semaines", "price": "Sur devis" },
+    "standard": {
+      "label": "France métropolitaine — standard",
+      "delay": "4 à 6 semaines",
+      "price": "Offert dès 2 000 €"
+    },
+    "express": {
+      "label": "France métropolitaine — express",
+      "delay": "3 semaines",
+      "price": "+ 299 €"
+    },
+    "install": {
+      "label": "Pose par nos équipes",
+      "delay": "Ajouté au délai standard",
+      "price": "à partir de 1 490 €"
+    },
+    "beNlCh": {
+      "label": "Belgique / Luxembourg / Suisse",
+      "delay": "5 à 7 semaines",
+      "price": "Sur devis"
+    },
     "outsideNotice": "Livraison dans les DOM-TOM et hors Europe possible sur devis. Contactez notre équipe pour un chiffrage précis selon votre destination."
   },
   "warranty": {
@@ -554,10 +594,26 @@
     "title": "Une garantie, une équipe, un seul interlocuteur.",
     "intro": "Nous concevons nos pergolas pour durer. Nos garanties couvrent la structure, les motorisations, les finitions et la pose.",
     "guaranteeLabel": "Garantie",
-    "structure": { "title": "Structure porteuse", "body": "Traverses, chevrons, poteaux, sabots inox. Corrosion, déformation, rupture.", "years": "10 ans" },
-    "motors": { "title": "Motorisations & LED", "body": "Moteurs Somfy, cartes électroniques, bandeaux LED intégrés, capteurs pluie/vent.", "years": "5 ans" },
-    "finish": { "title": "Finitions Qualicoat", "body": "Thermolaquage, teintes RAL, aspects anodisés.", "years": "5 ans" },
-    "accessories": { "title": "Accessoires & pose", "body": "Zip screens, panneaux vitrés, main d'œuvre de nos équipes.", "years": "2 ans" },
+    "structure": {
+      "title": "Structure porteuse",
+      "body": "Traverses, chevrons, poteaux, sabots inox. Corrosion, déformation, rupture.",
+      "years": "10 ans"
+    },
+    "motors": {
+      "title": "Motorisations & LED",
+      "body": "Moteurs Somfy, cartes électroniques, bandeaux LED intégrés, capteurs pluie/vent.",
+      "years": "5 ans"
+    },
+    "finish": {
+      "title": "Finitions Qualicoat",
+      "body": "Thermolaquage, teintes RAL, aspects anodisés.",
+      "years": "5 ans"
+    },
+    "accessories": {
+      "title": "Accessoires & pose",
+      "body": "Zip screens, panneaux vitrés, main d'œuvre de nos équipes.",
+      "years": "2 ans"
+    },
     "coveredEyebrow": "Ce qui est couvert",
     "coveredTitle": "Nous prenons tout en charge.",
     "coveredList": [
@@ -707,5 +763,117 @@
   "newsletter": {
     "successTitle": "Bienvenue chez Pergola FR",
     "successBody": "Vous recevrez nos nouveautés et invitations privées."
+  },
+  "configuratorPage": {
+    "eyebrow": "Configurateur",
+    "required": "Requis",
+    "included": "Inclus",
+    "incompatible": "Incompatible avec vos choix",
+    "reference": "Référence",
+    "footprint": "Emprise au sol",
+    "widthLength": "Largeur × Longueur",
+    "basePrice": "Prix de base",
+    "adjustments": "Ajustements",
+    "totalTTC": "Total TTC",
+    "addToCart": "Ajouter au panier",
+    "requestQuote": "Demander un devis PDF",
+    "deliveryEstimate": "Livraison estimée : 4–6 semaines",
+    "productName": "Pergola bioclimatique sur-mesure",
+    "pageTitle": "Dessinez votre pergola bioclimatique.",
+    "pageDescription": "Chaque choix met à jour le prix, la référence SKU et l'aperçu en temps réel. Sauvegardez, demandez un devis ou commandez directement en ligne.",
+    "customDimensions": "Sur-mesure hors format standard"
+  },
+  "configuratorData": {
+    "options": {
+      "width": {
+        "label": "Largeur",
+        "helper": "De 3,00 m à 6,00 m, au centimètre près.",
+        "valueLabel": "Largeur (mm)"
+      },
+      "length": {
+        "label": "Longueur",
+        "helper": "De 3,00 m à 7,00 m, au centimètre près.",
+        "valueLabel": "Longueur (mm)"
+      },
+      "roof": {
+        "label": "Type de toit",
+        "values": {
+          "bioclimatique": "Bioclimatique motorisée",
+          "vitre-fixe": "Verre fixe",
+          "toile-retractable": "Toile rétractable"
+        }
+      },
+      "frame_color": {
+        "label": "Coloris cadre",
+        "values": {
+          "anthracite": "Anthracite RAL 7016",
+          "noir-2100": "Noir sablé RAL 9005",
+          "blanc-9010": "Blanc pur RAL 9010",
+          "gris-quartz": "Gris quartz RAL 7039",
+          "bronze-anodise": "Bronze anodisé",
+          "cuivre-anodise": "Cuivre anodisé"
+        }
+      },
+      "roof_color": {
+        "label": "Coloris lames",
+        "values": {
+          "identique": "Identique au cadre",
+          "contrast-noir": "Contraste noir sablé",
+          "contrast-blanc": "Contraste blanc pur"
+        }
+      },
+      "led": {
+        "label": "Éclairage LED périmétrique",
+        "helper": "Bandeau LED intégré dans les traverses, dimmable.",
+        "values": {
+          "aucun": "Sans",
+          "blanc-chaud": "Blanc chaud 2700K",
+          "rgbw": "RGBW pilotable"
+        }
+      },
+      "motorisation": {
+        "label": "Motorisation & capteurs",
+        "values": {
+          "manuel": "Manivelle manuelle",
+          "moto-radio": "Motorisation radio (télécommande)",
+          "moto-somfy": "Somfy io + capteur pluie/vent"
+        }
+      },
+      "screen": {
+        "label": "Zip screen latéral",
+        "helper": "Toile screen manuelle ou motorisée, une face.",
+        "values": {
+          "aucun": "Sans",
+          "manuel-1": "Manuel — 1 face",
+          "moto-1": "Motorisé — 1 face",
+          "moto-2": "Motorisé — 2 faces"
+        }
+      },
+      "glass": {
+        "label": "Vitrage coulissant",
+        "helper": "Baie vitrée coulissante sans profil, une face.",
+        "values": {
+          "aucun": "Sans",
+          "vitre-1": "1 face vitrée",
+          "vitre-2": "2 faces vitrées"
+        }
+      },
+      "foundation": {
+        "label": "Préparation du sol",
+        "values": {
+          "existant": "Sol dur existant",
+          "plots-beton": "4 plots béton scellés",
+          "dalle-complete": "Dalle béton complète"
+        }
+      },
+      "installation": {
+        "label": "Installation",
+        "values": {
+          "diy": "Livraison seule (autonome)",
+          "pose-standard": "Pose par nos équipes",
+          "pose-premium": "Pose premium + finitions maçonnées"
+        }
+      }
+    }
   }
 }

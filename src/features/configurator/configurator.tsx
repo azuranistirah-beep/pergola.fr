@@ -2,9 +2,12 @@
 
 import * as React from "react";
 import { AlertTriangle, Check, ChevronRight, Ruler } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
+import { useCart } from "@/features/cart/cart-store";
 import { cn, formatEUR } from "@/lib/utils";
 import {
   buildSku,
@@ -18,6 +21,11 @@ import {
 import type { ProductConfigurator, Selection } from "./config-types";
 
 export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
+  const t = useTranslations("configuratorPage");
+  const tData = useTranslations("configuratorData");
+  const router = useRouter();
+  const cart = useCart();
+
   const [selection, setSelection] = React.useState<Selection>(() =>
     initialSelection(cfg),
   );
@@ -45,66 +53,98 @@ export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
   );
   const roofColor = roofColorValue?.code === "identique" ? frameColor : roofColorValue?.swatch ?? frameColor;
 
+  function handleAddToCart() {
+    const configuration: Record<string, string | number> = {};
+    cfg.options.forEach((opt) => {
+      const optLabel = tData(`options.${opt.code}.label`);
+      if (opt.type === "dimension") {
+        const mm = (selection[opt.code] as number | undefined) ?? 0;
+        configuration[optLabel] = `${(mm / 1000).toFixed(2)} m`;
+      } else {
+        const val = getSelectedValue(opt, selection);
+        if (val) {
+          configuration[optLabel] = tData(
+            `options.${opt.code}.values.${val.code}`,
+          );
+        }
+      }
+    });
+
+    cart.add({
+      productSlug: cfg.productSlug,
+      name: t("productName"),
+      sku,
+      unitPriceCents: price.totalCents,
+      quantity: 1,
+      configuration,
+    });
+    router.push("/panier");
+  }
+
   return (
     <div className="bg-muted min-h-screen pt-28 pb-24 md:pt-32">
       <Container>
         <div className="mb-10 flex flex-col gap-3">
-          <Eyebrow>Configurateur</Eyebrow>
+          <Eyebrow>{t("eyebrow")}</Eyebrow>
           <h1 className="font-serif text-4xl leading-tight md:text-6xl">
-            Dessinez votre pergola bioclimatique.
+            {t("pageTitle")}
           </h1>
           <p className="text-secondary max-w-2xl text-base">
-            Chaque choix met à jour le prix, la référence SKU et l&apos;aperçu
-            en temps réel. Sauvegardez, demandez un devis ou commandez
-            directement en ligne.
+            {t("pageDescription")}
           </p>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           {/* Options column */}
           <div className="space-y-8">
-            {cfg.options.map((opt) => (
-              <div
-                key={opt.code}
-                className="bg-background border-border/70 rounded-[var(--radius-lg)] border p-6 md:p-8"
-              >
-                <div className="mb-5 flex items-baseline justify-between gap-4">
-                  <div>
-                    <h3 className="font-serif text-lg">{opt.label}</h3>
-                    {opt.helper && (
-                      <p className="text-secondary mt-1 text-xs">{opt.helper}</p>
+            {cfg.options.map((opt) => {
+              const label = tData(`options.${opt.code}.label`);
+              const helper = opt.helper
+                ? tData(`options.${opt.code}.helper`)
+                : undefined;
+              return (
+                <div
+                  key={opt.code}
+                  className="bg-background border-border/70 rounded-[var(--radius-lg)] border p-6 md:p-8"
+                >
+                  <div className="mb-5 flex items-baseline justify-between gap-4">
+                    <div>
+                      <h3 className="font-serif text-lg">{label}</h3>
+                      {helper && (
+                        <p className="text-secondary mt-1 text-xs">{helper}</p>
+                      )}
+                    </div>
+                    {opt.required && (
+                      <span className="text-accent text-[10px] uppercase tracking-[0.25em]">
+                        {t("required")}
+                      </span>
                     )}
                   </div>
-                  {opt.required && (
-                    <span className="text-accent text-[10px] uppercase tracking-[0.25em]">
-                      Requis
-                    </span>
+
+                  {opt.type === "dimension" ? (
+                    <DimensionSlider
+                      option={opt}
+                      value={(selection[opt.code] as number) ?? 0}
+                      onChange={(v) => pick(opt.code, v)}
+                    />
+                  ) : opt.type === "frame-color" || opt.type === "roof-color" ? (
+                    <SwatchGrid
+                      option={opt}
+                      selection={selection}
+                      conflicts={conflicts}
+                      onPick={pick}
+                    />
+                  ) : (
+                    <OptionCards
+                      option={opt}
+                      selection={selection}
+                      conflicts={conflicts}
+                      onPick={pick}
+                    />
                   )}
                 </div>
-
-                {opt.type === "dimension" ? (
-                  <DimensionSlider
-                    option={opt}
-                    value={(selection[opt.code] as number) ?? 0}
-                    onChange={(v) => pick(opt.code, v)}
-                  />
-                ) : opt.type === "frame-color" || opt.type === "roof-color" ? (
-                  <SwatchGrid
-                    option={opt}
-                    selection={selection}
-                    conflicts={conflicts}
-                    onPick={pick}
-                  />
-                ) : (
-                  <OptionCards
-                    option={opt}
-                    selection={selection}
-                    conflicts={conflicts}
-                    onPick={pick}
-                  />
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Summary column */}
@@ -120,7 +160,7 @@ export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
                 />
                 <div className="absolute inset-x-0 bottom-0 p-5">
                   <div className="text-[10px] uppercase tracking-[0.3em] text-white/60">
-                    Référence
+                    {t("reference")}
                   </div>
                   <div className="text-accent mt-1 font-mono text-sm">
                     {sku}
@@ -130,38 +170,43 @@ export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
 
               <div className="space-y-5 p-6 md:p-8">
                 <SummaryRow
-                  label="Emprise au sol"
+                  label={t("footprint")}
                   value={`${area.toFixed(2)} m²`}
                 />
                 <SummaryRow
-                  label="Largeur × Longueur"
+                  label={t("widthLength")}
                   value={`${(((selection.width as number) ?? 0) / 1000).toFixed(2)} × ${(((selection.length as number) ?? 0) / 1000).toFixed(2)} m`}
                 />
                 <SummaryRow
-                  label="Prix de base"
+                  label={t("basePrice")}
                   value={formatEUR(price.baseCents)}
                 />
                 {price.lines.length > 0 && (
                   <div className="border-primary-foreground/10 border-t pt-5">
                     <div className="mb-3 text-[10px] uppercase tracking-[0.25em] text-white/50">
-                      Ajustements
+                      {t("adjustments")}
                     </div>
-                    {price.lines.map((l) => (
-                      <div
-                        key={l.code + l.label}
-                        className="text-primary-foreground/80 flex justify-between gap-4 py-1 text-xs"
-                      >
-                        <span className="truncate">{l.label}</span>
-                        <span className="whitespace-nowrap">
-                          +{formatEUR(l.amountCents)}
-                        </span>
-                      </div>
-                    ))}
+                    {price.lines.map((l) => {
+                      const lineLabel = l.labelKey
+                        ? t(l.labelKey)
+                        : `${tData(`options.${l.optCode}.label`)} — ${tData(`options.${l.optCode}.values.${l.valCode}`)}`;
+                      return (
+                        <div
+                          key={l.code + (l.valCode ?? l.labelKey ?? "")}
+                          className="text-primary-foreground/80 flex justify-between gap-4 py-1 text-xs"
+                        >
+                          <span className="truncate">{lineLabel}</span>
+                          <span className="whitespace-nowrap">
+                            +{formatEUR(l.amountCents)}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
                 <div className="border-primary-foreground/10 border-t pt-5">
                   <div className="text-[10px] uppercase tracking-[0.25em] text-white/50">
-                    Total TTC
+                    {t("totalTTC")}
                   </div>
                   <div className="mt-1 flex items-baseline justify-between">
                     <span className="font-serif text-4xl">
@@ -174,20 +219,26 @@ export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2">
-                  <Button variant="accent" size="lg" className="w-full">
-                    Ajouter au panier
+                  <Button
+                    variant="accent"
+                    size="lg"
+                    className="w-full"
+                    onClick={handleAddToCart}
+                  >
+                    {t("addToCart")}
                   </Button>
                   <Button
                     variant="outline"
                     size="lg"
                     className="w-full border-white/30 bg-transparent text-white hover:border-white hover:bg-white hover:text-primary"
+                    onClick={() => router.push("/contact")}
                   >
-                    Demander un devis PDF
+                    {t("requestQuote")}
                   </Button>
                 </div>
 
                 <div className="text-primary-foreground/60 flex items-center gap-2 pt-2 text-xs">
-                  <Ruler className="text-accent size-3.5" /> Livraison estimée : 4–6 semaines
+                  <Ruler className="text-accent size-3.5" /> {t("deliveryEstimate")}
                 </div>
               </div>
             </div>
@@ -260,12 +311,15 @@ function OptionCards({
   conflicts: import("./engine").RuleConflict[];
   onPick: (opt: string, v: string) => void;
 }) {
+  const t = useTranslations("configuratorPage");
+  const tData = useTranslations("configuratorData");
   const currentCode = selection[option.code];
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {option.values.map((v) => {
         const disabled = isValueDisabled(option.code, v.code, conflicts);
         const active = currentCode === v.code && !disabled;
+        const valueLabel = tData(`options.${option.code}.values.${v.code}`);
         return (
           <button
             key={v.code}
@@ -281,10 +335,10 @@ function OptionCards({
           >
             <div className="flex w-full items-start justify-between gap-2">
               <div>
-                <div className="text-sm font-medium">{v.label}</div>
+                <div className="text-sm font-medium">{valueLabel}</div>
                 <div className="text-secondary mt-1 text-xs">
                   {v.priceCents === 0
-                    ? "Inclus"
+                    ? t("included")
                     : `+${formatEUR(v.priceCents)}${v.priceKind === "per_sqm" ? "/m²" : v.priceKind === "per_linear_m" ? "/ml" : ""}`}
                 </div>
               </div>
@@ -301,7 +355,7 @@ function OptionCards({
             </div>
             {disabled && (
               <div className="text-accent flex items-center gap-1 text-[10px]">
-                <AlertTriangle className="size-3" /> Incompatible avec vos choix
+                <AlertTriangle className="size-3" /> {t("incompatible")}
               </div>
             )}
           </button>
@@ -322,12 +376,14 @@ function SwatchGrid({
   conflicts: import("./engine").RuleConflict[];
   onPick: (opt: string, v: string) => void;
 }) {
+  const tData = useTranslations("configuratorData");
   const currentCode = selection[option.code];
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
       {option.values.map((v) => {
         const disabled = isValueDisabled(option.code, v.code, conflicts);
         const active = currentCode === v.code && !disabled;
+        const valueLabel = tData(`options.${option.code}.values.${v.code}`);
         return (
           <button
             key={v.code}
@@ -346,7 +402,7 @@ function SwatchGrid({
               style={{ background: v.swatch ?? "#ccc" }}
             />
             <span className="min-w-0">
-              <span className="block truncate text-xs font-medium">{v.label}</span>
+              <span className="block truncate text-xs font-medium">{valueLabel}</span>
               {v.priceCents > 0 && (
                 <span className="text-secondary block text-[10px]">
                   +{formatEUR(v.priceCents)}

@@ -487,10 +487,22 @@
     "statMadeIn": "Made in France",
     "commitmentsEyebrow": "Our commitments",
     "commitmentsTitle": "One standard, every step.",
-    "design": { "title": "Designed in Paris", "body": "In-house design studio at our Marais showroom." },
-    "workshop": { "title": "Vendée workshop", "body": "Artisan manufacturing, CNC machines." },
-    "ecodesign": { "title": "Eco-designed", "body": "Recyclable aluminium, PEFC cedar, low-consumption LED." },
-    "awarded": { "title": "Award-winning", "body": "Janus de l'Industrie prize, referenced by Architectes du Patrimoine." }
+    "design": {
+      "title": "Designed in Paris",
+      "body": "In-house design studio at our Marais showroom."
+    },
+    "workshop": {
+      "title": "Vendée workshop",
+      "body": "Artisan manufacturing, CNC machines."
+    },
+    "ecodesign": {
+      "title": "Eco-designed",
+      "body": "Recyclable aluminium, PEFC cedar, low-consumption LED."
+    },
+    "awarded": {
+      "title": "Award-winning",
+      "body": "Janus de l'Industrie prize, referenced by Architectes du Patrimoine."
+    }
   },
   "projectsPage": {
     "eyebrow": "Projects",
@@ -537,16 +549,44 @@
     "eyebrow": "Service",
     "title": "Delivery, install & follow-up.",
     "intro": "We handle every step, from workshop shipping to full commissioning at your home.",
-    "step1": { "title": "1. Manufacturing", "body": "3 to 5 weeks in our Vendée workshop. Tenth-of-a-mm quality control, Qualicoat-certified thermo-lacquering." },
-    "step2": { "title": "2. Shipping", "body": "Appointment booked 48h before delivery. Suitable truck, tail lift for large structures." },
-    "step3": { "title": "3. Install", "body": "Our team fixes, adjusts and commissions the pergola. Full site cleaning before leaving." },
-    "step4": { "title": "4. Follow-up", "body": "A dedicated studio lead stays reachable during the full warranty. Interventions within 72h in mainland France." },
+    "step1": {
+      "title": "1. Manufacturing",
+      "body": "3 to 5 weeks in our Vendée workshop. Tenth-of-a-mm quality control, Qualicoat-certified thermo-lacquering."
+    },
+    "step2": {
+      "title": "2. Shipping",
+      "body": "Appointment booked 48h before delivery. Suitable truck, tail lift for large structures."
+    },
+    "step3": {
+      "title": "3. Install",
+      "body": "Our team fixes, adjusts and commissions the pergola. Full site cleaning before leaving."
+    },
+    "step4": {
+      "title": "4. Follow-up",
+      "body": "A dedicated studio lead stays reachable during the full warranty. Interventions within 72h in mainland France."
+    },
     "optionsEyebrow": "Options & pricing",
     "optionsTitle": "Clear pricing, whatever your project.",
-    "standard": { "label": "Mainland France — standard", "delay": "4 to 6 weeks", "price": "Free over €2,000" },
-    "express": { "label": "Mainland France — express", "delay": "3 weeks", "price": "+ €299" },
-    "install": { "label": "Install by our team", "delay": "Added to standard delay", "price": "from €1,490" },
-    "beNlCh": { "label": "Belgium / Luxembourg / Switzerland", "delay": "5 to 7 weeks", "price": "On quote" },
+    "standard": {
+      "label": "Mainland France — standard",
+      "delay": "4 to 6 weeks",
+      "price": "Free over €2,000"
+    },
+    "express": {
+      "label": "Mainland France — express",
+      "delay": "3 weeks",
+      "price": "+ €299"
+    },
+    "install": {
+      "label": "Install by our team",
+      "delay": "Added to standard delay",
+      "price": "from €1,490"
+    },
+    "beNlCh": {
+      "label": "Belgium / Luxembourg / Switzerland",
+      "delay": "5 to 7 weeks",
+      "price": "On quote"
+    },
     "outsideNotice": "Delivery to French overseas territories and outside Europe possible on quote. Contact our team for precise pricing based on your destination."
   },
   "warranty": {
@@ -554,10 +594,26 @@
     "title": "One warranty, one team, one point of contact.",
     "intro": "We design our pergolas to last. Our warranties cover structure, motors, finishes and installation.",
     "guaranteeLabel": "Warranty",
-    "structure": { "title": "Load-bearing structure", "body": "Beams, rafters, posts, stainless steel brackets. Corrosion, deformation, breakage.", "years": "10 years" },
-    "motors": { "title": "Motors & LED", "body": "Somfy motors, electronic boards, integrated LED strips, rain/wind sensors.", "years": "5 years" },
-    "finish": { "title": "Qualicoat finishes", "body": "Thermo-lacquering, RAL tones, anodised looks.", "years": "5 years" },
-    "accessories": { "title": "Accessories & install", "body": "Zip screens, glass panels, our team's labour.", "years": "2 years" },
+    "structure": {
+      "title": "Load-bearing structure",
+      "body": "Beams, rafters, posts, stainless steel brackets. Corrosion, deformation, breakage.",
+      "years": "10 years"
+    },
+    "motors": {
+      "title": "Motors & LED",
+      "body": "Somfy motors, electronic boards, integrated LED strips, rain/wind sensors.",
+      "years": "5 years"
+    },
+    "finish": {
+      "title": "Qualicoat finishes",
+      "body": "Thermo-lacquering, RAL tones, anodised looks.",
+      "years": "5 years"
+    },
+    "accessories": {
+      "title": "Accessories & install",
+      "body": "Zip screens, glass panels, our team's labour.",
+      "years": "2 years"
+    },
     "coveredEyebrow": "What is covered",
     "coveredTitle": "We handle everything.",
     "coveredList": [
@@ -707,5 +763,117 @@
   "newsletter": {
     "successTitle": "Welcome to Pergola FR",
     "successBody": "You'll receive our new arrivals and private invitations."
+  },
+  "configuratorPage": {
+    "eyebrow": "Configurator",
+    "required": "Required",
+    "included": "Included",
+    "incompatible": "Incompatible with your choices",
+    "reference": "Reference",
+    "footprint": "Footprint",
+    "widthLength": "Width × Length",
+    "basePrice": "Base price",
+    "adjustments": "Adjustments",
+    "totalTTC": "Total incl. VAT",
+    "addToCart": "Add to cart",
+    "requestQuote": "Request PDF quote",
+    "deliveryEstimate": "Estimated delivery: 4–6 weeks",
+    "productName": "Custom bioclimatic pergola",
+    "pageTitle": "Design your bioclimatic pergola.",
+    "pageDescription": "Every choice updates the price, SKU reference and preview in real time. Save, request a quote or order directly online.",
+    "customDimensions": "Custom size beyond standard format"
+  },
+  "configuratorData": {
+    "options": {
+      "width": {
+        "label": "Width",
+        "helper": "From 3.00 m to 6.00 m, to the centimeter.",
+        "valueLabel": "Width (mm)"
+      },
+      "length": {
+        "label": "Length",
+        "helper": "From 3.00 m to 7.00 m, to the centimeter.",
+        "valueLabel": "Length (mm)"
+      },
+      "roof": {
+        "label": "Roof type",
+        "values": {
+          "bioclimatique": "Motorized bioclimatic",
+          "vitre-fixe": "Fixed glass",
+          "toile-retractable": "Retractable canvas"
+        }
+      },
+      "frame_color": {
+        "label": "Frame color",
+        "values": {
+          "anthracite": "Anthracite RAL 7016",
+          "noir-2100": "Sandblasted black RAL 9005",
+          "blanc-9010": "Pure white RAL 9010",
+          "gris-quartz": "Quartz grey RAL 7039",
+          "bronze-anodise": "Anodized bronze",
+          "cuivre-anodise": "Anodized copper"
+        }
+      },
+      "roof_color": {
+        "label": "Louvre color",
+        "values": {
+          "identique": "Same as frame",
+          "contrast-noir": "Sandblasted black contrast",
+          "contrast-blanc": "Pure white contrast"
+        }
+      },
+      "led": {
+        "label": "Perimeter LED lighting",
+        "helper": "LED strip integrated into the beams, dimmable.",
+        "values": {
+          "aucun": "None",
+          "blanc-chaud": "Warm white 2700K",
+          "rgbw": "RGBW controllable"
+        }
+      },
+      "motorisation": {
+        "label": "Motorization & sensors",
+        "values": {
+          "manuel": "Manual crank",
+          "moto-radio": "Radio motorization (remote)",
+          "moto-somfy": "Somfy io + rain/wind sensor"
+        }
+      },
+      "screen": {
+        "label": "Side zip screen",
+        "helper": "Manual or motorized screen fabric, one side.",
+        "values": {
+          "aucun": "None",
+          "manuel-1": "Manual — 1 side",
+          "moto-1": "Motorized — 1 side",
+          "moto-2": "Motorized — 2 sides"
+        }
+      },
+      "glass": {
+        "label": "Sliding glazing",
+        "helper": "Frameless sliding glass door, one side.",
+        "values": {
+          "aucun": "None",
+          "vitre-1": "1 glazed side",
+          "vitre-2": "2 glazed sides"
+        }
+      },
+      "foundation": {
+        "label": "Ground preparation",
+        "values": {
+          "existant": "Existing hard surface",
+          "plots-beton": "4 anchored concrete pads",
+          "dalle-complete": "Full concrete slab"
+        }
+      },
+      "installation": {
+        "label": "Installation",
+        "values": {
+          "diy": "Delivery only (self-install)",
+          "pose-standard": "Installation by our teams",
+          "pose-premium": "Premium installation + masonry finishing"
+        }
+      }
+    }
   }
 }

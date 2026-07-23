@@ -5,9 +5,17 @@ import type {
   Selection,
 } from "./config-types";
 
+export interface PriceLine {
+  code: string;
+  amountCents: number;
+  labelKey?: string;
+  optCode?: string;
+  valCode?: string;
+}
+
 export interface PriceBreakdown {
   baseCents: number;
-  lines: { code: string; label: string; amountCents: number }[];
+  lines: PriceLine[];
   totalCents: number;
 }
 
@@ -70,7 +78,7 @@ export function computePrice(
   if (dimExtra > 0) {
     lines.push({
       code: "dimensions",
-      label: "Sur-mesure hors format standard",
+      labelKey: "customDimensions",
       amountCents: dimExtra,
     });
   }
@@ -99,7 +107,12 @@ export function computePrice(
         break;
     }
     if (amt > 0) {
-      lines.push({ code: opt.code, label: `${opt.label} — ${val.label}`, amountCents: amt });
+      lines.push({
+        code: opt.code,
+        optCode: opt.code,
+        valCode: val.code,
+        amountCents: amt,
+      });
     }
   });
 
