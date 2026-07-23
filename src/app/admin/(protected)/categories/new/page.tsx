@@ -1,12 +1,14 @@
 import { AdminHeader } from "@/features/admin/admin-ui";
 import { CategoryForm } from "@/features/admin/category-form";
+import { getT } from "@/lib/admin-i18n";
 
-export default function NewCategoryPage() {
+export default async function NewCategoryPage() {
+  const { t } = await getT();
   return (
     <>
       <AdminHeader
-        title="Nouvelle catégorie"
-        subtitle="Créez une famille produit avec traductions FR / EN"
+        title={t("categories.newTitle")}
+        subtitle={t("categories.newSubtitle")}
       />
       <CategoryForm
         initial={{

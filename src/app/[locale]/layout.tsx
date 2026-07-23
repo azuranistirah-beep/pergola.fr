@@ -6,9 +6,10 @@ import { Inter, Playfair_Display } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { WhatsappFab } from "@/components/layout/whatsapp-fab";
 import { CartProvider } from "@/features/cart/cart-store";
 import { listProducts } from "@/repositories/product-repository";
-import { getTheme } from "@/repositories/settings-repository";
+import { getTheme, getSiteInfo } from "@/repositories/settings-repository";
 import { Toaster } from "@/components/ui/toaster";
 import "../globals.css";
 
@@ -38,6 +39,12 @@ export async function generateMetadata({
 
   return {
     metadataBase: new URL("https://pergolafr.com"),
+    icons: {
+      icon: [
+        { url: "/favicon.svg", type: "image/svg+xml" },
+        { url: "/favicon.ico", sizes: "any" },
+      ],
+    },
     title: {
       default: t("defaultTitle"),
       template: `%s — ${t("siteName")}`,
@@ -62,9 +69,10 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const [catalog, theme] = await Promise.all([
+  const [catalog, theme, site] = await Promise.all([
     listProducts().catch(() => []),
     getTheme().catch(() => null),
+    getSiteInfo().catch(() => null),
   ]);
   const themeCss = theme
     ? `:root{--color-primary:${theme.primary};--color-primary-foreground:${theme.background};--color-accent:${theme.accent};--color-background:${theme.background};--color-foreground:${theme.foreground};--color-secondary:${theme.secondary};--radius:${theme.radius}px;}`
@@ -83,9 +91,10 @@ export default async function LocaleLayout({
       <body className="bg-background text-foreground min-h-full font-sans">
         <NextIntlClientProvider>
           <CartProvider>
-            <SiteHeader catalog={catalog} />
+            <SiteHeader catalog={catalog} site={site} />
             <main>{children}</main>
             <SiteFooter />
+            <WhatsappFab />
             <Toaster />
           </CartProvider>
         </NextIntlClientProvider>

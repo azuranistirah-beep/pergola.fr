@@ -6,6 +6,7 @@ import {
   AdminSection,
 } from "@/features/admin/admin-ui";
 import { insforgeAdmin } from "@/lib/insforge-admin";
+import { getT } from "@/lib/admin-i18n";
 
 async function load() {
   const { data: cats } = await insforgeAdmin.database
@@ -20,7 +21,7 @@ async function load() {
     .from("products")
     .select("category_id");
   const name = new Map<string, string>();
-  (tr ?? []).forEach((t) => name.set(t.category_id, t.name));
+  (tr ?? []).forEach((r) => name.set(r.category_id, r.name));
   const count = new Map<string, number>();
   (products ?? []).forEach((p) => {
     count.set(p.category_id, (count.get(p.category_id) ?? 0) + 1);
@@ -33,16 +34,16 @@ async function load() {
 }
 
 export default async function CategoriesListPage() {
-  const rows = await load();
+  const [rows, { t }] = await Promise.all([load(), getT()]);
   return (
     <>
       <AdminHeader
-        title="Catégories"
-        subtitle={`${rows.length} famille${rows.length > 1 ? "s" : ""}`}
+        title={t("categories.title")}
+        subtitle={t("categories.subtitle", { n: rows.length })}
         actions={
           <Link href="/admin/categories/new">
             <AdminButton variant="primary">
-              <Plus className="size-4" /> Nouvelle catégorie
+              <Plus className="size-4" /> {t("categories.new")}
             </AdminButton>
           </Link>
         }
@@ -53,12 +54,12 @@ export default async function CategoriesListPage() {
           <table className="w-full text-sm">
             <thead className="border-border/60 border-b text-left">
               <tr className="text-secondary [&_th]:px-6 [&_th]:py-3 [&_th]:text-[10px] [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-[0.2em]">
-                <th>Nom</th>
-                <th>Slug</th>
-                <th className="text-right">Produits</th>
-                <th className="text-right">Ordre</th>
-                <th>Mise en avant</th>
-                <th className="w-20 text-right">Actions</th>
+                <th>{t("common.name")}</th>
+                <th>{t("common.slug")}</th>
+                <th className="text-right">{t("categories.table.products")}</th>
+                <th className="text-right">{t("categories.table.order")}</th>
+                <th>{t("categories.table.featured")}</th>
+                <th className="w-20 text-right">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-border/60 divide-y">
@@ -79,10 +80,10 @@ export default async function CategoriesListPage() {
                   <td className="px-6 py-4">
                     {c.is_featured ? (
                       <span className="bg-accent/15 text-accent rounded-full px-2 py-0.5 text-[10px] uppercase tracking-[0.2em]">
-                        Oui
+                        {t("common.yes")}
                       </span>
                     ) : (
-                      <span className="text-secondary text-xs">Non</span>
+                      <span className="text-secondary text-xs">{t("common.no")}</span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -90,7 +91,7 @@ export default async function CategoriesListPage() {
                       href={`/admin/categories/${c.id}`}
                       className="text-primary text-xs underline underline-offset-4"
                     >
-                      Éditer
+                      {t("common.edit")}
                     </Link>
                   </td>
                 </tr>

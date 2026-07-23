@@ -1,15 +1,13 @@
 import { AdminHeader } from "@/features/admin/admin-ui";
 import { ThemeEditor } from "@/features/admin/theme-editor";
 import { getTheme } from "@/repositories/settings-repository";
+import { getT } from "@/lib/admin-i18n";
 
 export default async function ThemePage() {
-  const theme = await getTheme();
+  const [theme, { t }] = await Promise.all([getTheme(), getT()]);
   return (
     <>
-      <AdminHeader
-        title="Thème"
-        subtitle="Couleurs, radius et palettes prédéfinies. Appliqué instantanément sur tout le site."
-      />
+      <AdminHeader title={t("theme.title")} subtitle={t("theme.subtitle")} />
       <ThemeEditor initial={theme} />
     </>
   );

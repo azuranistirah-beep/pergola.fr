@@ -1,6 +1,7 @@
 import { AdminHeader } from "@/features/admin/admin-ui";
 import { ProductForm } from "@/features/admin/product-form";
 import { insforgeAdmin } from "@/lib/insforge-admin";
+import { getT } from "@/lib/admin-i18n";
 
 async function loadCategories() {
   const { data: cats } = await insforgeAdmin.database
@@ -17,12 +18,12 @@ async function loadCategories() {
 }
 
 export default async function NewProductPage() {
-  const categories = await loadCategories();
+  const [categories, { t }] = await Promise.all([loadCategories(), getT()]);
   return (
     <>
       <AdminHeader
-        title="Nouveau produit"
-        subtitle="Créez un produit avec traductions FR / EN"
+        title={t("products.newTitle")}
+        subtitle={t("products.newSubtitle")}
       />
       <ProductForm
         categories={categories}

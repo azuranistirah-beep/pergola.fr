@@ -3,6 +3,7 @@ import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { ContactForm } from "@/features/contact/contact-form";
+import { getSiteInfo } from "@/repositories/settings-repository";
 
 export async function generateMetadata({
   params,
@@ -21,7 +22,10 @@ export default async function ContactPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("contactPage");
+  const [t, site] = await Promise.all([
+    getTranslations("contactPage"),
+    getSiteInfo(),
+  ]);
   return (
     <div className="pt-28 pb-24 md:pt-32">
       <Container>
@@ -42,26 +46,22 @@ export default async function ContactPage({
             <InfoCard
               Icon={MapPin}
               title={t("showroom")}
-              lines={[
-                "12 rue de Rivoli",
-                "75004 Paris — Le Marais",
-                t("openHours"),
-              ]}
+              lines={[site.showroomAddress, site.showroomHours]}
             />
             <InfoCard
               Icon={Phone}
               title={t("hotline")}
-              lines={["+33 1 84 88 00 00", t("hotlineHours")]}
+              lines={[site.phone, t("hotlineHours")]}
             />
             <InfoCard
               Icon={Mail}
               title={t("email")}
-              lines={["bonjour@pergolafr.com"]}
+              lines={[site.email]}
             />
             <InfoCard
               Icon={MessageCircle}
               title={t("whatsapp")}
-              lines={["+33 6 12 34 56 78 — " + t("whatsappHelper")]}
+              lines={[site.phone + " — " + t("whatsappHelper")]}
             />
           </aside>
         </div>

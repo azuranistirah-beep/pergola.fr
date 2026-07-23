@@ -7,6 +7,7 @@ import {
   KpiCard,
 } from "@/features/admin/admin-ui";
 import { insforgeAdmin } from "@/lib/insforge-admin";
+import { getT } from "@/lib/admin-i18n";
 
 interface MediaGroup {
   slug: string;
@@ -33,7 +34,7 @@ async function load(): Promise<{
   ]);
 
   const nameById = new Map<string, string>();
-  (trRes.data ?? []).forEach((t) => nameById.set(t.product_id, t.name));
+  (trRes.data ?? []).forEach((tr) => nameById.set(tr.product_id, tr.name));
 
   const groups: MediaGroup[] = (prodRes.data ?? []).map((p) => ({
     productId: p.id,
@@ -50,22 +51,22 @@ async function load(): Promise<{
 }
 
 export default async function MediaLibraryPage() {
-  const { groups, totalImages, totalProducts } = await load();
+  const [{ groups, totalImages, totalProducts }, { t }] = await Promise.all([
+    load(),
+    getT(),
+  ]);
   return (
     <>
-      <AdminHeader
-        title="Médiathèque"
-        subtitle="Toutes les images du bucket InsForge, regroupées par produit."
-      />
+      <AdminHeader title={t("media.title")} subtitle={t("media.subtitle")} />
 
       <AdminSection>
         <div className="grid gap-4 md:grid-cols-3">
-          <KpiCard label="Images totales" value={totalImages} />
-          <KpiCard label="Produits avec images" value={totalProducts} />
+          <KpiCard label={t("media.kpi.total")} value={totalImages} />
+          <KpiCard label={t("media.kpi.products")} value={totalProducts} />
           <KpiCard
-            label="Bucket"
+            label={t("media.kpi.bucket")}
             value="products"
-            hint="Public — servi via CDN InsForge"
+            hint={t("media.kpi.bucketHint")}
           />
         </div>
       </AdminSection>
@@ -85,12 +86,12 @@ export default async function MediaLibraryPage() {
                   href={`/admin/products/${g.productId}`}
                   className="text-primary text-xs underline underline-offset-4"
                 >
-                  Éditer le produit
+                  {t("media.editProduct")}
                 </Link>
               </div>
               {g.images.length === 0 ? (
                 <div className="text-secondary bg-muted rounded-2xl p-6 text-center text-xs">
-                  Aucune image pour ce produit. Uploader depuis la page du produit.
+                  {t("media.empty")}
                 </div>
               ) : (
                 <div className="grid gap-3 md:grid-cols-6">

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { insforgeAdmin } from "@/lib/insforge-admin";
 import { upsertSetting } from "@/repositories/settings-repository";
+import type { SiteInfoSettings } from "@/repositories/settings-repository";
 
 // ─── Products ────────────────────────────────────────────────────────────
 
@@ -66,28 +67,37 @@ export async function createProduct(input: ProductInput) {
 }
 
 export async function updateProduct(id: string, input: ProductInput) {
-  await insforgeAdmin.database
+  const { data: existing } = await insforgeAdmin.database
     .from("products")
-    .update({
-      sku: input.sku,
-      slug: input.slug,
-      category_id: input.categoryId,
-      status: input.status,
-      base_price_cents: input.basePriceCents,
-      stock: input.stock,
-      is_configurable: input.isConfigurable,
-      is_featured: input.isFeatured,
-      family: input.family ?? null,
-      material: input.material ?? null,
-      colorway: input.colorway ?? null,
-      finish: input.finish ?? null,
-      width_ft: input.widthFt ?? null,
-      length_ft: input.lengthFt ?? null,
-      width_cm: input.widthCm ?? null,
-      length_cm: input.lengthCm ?? null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id);
+    .select("status, published_at")
+    .eq("id", id)
+    .limit(1);
+  const prev = (existing ?? [])[0] as
+    | { status: string; published_at: string | null }
+    | undefined;
+  const patch: Record<string, string | number | boolean | null> = {
+    sku: input.sku,
+    slug: input.slug,
+    category_id: input.categoryId,
+    status: input.status,
+    base_price_cents: input.basePriceCents,
+    stock: input.stock,
+    is_configurable: input.isConfigurable,
+    is_featured: input.isFeatured,
+    family: input.family ?? null,
+    material: input.material ?? null,
+    colorway: input.colorway ?? null,
+    finish: input.finish ?? null,
+    width_ft: input.widthFt ?? null,
+    length_ft: input.lengthFt ?? null,
+    width_cm: input.widthCm ?? null,
+    length_cm: input.lengthCm ?? null,
+    updated_at: new Date().toISOString(),
+  };
+  if (input.status === "PUBLISHED" && !prev?.published_at) {
+    patch.published_at = new Date().toISOString();
+  }
+  await insforgeAdmin.database.from("products").update(patch).eq("id", id);
 
   await insforgeAdmin.database
     .from("product_translations")
@@ -114,7 +124,160 @@ export async function deleteProduct(id: string) {
   redirect("/admin/products");
 }
 
+// ─── Bulk product operations ────────────────────────────────────────────
+
+export async function bulkSetProductStatus(
+  ids: string[],
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED",
+): Promise<number> {
+  if (!ids.length) return 0;
+  const patch: Record<string, string> = { status };
+  if (status === "PUBLISHED") patch.published_at = new Date().toISOString();
+  await insforgeAdmin.database.from("products").update(patch).in("id", ids);
+  revalidatePath("/", "layout");
+  return ids.length;
+}
+
+export async function bulkDeleteProducts(ids: string[]): Promise<number> {
+  if (!ids.length) return 0;
+  await insforgeAdmin.database.from("product_media").delete().in("product_id", ids);
+  await insforgeAdmin.database
+    .from("product_translations")
+    .delete()
+    .in("product_id", ids);
+  await insforgeAdmin.database.from("products").delete().in("id", ids);
+  revalidatePath("/", "layout");
+  return ids.length;
+}
+
+export async function duplicateProduct(id: string): Promise<string> {
+  const { data: rows } = await insforgeAdmin.database
+    .from("products")
+    .select("*")
+    .eq("id", id)
+    .limit(1);
+  const src = (rows ?? [])[0] as Record<string, unknown> | undefined;
+  if (!src) throw new Error("Product not found");
+
+  const stamp = Date.now().toString(36);
+  const newId = `p-${src.slug}-copy-${stamp}`;
+  const newSlug = `${src.slug}-copy-${stamp}`;
+  const newSku = `${src.sku}-COPY-${stamp.slice(-4).toUpperCase()}`;
+
+  const insertRow = {
+    ...src,
+    id: newId,
+    slug: newSlug,
+    sku: newSku,
+    status: "DRAFT",
+    is_featured: false,
+    published_at: null,
+    created_at: undefined,
+    updated_at: undefined,
+  };
+  delete (insertRow as Record<string, unknown>).created_at;
+  delete (insertRow as Record<string, unknown>).updated_at;
+  const { error } = await insforgeAdmin.database.from("products").insert(insertRow);
+  if (error) throw error;
+
+  const { data: trRows } = await insforgeAdmin.database
+    .from("product_translations")
+    .select("locale, name, short_desc, description, features_json")
+    .eq("product_id", id);
+  const trs = (trRows ?? []) as {
+    locale: string;
+    name: string;
+    short_desc: string | null;
+    description: string | null;
+    features_json: unknown;
+  }[];
+  if (trs.length) {
+    await insforgeAdmin.database.from("product_translations").insert(
+      trs.map((tr) => ({
+        id: `${newId}-${tr.locale}`,
+        product_id: newId,
+        locale: tr.locale,
+        name: `${tr.name} (copy)`,
+        short_desc: tr.short_desc,
+        description: tr.description,
+        features_json: tr.features_json ?? null,
+      })),
+    );
+  }
+
+  const { data: mediaRows } = await insforgeAdmin.database
+    .from("product_media")
+    .select("url, alt_text, type, sort_order, is_lifestyle, is_cover")
+    .eq("product_id", id);
+  const media = (mediaRows ?? []) as {
+    url: string;
+    alt_text: string | null;
+    type: string;
+    sort_order: number;
+    is_lifestyle: boolean;
+    is_cover: boolean;
+  }[];
+  if (media.length) {
+    await insforgeAdmin.database.from("product_media").insert(
+      media.map((m, i) => ({
+        id: `m-${newId}-${i}`,
+        product_id: newId,
+        url: m.url,
+        alt_text: m.alt_text,
+        type: m.type,
+        sort_order: m.sort_order,
+        is_lifestyle: m.is_lifestyle,
+        is_cover: m.is_cover,
+      })),
+    );
+  }
+
+  revalidatePath("/admin/products");
+  return newId;
+}
+
+export async function duplicateProductAndRedirect(id: string) {
+  const newId = await duplicateProduct(id);
+  redirect(`/admin/products/${newId}`);
+}
+
 // ─── Product media ──────────────────────────────────────────────────────
+
+const IMAGE_MIME_TO_EXT: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5 MB
+
+function sanitizeSlug(s: string): string {
+  return (s || "misc").toLowerCase().replace(/[^a-z0-9-]+/g, "-").slice(0, 80);
+}
+
+function detectImageMime(buf: Buffer): string | null {
+  // Magic bytes — trust the file, not the client-provided mime.
+  if (buf.length < 12) return null;
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return "image/jpeg";
+  if (
+    buf[0] === 0x89 &&
+    buf[1] === 0x50 &&
+    buf[2] === 0x4e &&
+    buf[3] === 0x47
+  )
+    return "image/png";
+  if (
+    buf[0] === 0x52 &&
+    buf[1] === 0x49 &&
+    buf[2] === 0x46 &&
+    buf[3] === 0x46 &&
+    buf[8] === 0x57 &&
+    buf[9] === 0x45 &&
+    buf[10] === 0x42 &&
+    buf[11] === 0x50
+  )
+    return "image/webp";
+  return null;
+}
 
 export async function uploadProductImage(
   productId: string,
@@ -124,9 +287,26 @@ export async function uploadProductImage(
   isCover: boolean,
 ) {
   const buf = Buffer.from(base64.split(",").pop() ?? "", "base64");
-  const key = `${slug}/${Date.now()}.${mime.split("/")[1] ?? "jpg"}`;
-  const blob = new Blob([buf], { type: mime });
-  const file = new File([blob], key.split("/").pop() ?? "img.jpg", { type: mime });
+  if (buf.length === 0) throw new Error("Empty file");
+  if (buf.length > MAX_IMAGE_BYTES)
+    throw new Error(
+      `File too large (${(buf.length / 1024 / 1024).toFixed(1)} MB). Max is 5 MB.`,
+    );
+
+  const detected = detectImageMime(buf);
+  if (!detected || !IMAGE_MIME_TO_EXT[detected]) {
+    throw new Error("Only JPG, PNG and WebP images are allowed.");
+  }
+  // If the client-declared mime disagrees with the magic bytes, trust the bytes.
+  const safeMime = detected;
+  const ext = IMAGE_MIME_TO_EXT[safeMime];
+  const safeSlug = sanitizeSlug(slug);
+  const key = `${safeSlug}/${Date.now()}.${ext}`;
+
+  const blob = new Blob([buf], { type: safeMime });
+  const file = new File([blob], key.split("/").pop() ?? `img.${ext}`, {
+    type: safeMime,
+  });
 
   const { data: uploaded, error } = await insforgeAdmin.storage
     .from("products")
@@ -236,13 +416,7 @@ export async function saveTheme(value: {
   revalidatePath("/", "layout");
 }
 
-export async function saveSite(value: {
-  phone: string;
-  email: string;
-  showroomAddress: string;
-  showroomHours: string;
-  instagram: string;
-}) {
+export async function saveSite(value: SiteInfoSettings) {
   await upsertSetting("site", value);
   revalidatePath("/", "layout");
 }

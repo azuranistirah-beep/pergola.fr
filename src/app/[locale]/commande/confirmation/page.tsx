@@ -12,6 +12,7 @@ import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Button } from "@/components/ui/button";
 import { formatEUR } from "@/lib/utils";
+import { insforge } from "@/lib/insforge";
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -24,14 +25,44 @@ const steps = [
   { key: "delivery", Icon: Truck },
 ] as const;
 
+interface OrderRow {
+  order_number: string;
+  customer_name: string | null;
+  customer_email: string | null;
+  total_cents: number;
+  currency: string;
+  status: string;
+  created_at: string;
+}
+
+async function loadOrder(ref: string | undefined): Promise<OrderRow | null> {
+  if (!ref) return null;
+  const { data } = await insforge.database
+    .from("orders")
+    .select("order_number, customer_name, customer_email, total_cents, currency, status, created_at")
+    .eq("order_number", ref)
+    .limit(1);
+  return ((data ?? [])[0] as OrderRow | undefined) ?? null;
+}
+
 export default async function OrderConfirmationPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ ref?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("confirmation");
+  const { ref } = await searchParams;
+  const [t, order] = await Promise.all([
+    getTranslations("confirmation"),
+    loadOrder(ref),
+  ]);
+
+  const orderNumber = order?.order_number ?? ref ?? "—";
+  const totalCents = order?.total_cents ?? 0;
+  const email = order?.customer_email ?? "";
 
   return (
     <div className="relative pt-32 pb-24 md:pt-40">
@@ -51,19 +82,33 @@ export default async function OrderConfirmationPage({
           </div>
           <Eyebrow className="mt-8">{t("badge")}</Eyebrow>
           <h1 className="mt-4 font-serif text-4xl leading-tight md:text-6xl">
-            {t("title")}
+            {order?.customer_name
+              ? t.rich("titleWithName", {
+                  name: order.customer_name,
+                  strong: (chunks) => <span>{chunks}</span>,
+                })
+              : t("title")}
           </h1>
           <p className="text-secondary mt-6 text-base">
             {t("intro")}{" "}
-            <strong className="text-primary">c.riviere@example.fr</strong>.
+            <strong className="text-primary">
+              {email || t("emailFallback")}
+            </strong>
+            .
           </p>
         </div>
 
         <div className="mx-auto mt-16 max-w-3xl">
           <div className="border-border/70 grid gap-6 rounded-[var(--radius-lg)] border p-8 md:grid-cols-3">
-            <Summary label={t("orderRef")} value="PGL-2026-00184" mono />
-            <Summary label={t("orderTotal")} value={formatEUR(849000)} />
-            <Summary label={t("orderPayment")} value="Visa •••• 4242" />
+            <Summary label={t("orderRef")} value={orderNumber} mono />
+            <Summary
+              label={t("orderTotal")}
+              value={order ? formatEUR(totalCents) : "—"}
+            />
+            <Summary
+              label={t("orderStatus")}
+              value={order ? statusLabel(t, order.status) : "—"}
+            />
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -71,7 +116,7 @@ export default async function OrderConfirmationPage({
               <Download /> {t("download")}
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full">
-              <Link href="/compte">{t("track")}</Link>
+              <Link href="/contact">{t("track")}</Link>
             </Button>
           </div>
         </div>
@@ -112,6 +157,22 @@ export default async function OrderConfirmationPage({
       </Container>
     </div>
   );
+}
+
+function statusLabel(
+  t: (key: string) => string,
+  status: string,
+): string {
+  const map: Record<string, string> = {
+    PENDING: t("status.pending"),
+    PAID: t("status.paid"),
+    PROCESSING: t("status.processing"),
+    SHIPPED: t("status.shipped"),
+    DELIVERED: t("status.delivered"),
+    CANCELLED: t("status.cancelled"),
+    REFUNDED: t("status.refunded"),
+  };
+  return map[status] ?? status;
 }
 
 function Summary({

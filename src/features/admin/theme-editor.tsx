@@ -10,8 +10,10 @@ import {
   AdminSection,
   fieldClass,
 } from "@/features/admin/admin-ui";
+import { useAdminT } from "@/features/admin/admin-i18n-provider";
 import { saveTheme } from "@/actions/admin-actions";
 import type { ThemeSettings } from "@/repositories/settings-repository";
+import type { AdminMessageKey } from "@/lib/admin-i18n";
 
 const defaults: ThemeSettings = {
   primary: "#111111",
@@ -22,16 +24,10 @@ const defaults: ThemeSettings = {
   radius: 16,
 };
 
-const swatches: {
-  name: string;
-  theme: Partial<ThemeSettings>;
-}[] = [
+const swatches: { key: AdminMessageKey; theme: Partial<ThemeSettings> }[] = [
+  { key: "theme.palette.signature", theme: defaults },
   {
-    name: "Signature (défaut)",
-    theme: defaults,
-  },
-  {
-    name: "Nocturne",
+    key: "theme.palette.nocturne",
     theme: {
       primary: "#000000",
       accent: "#e8b96b",
@@ -41,7 +37,7 @@ const swatches: {
     },
   },
   {
-    name: "Bord de mer",
+    key: "theme.palette.seaside",
     theme: {
       primary: "#1e3a5f",
       accent: "#c8a46b",
@@ -51,7 +47,7 @@ const swatches: {
     },
   },
   {
-    name: "Forêt",
+    key: "theme.palette.forest",
     theme: {
       primary: "#2d3f2a",
       accent: "#c9a05e",
@@ -61,7 +57,7 @@ const swatches: {
     },
   },
   {
-    name: "Marbre chaud",
+    key: "theme.palette.warmMarble",
     theme: {
       primary: "#2a1e14",
       accent: "#b78659",
@@ -73,6 +69,7 @@ const swatches: {
 ];
 
 export function ThemeEditor({ initial }: { initial: ThemeSettings }) {
+  const { t } = useAdminT();
   const [theme, setTheme] = React.useState<ThemeSettings>(initial);
   const [pending, setPending] = React.useState(false);
 
@@ -83,12 +80,9 @@ export function ThemeEditor({ initial }: { initial: ThemeSettings }) {
     setPending(true);
     try {
       await saveTheme(theme);
-      toast.success("Thème appliqué", {
-        description:
-          "Les visiteurs verront la nouvelle palette au prochain chargement.",
-      });
+      toast.success(t("theme.applied"), { description: t("theme.appliedDesc") });
     } catch (e) {
-      toast.error("Erreur", {
+      toast.error(t("common.error"), {
         description: e instanceof Error ? e.message : String(e),
       });
     } finally {
@@ -98,11 +92,11 @@ export function ThemeEditor({ initial }: { initial: ThemeSettings }) {
 
   return (
     <div className="space-y-8">
-      <AdminSection title="Palettes prédéfinies" description="Cliquez pour appliquer.">
+      <AdminSection title={t("theme.palettes")} description={t("theme.palettes.hint")}>
         <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-5">
           {swatches.map((s) => (
             <button
-              key={s.name}
+              key={s.key}
               type="button"
               onClick={() => setTheme((prev) => ({ ...prev, ...s.theme }))}
               className="border-border/60 hover:border-primary group flex flex-col gap-3 rounded-2xl border p-4 text-left transition-colors"
@@ -120,42 +114,42 @@ export function ThemeEditor({ initial }: { initial: ThemeSettings }) {
                   ),
                 )}
               </div>
-              <div className="text-primary text-xs font-medium">{s.name}</div>
+              <div className="text-primary text-xs font-medium">{t(s.key)}</div>
             </button>
           ))}
         </div>
       </AdminSection>
 
-      <AdminSection title="Personnalisation">
+      <AdminSection title={t("theme.customization")}>
         <AdminCard>
           <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
             <div className="space-y-5">
               <ColorField
-                label="Primary — texte, boutons, header solide"
+                label={t("theme.field.primary")}
                 value={theme.primary}
                 onChange={(v) => set("primary", v)}
               />
               <ColorField
-                label="Accent — CTA, ornements"
+                label={t("theme.field.accent")}
                 value={theme.accent}
                 onChange={(v) => set("accent", v)}
               />
               <ColorField
-                label="Background — fond principal"
+                label={t("theme.field.background")}
                 value={theme.background}
                 onChange={(v) => set("background", v)}
               />
               <ColorField
-                label="Foreground — texte de contenu"
+                label={t("theme.field.foreground")}
                 value={theme.foreground}
                 onChange={(v) => set("foreground", v)}
               />
               <ColorField
-                label="Secondary — texte discret"
+                label={t("theme.field.secondary")}
                 value={theme.secondary}
                 onChange={(v) => set("secondary", v)}
               />
-              <AdminLabel label={`Radius global — ${theme.radius}px`}>
+              <AdminLabel label={t("theme.field.radius", { n: theme.radius })}>
                 <input
                   type="range"
                   min={0}
@@ -168,10 +162,9 @@ export function ThemeEditor({ initial }: { initial: ThemeSettings }) {
               </AdminLabel>
             </div>
 
-            {/* Live preview */}
             <div className="border-border/60 rounded-3xl border p-6">
               <div className="text-secondary text-[10px] uppercase tracking-[0.25em]">
-                Aperçu
+                {t("theme.preview")}
               </div>
               <div
                 className="mt-4 space-y-5 rounded-2xl p-6"
@@ -185,18 +178,16 @@ export function ThemeEditor({ initial }: { initial: ThemeSettings }) {
                   style={{ color: theme.accent }}
                   className="text-[10px] uppercase tracking-[0.3em]"
                 >
-                  Collection 2026
+                  {t("theme.preview.collection")}
                 </div>
                 <h3
                   className="font-serif text-3xl leading-tight"
                   style={{ color: theme.foreground }}
                 >
-                  Chaque pergola, une pièce singulière.
+                  {t("theme.preview.title")}
                 </h3>
                 <p style={{ color: theme.secondary }} className="text-sm">
-                  Cèdre massif, aluminium à lames orientables, voiles
-                  d&apos;ombrage — la structure qui prolonge votre intérieur au
-                  grand air.
+                  {t("theme.preview.body")}
                 </p>
                 <div className="flex gap-3">
                   <span
@@ -230,7 +221,7 @@ export function ThemeEditor({ initial }: { initial: ThemeSettings }) {
           variant="outline"
           onClick={() => setTheme(defaults)}
         >
-          <RotateCcw className="size-4" /> Réinitialiser
+          <RotateCcw className="size-4" /> {t("common.reset")}
         </AdminButton>
         <AdminButton
           type="button"
@@ -238,7 +229,7 @@ export function ThemeEditor({ initial }: { initial: ThemeSettings }) {
           onClick={save}
           disabled={pending}
         >
-          {pending ? "Enregistrement…" : "Appliquer sur le site"}
+          {pending ? t("common.saving") : t("theme.applyToSite")}
         </AdminButton>
       </div>
     </div>

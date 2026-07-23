@@ -2,6 +2,8 @@
 
 import { toast } from "sonner";
 import { updateOrderStatus } from "@/actions/admin-inbox-actions";
+import { useAdminT } from "@/features/admin/admin-i18n-provider";
+import type { AdminMessageKey } from "@/lib/admin-i18n";
 
 const statuses = [
   "PENDING",
@@ -13,16 +15,6 @@ const statuses = [
   "REFUNDED",
 ] as const;
 
-const labels: Record<string, string> = {
-  PENDING: "En attente",
-  PAID: "Payée",
-  PROCESSING: "En atelier",
-  SHIPPED: "Expédiée",
-  DELIVERED: "Livrée",
-  CANCELLED: "Annulée",
-  REFUNDED: "Remboursée",
-};
-
 export function OrderStatusSelect({
   id,
   current,
@@ -30,6 +22,7 @@ export function OrderStatusSelect({
   id: string;
   current: string;
 }) {
+  const { t } = useAdminT();
   return (
     <select
       value={current}
@@ -37,9 +30,9 @@ export function OrderStatusSelect({
         const next = e.target.value as (typeof statuses)[number];
         try {
           await updateOrderStatus(id, next);
-          toast.success("Statut mis à jour");
+          toast.success(t("orders.statusUpdated"));
         } catch (err) {
-          toast.error("Erreur", {
+          toast.error(t("common.error"), {
             description: err instanceof Error ? err.message : String(err),
           });
         }
@@ -48,7 +41,7 @@ export function OrderStatusSelect({
     >
       {statuses.map((s) => (
         <option key={s} value={s}>
-          {labels[s]}
+          {t(`orders.status.${s}` as AdminMessageKey)}
         </option>
       ))}
     </select>

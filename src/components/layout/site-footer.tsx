@@ -1,8 +1,10 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { NewsletterForm } from "@/features/newsletter/newsletter-form";
+import { getSiteInfo } from "@/repositories/settings-repository";
+import { Logo } from "@/components/brand/logo";
 
 const columns = [
   {
@@ -36,16 +38,22 @@ const columns = [
   },
 ] as const;
 
-export function SiteFooter() {
-  const t = useTranslations("footer");
+export async function SiteFooter() {
+  const [t, site] = await Promise.all([
+    getTranslations("footer"),
+    getSiteInfo(),
+  ]);
   return (
     <footer className="bg-primary text-primary-foreground mt-32">
       <Container className="py-20">
         <div className="grid gap-16 lg:grid-cols-[1.4fr_2fr_1.2fr]">
           <div className="max-w-sm">
-            <div className="font-serif text-3xl tracking-tight">
-              Pergola<span className="text-accent">.</span>fr
-            </div>
+            <Logo
+              variant="stacked"
+              showTagline
+              wordClassName="text-3xl"
+              className="items-start text-primary-foreground"
+            />
             <p className="text-primary-foreground/60 mt-6 text-sm leading-relaxed">
               {t("tagline")}
             </p>
@@ -53,8 +61,13 @@ export function SiteFooter() {
               <span className="text-primary-foreground/60">
                 {t("showroom")}
               </span>
-              <span>12 rue de Rivoli, 75004 Paris</span>
-              <span className="text-accent mt-1">+33 1 84 88 00 00</span>
+              <span>{site.showroomAddress}</span>
+              <a
+                className="text-accent mt-1 hover:underline"
+                href={`tel:${site.phone.replace(/\s+/g, "")}`}
+              >
+                {site.phone}
+              </a>
             </div>
           </div>
 

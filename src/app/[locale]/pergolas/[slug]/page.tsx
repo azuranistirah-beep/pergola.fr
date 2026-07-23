@@ -32,12 +32,38 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return {};
-  return { title: product.name, description: product.tagline };
+  const description =
+    product.tagline ||
+    `${product.name} — ${product.widthFt}×${product.lengthFt} ft, ${product.material}. ${formatEUR(product.priceCents)}. Livraison France.`;
+  const canonical = `/${locale}/pergolas/${slug}`;
+  return {
+    title: product.name,
+    description,
+    alternates: {
+      canonical,
+      languages: {
+        fr: `/fr/pergolas/${slug}`,
+        en: `/en/pergolas/${slug}`,
+      },
+    },
+    openGraph: {
+      type: "website",
+      title: product.name,
+      description,
+      images: product.heroUrl ? [{ url: product.heroUrl }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.name,
+      description,
+      images: product.heroUrl ? [product.heroUrl] : undefined,
+    },
+  };
 }
 
 export default async function ProductDetailPage({
@@ -63,8 +89,45 @@ export default async function ProductDetailPage({
       ? t("specsValues.structureWood")
       : t("specsValues.structureSteel");
 
+  const productJsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    name: product.name,
+    description: product.tagline,
+    sku: product.sku,
+    brand: { "@type": "Brand", name: "Pergola FR" },
+    image: product.heroUrl ? [product.heroUrl] : undefined,
+    material:
+      product.material === "wood"
+        ? "Solid cedar"
+        : product.material === "steel"
+          ? "Galvanised steel"
+          : "Extruded aluminium",
+    width: {
+      "@type": "QuantitativeValue",
+      value: product.widthCm,
+      unitCode: "CMT",
+    },
+    depth: {
+      "@type": "QuantitativeValue",
+      value: product.lengthCm,
+      unitCode: "CMT",
+    },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "EUR",
+      price: (product.priceCents / 100).toFixed(2),
+      availability: "https://schema.org/InStock",
+      url: `https://pergolafr.com/${locale}/pergolas/${slug}`,
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
       <Container className="pt-28 md:pt-32">
         <nav className="text-secondary flex items-center gap-2 text-xs">
           <Link href="/" className="hover:text-primary">

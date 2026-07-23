@@ -17,12 +17,14 @@ export function NewsletterForm({ placeholder, submitLabel }: Props) {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const email = new FormData(e.currentTarget).get("email")?.toString().trim();
+    const fd = new FormData(e.currentTarget);
+    const email = fd.get("email")?.toString().trim();
     if (!email) return;
+    const honeypot = fd.get("website")?.toString() ?? "";
     const form = e.currentTarget;
     setPending(true);
     try {
-      await subscribeNewsletter(email, locale);
+      await subscribeNewsletter(email, locale, honeypot);
       form.reset();
       toast.success(t("successTitle"), { description: t("successBody") });
     } catch (err) {
@@ -39,6 +41,14 @@ export function NewsletterForm({ placeholder, submitLabel }: Props) {
       onSubmit={onSubmit}
       className="border-primary-foreground/20 focus-within:border-accent mt-5 flex items-center border-b py-3 transition-colors"
     >
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-10000px", width: 1, height: 1, opacity: 0 }}
+      />
       <input
         type="email"
         name="email"

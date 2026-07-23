@@ -166,7 +166,27 @@
         "wood": "Cedar wood",
         "steel": "Steel",
         "aluminium": "Aluminium"
-      }
+      },
+      "colorway": "Colorway",
+      "colorways": {
+        "warm-cedar": "Warm cedar",
+        "walnut": "Walnut",
+        "barnwood": "Barnwood",
+        "black": "Black",
+        "white": "White"
+      },
+      "size": "Size",
+      "sizes": {
+        "any": "All sizes",
+        "small": "Small (< 13 m²)",
+        "medium": "Medium (13–20 m²)",
+        "large": "Large (> 20 m²)"
+      },
+      "family": "Family"
+    },
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next"
     }
   },
   "pdp": {
@@ -312,17 +332,30 @@
     "subtotalHt": "Subtotal excl. VAT",
     "vat": "VAT 20%",
     "totalTtc": "Total incl. VAT",
+    "shipping": "Shipping",
     "freeShipping": "Free shipping in France over €2,000",
     "warranty": "10-year warranty",
     "cartEmpty": "Cart is empty."
   },
   "confirmation": {
     "badge": "Order confirmed",
-    "title": "Thank you Camille, your pergola is on its way.",
+    "title": "Thank you, your pergola is on its way.",
+    "titleWithName": "Thank you <strong>{name}</strong>, your pergola is on its way.",
     "intro": "A confirmation email has been sent to",
+    "emailFallback": "the address on file",
     "orderRef": "Reference",
     "orderTotal": "Total incl. VAT",
     "orderPayment": "Payment",
+    "orderStatus": "Status",
+    "status": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "processing": "In workshop",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    },
     "download": "Download invoice",
     "track": "Track my order",
     "nextEyebrow": "Next steps",

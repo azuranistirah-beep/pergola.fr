@@ -24,6 +24,7 @@ export function ContactForm() {
         postal: fd.get("postal")?.toString() || undefined,
         message: fd.get("message")?.toString() ?? "",
         locale,
+        website: fd.get("website")?.toString() ?? "",
       });
       form.reset();
       toast.success(t("successTitle"), { description: t("successBody") });
@@ -38,6 +39,15 @@ export function ContactForm() {
 
   return (
     <form onSubmit={onSubmit} className="mt-12 grid gap-5">
+      {/* Honeypot: bots fill this, humans don't see it */}
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-10000px", width: 1, height: 1, opacity: 0 }}
+      />
       <Field label={t("name")} name="name" required />
       <div className="grid gap-5 md:grid-cols-2">
         <Field label={t("email")} type="email" name="email" required />

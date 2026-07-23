@@ -9,6 +9,7 @@ import {
   UnsubscribeButton,
 } from "@/features/admin/newsletter-actions";
 import { insforgeAdmin } from "@/lib/insforge-admin";
+import { getT } from "@/lib/admin-i18n";
 
 interface Subscriber {
   email: string;
@@ -26,26 +27,27 @@ async function load() {
 }
 
 export default async function NewsletterPage() {
-  const rows = await load();
+  const [rows, { t, locale }] = await Promise.all([load(), getT()]);
   const active = rows.filter((r) => !r.unsubscribed_at);
+  const dateLocale = locale === "id" ? "id-ID" : "en-GB";
   return (
     <>
       <AdminHeader
-        title="Newsletter"
-        subtitle="Abonnés au bandeau newsletter du footer."
+        title={t("newsletter.title")}
+        subtitle={t("newsletter.subtitle")}
         actions={<NewsletterExport rows={active} />}
       />
 
       <AdminSection>
         <div className="grid gap-4 md:grid-cols-3">
-          <KpiCard label="Abonnés actifs" value={active.length} Icon={Mail} />
+          <KpiCard label={t("newsletter.kpi.active")} value={active.length} Icon={Mail} />
           <KpiCard
-            label="Désabonnés"
+            label={t("newsletter.kpi.unsubscribed")}
             value={rows.length - active.length}
-            hint="Ne recevront plus de campagnes"
+            hint={t("newsletter.kpi.unsubscribedHint")}
           />
           <KpiCard
-            label="Locale FR"
+            label={t("newsletter.kpi.localeFr")}
             value={active.filter((r) => r.locale === "fr").length}
           />
         </div>
@@ -56,10 +58,10 @@ export default async function NewsletterPage() {
           <table className="w-full text-sm">
             <thead className="border-border/60 border-b text-left">
               <tr className="text-secondary [&_th]:px-6 [&_th]:py-3 [&_th]:text-[10px] [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-[0.2em]">
-                <th>Email</th>
-                <th>Locale</th>
-                <th>Inscrit le</th>
-                <th>Statut</th>
+                <th>{t("common.email")}</th>
+                <th>{t("common.locale")}</th>
+                <th>{t("newsletter.table.subscribedAt")}</th>
+                <th>{t("common.status")}</th>
                 <th className="w-16 text-right"></th>
               </tr>
             </thead>
@@ -71,17 +73,19 @@ export default async function NewsletterPage() {
                     {s.locale}
                   </td>
                   <td className="text-secondary px-6 py-4 text-xs">
-                    {new Date(s.subscribed_at).toLocaleString("fr-FR", {
+                    {new Date(s.subscribed_at).toLocaleString(dateLocale, {
                       dateStyle: "medium",
                       timeStyle: "short",
                     })}
                   </td>
                   <td className="px-6 py-4">
                     {s.unsubscribed_at ? (
-                      <span className="text-secondary text-xs">Désabonné</span>
+                      <span className="text-secondary text-xs">
+                        {t("newsletter.status.unsubscribed")}
+                      </span>
                     ) : (
                       <span className="bg-accent/15 text-accent rounded-full px-2 py-0.5 text-[10px] uppercase tracking-[0.2em]">
-                        Actif
+                        {t("newsletter.status.active")}
                       </span>
                     )}
                   </td>
@@ -98,7 +102,7 @@ export default async function NewsletterPage() {
                     colSpan={5}
                     className="text-secondary p-12 text-center text-sm"
                   >
-                    Aucun abonné pour l&apos;instant.
+                    {t("newsletter.empty")}
                   </td>
                 </tr>
               )}

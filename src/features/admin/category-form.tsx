@@ -9,6 +9,7 @@ import {
   AdminSection,
   fieldClass,
 } from "@/features/admin/admin-ui";
+import { useAdminT } from "@/features/admin/admin-i18n-provider";
 import { createCategory, updateCategory } from "@/actions/admin-actions";
 
 export interface CategoryFormValues {
@@ -30,6 +31,7 @@ export function CategoryForm({
   initial: CategoryFormValues;
   onDelete?: () => Promise<void>;
 }) {
+  const { t } = useAdminT();
   const [values, setValues] = React.useState<CategoryFormValues>(initial);
   const [pending, setPending] = React.useState(false);
 
@@ -53,12 +55,12 @@ export function CategoryForm({
       };
       if (categoryId) {
         await updateCategory(categoryId, payload);
-        toast.success("Catégorie enregistrée");
+        toast.success(t("categoryForm.saveSuccess"));
       } else {
         await createCategory(payload);
       }
     } catch (err) {
-      toast.error("Erreur", {
+      toast.error(t("common.error"), {
         description: err instanceof Error ? err.message : String(err),
       });
     } finally {
@@ -71,7 +73,7 @@ export function CategoryForm({
       <AdminSection>
         <AdminCard>
           <div className="grid gap-5 md:grid-cols-2">
-            <AdminLabel label="Nom (FR)">
+            <AdminLabel label={t("productForm.nameFr")}>
               <input
                 required
                 value={values.nameFr}
@@ -79,7 +81,7 @@ export function CategoryForm({
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Nom (EN)">
+            <AdminLabel label={t("productForm.nameEn")}>
               <input
                 required
                 value={values.nameEn}
@@ -87,7 +89,7 @@ export function CategoryForm({
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Slug URL">
+            <AdminLabel label={t("categoryForm.slug")}>
               <input
                 required
                 value={values.slug}
@@ -100,7 +102,7 @@ export function CategoryForm({
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Ordre d'affichage">
+            <AdminLabel label={t("categoryForm.order")}>
               <input
                 type="number"
                 value={values.sortOrder}
@@ -108,7 +110,7 @@ export function CategoryForm({
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Description (FR)">
+            <AdminLabel label={t("categoryForm.descFr")}>
               <textarea
                 value={values.descriptionFr}
                 onChange={(e) => set("descriptionFr", e.target.value)}
@@ -116,7 +118,7 @@ export function CategoryForm({
                 className={fieldClass + " resize-none"}
               />
             </AdminLabel>
-            <AdminLabel label="Description (EN)">
+            <AdminLabel label={t("categoryForm.descEn")}>
               <textarea
                 value={values.descriptionEn}
                 onChange={(e) => set("descriptionEn", e.target.value)}
@@ -131,7 +133,7 @@ export function CategoryForm({
                 onChange={(e) => set("isFeatured", e.target.checked)}
                 className="accent-primary"
               />
-              Mise en avant (affichée dans la sélection Home)
+              {t("categoryForm.featured")}
             </label>
           </div>
         </AdminCard>
@@ -143,18 +145,22 @@ export function CategoryForm({
             <AdminButton
               variant="danger"
               onClick={(e) => {
-                if (!confirm("Supprimer cette catégorie ?"))
+                if (!confirm(t("categoryForm.deleteConfirm")))
                   e.preventDefault();
               }}
             >
-              Supprimer
+              {t("common.delete")}
             </AdminButton>
           </form>
         ) : (
           <span />
         )}
         <AdminButton type="submit" variant="primary" disabled={pending}>
-          {pending ? "Enregistrement…" : categoryId ? "Enregistrer" : "Créer"}
+          {pending
+            ? t("common.saving")
+            : categoryId
+              ? t("common.save")
+              : t("common.create")}
         </AdminButton>
       </div>
     </form>

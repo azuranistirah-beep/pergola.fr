@@ -1,6 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { LegalContent, LegalSection } from "@/features/legal/legal-content";
+import { getSiteInfo } from "@/repositories/settings-repository";
 
 export const metadata = {
   title: "Mentions légales",
@@ -15,6 +16,7 @@ export default async function MentionsLegalesPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const site = await getSiteInfo();
   return (
     <>
       <PageHeader
@@ -33,11 +35,11 @@ export default async function MentionsLegalesPage({
             TVA intracommunautaire : FR 12 892456789
           </p>
           <p>
-            Siège social : 12 rue de Rivoli, 75004 Paris — France
+            Siège social : {site.showroomAddress}
             <br />
-            Téléphone : +33 1 84 88 00 00
+            Téléphone : {site.phone}
             <br />
-            Email : bonjour@pergolafr.com
+            Email : {site.email}
           </p>
           <p>Directeur de la publication : Antoine Rivière, Président.</p>
         </LegalSection>

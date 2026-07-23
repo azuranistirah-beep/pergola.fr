@@ -7,6 +7,7 @@ import {
   AdminButton,
   AdminCard,
 } from "@/features/admin/admin-ui";
+import { useAdminT } from "@/features/admin/admin-i18n-provider";
 import { deleteProductMedia, uploadProductImage } from "@/actions/admin-actions";
 
 interface MediaRow {
@@ -24,6 +25,7 @@ export function ProductMediaEditor({
   slug: string;
   media: MediaRow[];
 }) {
+  const { t } = useAdminT();
   const [items, setItems] = React.useState<MediaRow[]>(media);
   const [uploading, setUploading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -31,6 +33,20 @@ export function ProductMediaEditor({
   React.useEffect(() => setItems(media), [media]);
 
   const onFile = async (file: File, asCover: boolean) => {
+    const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
+    const MAX = 5 * 1024 * 1024;
+    if (!ALLOWED.includes(file.type)) {
+      toast.error(t("productMedia.uploadFailed"), {
+        description: "Only JPG, PNG or WebP.",
+      });
+      return;
+    }
+    if (file.size > MAX) {
+      toast.error(t("productMedia.uploadFailed"), {
+        description: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max 5 MB.`,
+      });
+      return;
+    }
     setUploading(true);
     try {
       const base64 = await fileToBase64(file);
@@ -45,9 +61,9 @@ export function ProductMediaEditor({
         ...prev,
         { id: `pending-${Date.now()}`, url: res.url, isCover: asCover },
       ]);
-      toast.success("Image ajoutée");
+      toast.success(t("productMedia.imageAdded"));
     } catch (e) {
-      toast.error("Échec de l'envoi", {
+      toast.error(t("productMedia.uploadFailed"), {
         description: e instanceof Error ? e.message : String(e),
       });
     } finally {
@@ -56,10 +72,10 @@ export function ProductMediaEditor({
   };
 
   const onDelete = async (id: string) => {
-    if (!confirm("Supprimer cette image ?")) return;
+    if (!confirm(t("productMedia.deleteConfirm"))) return;
     setItems((prev) => prev.filter((m) => m.id !== id));
     await deleteProductMedia(id);
-    toast.success("Image supprimée");
+    toast.success(t("productMedia.imageDeleted"));
   };
 
   return (
@@ -84,23 +100,22 @@ export function ProductMediaEditor({
             <button
               onClick={() => onDelete(m.id)}
               className="absolute right-2 top-2 rounded-full bg-black/60 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100"
-              aria-label="Supprimer"
+              aria-label={t("productMedia.deleteLabel")}
             >
               <Trash2 className="size-3.5" />
             </button>
           </div>
         ))}
 
-        {/* Upload button */}
         <label className="border-border/70 hover:border-primary text-secondary hover:text-primary flex aspect-[4/3] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed transition-colors">
           <Upload className="size-5" />
           <span className="text-xs">
-            {uploading ? "Envoi…" : "Ajouter une image"}
+            {uploading ? t("common.uploading") : t("productMedia.addImage")}
           </span>
           <input
             ref={inputRef}
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp"
             className="hidden"
             onChange={async (e) => {
               const f = e.target.files?.[0];
@@ -112,8 +127,7 @@ export function ProductMediaEditor({
         </label>
       </div>
       <p className="text-secondary mt-6 text-xs">
-        La première image ajoutée devient la couverture. Formats JPG, PNG,
-        WebP. Uploadées dans le bucket InsForge{" "}
+        {t("productMedia.helper")}{" "}
         <code className="bg-muted rounded px-1.5 py-0.5">products</code>.
       </p>
       <div className="mt-4">
@@ -122,7 +136,7 @@ export function ProductMediaEditor({
           variant="outline"
           onClick={() => inputRef.current?.click()}
         >
-          <Upload className="size-4" /> Uploader
+          <Upload className="size-4" /> {t("common.upload")}
         </AdminButton>
       </div>
     </AdminCard>

@@ -9,6 +9,7 @@ import {
   AdminSection,
   fieldClass,
 } from "@/features/admin/admin-ui";
+import { useAdminT } from "@/features/admin/admin-i18n-provider";
 import { createProduct, updateProduct } from "@/actions/admin-actions";
 
 export interface ProductFormValues {
@@ -40,6 +41,7 @@ interface Props {
 }
 
 export function ProductForm({ productId, categories, initial, onDelete }: Props) {
+  const { t } = useAdminT();
   const [values, setValues] = React.useState<ProductFormValues>(initial);
   const [pending, setPending] = React.useState(false);
 
@@ -79,12 +81,12 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
 
       if (productId) {
         await updateProduct(productId, payload);
-        toast.success("Produit enregistré");
+        toast.success(t("productForm.saveSuccess"));
       } else {
         await createProduct(payload);
       }
     } catch (err) {
-      toast.error("Erreur lors de l'enregistrement", {
+      toast.error(t("productForm.saveError"), {
         description: err instanceof Error ? err.message : String(err),
       });
     } finally {
@@ -94,10 +96,10 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
 
   return (
     <form onSubmit={onSubmit} className="space-y-8">
-      <AdminSection title="Informations générales">
+      <AdminSection title={t("productForm.info")}>
         <AdminCard>
           <div className="grid gap-5 md:grid-cols-2">
-            <AdminLabel label="Nom (FR)">
+            <AdminLabel label={t("productForm.nameFr")}>
               <input
                 required
                 value={values.nameFr}
@@ -105,7 +107,7 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Nom (EN)">
+            <AdminLabel label={t("productForm.nameEn")}>
               <input
                 required
                 value={values.nameEn}
@@ -113,7 +115,7 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Slug URL" hint="ex: beaumont-14x10">
+            <AdminLabel label={t("productForm.slug")} hint={t("productForm.slugHint")}>
               <input
                 required
                 value={values.slug}
@@ -126,7 +128,7 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="SKU">
+            <AdminLabel label={t("productForm.sku")}>
               <input
                 required
                 value={values.sku}
@@ -134,7 +136,7 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Tagline (FR)">
+            <AdminLabel label={t("productForm.taglineFr")}>
               <textarea
                 value={values.taglineFr}
                 onChange={(e) => set("taglineFr", e.target.value)}
@@ -142,7 +144,7 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 className={fieldClass + " resize-none"}
               />
             </AdminLabel>
-            <AdminLabel label="Tagline (EN)">
+            <AdminLabel label={t("productForm.taglineEn")}>
               <textarea
                 value={values.taglineEn}
                 onChange={(e) => set("taglineEn", e.target.value)}
@@ -154,10 +156,10 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
         </AdminCard>
       </AdminSection>
 
-      <AdminSection title="Prix, stock & catégorie">
+      <AdminSection title={t("productForm.priceStockCat")}>
         <AdminCard>
           <div className="grid gap-5 md:grid-cols-3">
-            <AdminLabel label="Prix EUR (TTC)">
+            <AdminLabel label={t("productForm.priceEur")}>
               <input
                 type="number"
                 min={0}
@@ -168,7 +170,7 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Stock">
+            <AdminLabel label={t("productForm.stock")}>
               <input
                 type="number"
                 min={0}
@@ -177,14 +179,14 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Catégorie">
+            <AdminLabel label={t("productForm.category")}>
               <select
                 required
                 value={values.categoryId}
                 onChange={(e) => set("categoryId", e.target.value)}
                 className={fieldClass}
               >
-                <option value="">— Sélectionner —</option>
+                <option value="">{t("productForm.categoryPlaceholder")}</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.label}
@@ -192,7 +194,7 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 ))}
               </select>
             </AdminLabel>
-            <AdminLabel label="Statut">
+            <AdminLabel label={t("productForm.status")}>
               <select
                 value={values.status}
                 onChange={(e) =>
@@ -200,9 +202,9 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 }
                 className={fieldClass}
               >
-                <option value="DRAFT">Brouillon</option>
-                <option value="PUBLISHED">Publié</option>
-                <option value="ARCHIVED">Archivé</option>
+                <option value="DRAFT">{t("products.status.DRAFT")}</option>
+                <option value="PUBLISHED">{t("products.status.PUBLISHED")}</option>
+                <option value="ARCHIVED">{t("products.status.ARCHIVED")}</option>
               </select>
             </AdminLabel>
             <label className="flex items-center gap-3 text-sm md:col-span-2 md:mt-6">
@@ -212,7 +214,7 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 onChange={(e) => set("isFeatured", e.target.checked)}
                 className="accent-primary"
               />
-              Mise en avant sur l&apos;accueil
+              {t("productForm.featured")}
             </label>
             <label className="flex items-center gap-3 text-sm md:col-span-2">
               <input
@@ -221,23 +223,23 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 onChange={(e) => set("isConfigurable", e.target.checked)}
                 className="accent-primary"
               />
-              Disponible dans le configurateur
+              {t("productForm.configurable")}
             </label>
           </div>
         </AdminCard>
       </AdminSection>
 
-      <AdminSection title="Attributs">
+      <AdminSection title={t("productForm.attributes")}>
         <AdminCard>
           <div className="grid gap-5 md:grid-cols-3">
-            <AdminLabel label="Famille" hint="beaumont, sarasota, evanston…">
+            <AdminLabel label={t("productForm.family")} hint={t("productForm.familyHint")}>
               <input
                 value={values.family}
                 onChange={(e) => set("family", e.target.value)}
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Matériau" hint="wood / steel / aluminium">
+            <AdminLabel label={t("productForm.material")} hint={t("productForm.materialHint")}>
               <select
                 value={values.material}
                 onChange={(e) => set("material", e.target.value)}
@@ -250,8 +252,8 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
               </select>
             </AdminLabel>
             <AdminLabel
-              label="Colorway"
-              hint="warm-cedar / walnut / barnwood / black / white"
+              label={t("productForm.colorway")}
+              hint={t("productForm.colorwayHint")}
             >
               <select
                 value={values.colorway}
@@ -266,14 +268,14 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 <option value="white">white</option>
               </select>
             </AdminLabel>
-            <AdminLabel label="Finition">
+            <AdminLabel label={t("productForm.finish")}>
               <input
                 value={values.finish}
                 onChange={(e) => set("finish", e.target.value)}
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Largeur (ft)">
+            <AdminLabel label={t("productForm.widthFt")}>
               <input
                 type="number"
                 min={0}
@@ -282,7 +284,7 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 className={fieldClass}
               />
             </AdminLabel>
-            <AdminLabel label="Longueur (ft)">
+            <AdminLabel label={t("productForm.lengthFt")}>
               <input
                 type="number"
                 min={0}
@@ -303,17 +305,21 @@ export function ProductForm({ productId, categories, initial, onDelete }: Props)
                 type="submit"
                 variant="danger"
                 onClick={(e) => {
-                  if (!confirm("Supprimer ce produit ?")) e.preventDefault();
+                  if (!confirm(t("productForm.deleteConfirm"))) e.preventDefault();
                 }}
               >
-                Supprimer
+                {t("common.delete")}
               </AdminButton>
             </form>
           )}
         </div>
         <div className="flex gap-3">
           <AdminButton type="submit" variant="primary" disabled={pending}>
-            {pending ? "Enregistrement…" : productId ? "Enregistrer" : "Créer le produit"}
+            {pending
+              ? t("common.saving")
+              : productId
+                ? t("common.save")
+                : t("productForm.createBtn")}
           </AdminButton>
         </div>
       </div>

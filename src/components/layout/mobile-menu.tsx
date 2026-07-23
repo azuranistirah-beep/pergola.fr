@@ -37,23 +37,15 @@ const groups = [
       { labelKey: "faq", href: "/faq" },
     ],
   },
-  {
-    title: "clientArea",
-    items: [
-      { labelKey: "signIn", href: "/connexion" },
-      { labelKey: "signUp", href: "/inscription" },
-      { labelKey: "myAccount", href: "/compte" },
-      { labelKey: "myWishlist", href: "/wishlist" },
-    ],
-  },
 ];
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  site: { phone: string; email: string; showroomAddress: string } | null;
 }
 
-export function MobileMenu({ open, onClose }: Props) {
+export function MobileMenu({ open, onClose, site }: Props) {
   const t = useTranslations("menu");
   const pathname = usePathname();
 
@@ -136,9 +128,13 @@ export function MobileMenu({ open, onClose }: Props) {
             </Link>
           </Button>
           <div className="text-secondary mt-6 space-y-1 text-xs">
-            <div>+33 1 84 88 00 00</div>
-            <div>bonjour@pergolafr.com</div>
-            <div>12 rue de Rivoli, 75004 Paris</div>
+            {site && (
+              <>
+                <div>{site.phone}</div>
+                <div>{site.email}</div>
+                <div>{site.showroomAddress}</div>
+              </>
+            )}
           </div>
         </div>
       </div>

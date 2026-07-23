@@ -166,7 +166,27 @@
         "wood": "Bois cèdre",
         "steel": "Acier",
         "aluminium": "Aluminium"
-      }
+      },
+      "colorway": "Teinte",
+      "colorways": {
+        "warm-cedar": "Cèdre chaud",
+        "walnut": "Noyer",
+        "barnwood": "Barnwood",
+        "black": "Noir",
+        "white": "Blanc"
+      },
+      "size": "Taille",
+      "sizes": {
+        "any": "Toutes tailles",
+        "small": "Petit (< 13 m²)",
+        "medium": "Moyen (13–20 m²)",
+        "large": "Grand (> 20 m²)"
+      },
+      "family": "Famille"
+    },
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
     }
   },
   "pdp": {
@@ -312,17 +332,30 @@
     "subtotalHt": "Sous-total HT",
     "vat": "TVA 20%",
     "totalTtc": "Total TTC",
+    "shipping": "Livraison",
     "freeShipping": "Livraison France offerte dès 2 000 €",
     "warranty": "Garantie 10 ans",
     "cartEmpty": "Panier vide."
   },
   "confirmation": {
     "badge": "Commande confirmée",
-    "title": "Merci Camille, votre pergola est en route.",
+    "title": "Merci, votre pergola est en route.",
+    "titleWithName": "Merci <strong>{name}</strong>, votre pergola est en route.",
     "intro": "Un email de confirmation vous a été envoyé à",
+    "emailFallback": "l'adresse indiquée",
     "orderRef": "Référence",
     "orderTotal": "Total TTC",
     "orderPayment": "Paiement",
+    "orderStatus": "Statut",
+    "status": {
+      "pending": "En attente",
+      "paid": "Payée",
+      "processing": "En atelier",
+      "shipped": "Expédiée",
+      "delivered": "Livrée",
+      "cancelled": "Annulée",
+      "refunded": "Remboursée"
+    },
     "download": "Télécharger la facture",
     "track": "Suivre ma commande",
     "nextEyebrow": "Prochaines étapes",

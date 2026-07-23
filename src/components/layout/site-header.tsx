@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Heart, Menu, Search, ShoppingBag, User } from "lucide-react";
+import { Menu, Search, ShoppingBag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
@@ -11,6 +11,7 @@ import { MobileMenu } from "@/components/layout/mobile-menu";
 import { SearchDialog } from "@/components/layout/search-dialog";
 import { cn } from "@/lib/utils";
 import type { PergolaProduct } from "@/features/products/types";
+import { Logo } from "@/components/brand/logo";
 
 // Pages whose top section is a dark, full-bleed photo — the header can stay
 // transparent until the user scrolls past it. Every other route uses a solid
@@ -32,7 +33,19 @@ const navItems = [
   { key: "contact", href: "/contact" },
 ] as const;
 
-export function SiteHeader({ catalog }: { catalog: PergolaProduct[] }) {
+export interface SiteInfoForHeader {
+  phone: string;
+  email: string;
+  showroomAddress: string;
+}
+
+export function SiteHeader({
+  catalog,
+  site,
+}: {
+  catalog: PergolaProduct[];
+  site: SiteInfoForHeader | null;
+}) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const isDarkHero = darkHeroRoutes.has(pathname);
@@ -73,12 +86,13 @@ export function SiteHeader({ catalog }: { catalog: PergolaProduct[] }) {
         <Container className="flex h-20 items-center justify-between md:h-24">
           <Link
             href="/"
+            aria-label="Pergola FR"
             className={cn(
-              "font-serif text-2xl tracking-tight transition-colors",
+              "transition-colors",
               overPhoto ? "text-white" : "text-primary",
             )}
           >
-            Pergola<span className="text-accent">.</span>fr
+            <Logo />
           </Link>
 
           <nav className="hidden items-center gap-8 lg:flex">
@@ -113,20 +127,6 @@ export function SiteHeader({ catalog }: { catalog: PergolaProduct[] }) {
               <LanguageSwitcher dark={overPhoto} />
             </div>
             <Link
-              href="/wishlist"
-              aria-label="Wishlist"
-              className="hover:bg-foreground/5 hidden rounded-full p-2.5 transition-colors md:block"
-            >
-              <Heart className="size-[18px]" />
-            </Link>
-            <Link
-              href="/connexion"
-              aria-label="Compte"
-              className="hover:bg-foreground/5 hidden rounded-full p-2.5 transition-colors md:block"
-            >
-              <User className="size-[18px]" />
-            </Link>
-            <Link
               href="/panier"
               aria-label="Panier"
               className="hover:bg-foreground/5 relative rounded-full p-2.5 transition-colors"
@@ -149,7 +149,7 @@ export function SiteHeader({ catalog }: { catalog: PergolaProduct[] }) {
         </Container>
       </header>
 
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} site={site} />
       <SearchDialog
         open={searchOpen}
         onClose={() => setSearchOpen(false)}

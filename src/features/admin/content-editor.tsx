@@ -9,10 +9,12 @@ import {
   AdminSection,
   fieldClass,
 } from "@/features/admin/admin-ui";
+import { useAdminT } from "@/features/admin/admin-i18n-provider";
 import { saveContent } from "@/actions/admin-inbox-actions";
 import type { ContentSettings } from "@/repositories/settings-repository";
 
 export function ContentEditor({ initial }: { initial: ContentSettings }) {
+  const { t } = useAdminT();
   const [v, setV] = React.useState<ContentSettings>(initial);
   const [pending, setPending] = React.useState(false);
 
@@ -24,11 +26,9 @@ export function ContentEditor({ initial }: { initial: ContentSettings }) {
     setPending(true);
     try {
       await saveContent(v);
-      toast.success("Contenu enregistré", {
-        description: "Visible sur la page d'accueil au prochain chargement.",
-      });
+      toast.success(t("content.saved"), { description: t("content.savedDesc") });
     } catch (err) {
-      toast.error("Erreur", {
+      toast.error(t("common.error"), {
         description: err instanceof Error ? err.message : String(err),
       });
     } finally {
@@ -39,24 +39,23 @@ export function ContentEditor({ initial }: { initial: ContentSettings }) {
   return (
     <form onSubmit={onSubmit} className="space-y-8">
       <AdminSection
-        title="Hero de la page d'accueil"
-        description="Le grand titre visible dès l'arrivée sur le site. Deux versions à saisir : française et anglaise."
+        title={t("content.heroTitle")}
+        description={t("content.heroDesc")}
       >
         <AdminCard>
           <div className="grid gap-8 md:grid-cols-2">
-            {/* FR column */}
             <div className="space-y-5">
               <div className="text-accent text-[10px] font-medium uppercase tracking-[0.3em]">
-                Français
+                {t("content.french")}
               </div>
-              <AdminLabel label="Eyebrow (petit texte au-dessus)">
+              <AdminLabel label={t("content.eyebrowFr")}>
                 <input
                   value={v.heroEyebrowFr}
                   onChange={(e) => set("heroEyebrowFr", e.target.value)}
                   className={fieldClass}
                 />
               </AdminLabel>
-              <AdminLabel label="Titre principal (H1)">
+              <AdminLabel label={t("content.mainTitle")}>
                 <textarea
                   value={v.heroTitleFr}
                   onChange={(e) => set("heroTitleFr", e.target.value)}
@@ -64,7 +63,7 @@ export function ContentEditor({ initial }: { initial: ContentSettings }) {
                   className={fieldClass + " resize-none font-serif text-lg"}
                 />
               </AdminLabel>
-              <AdminLabel label="Sous-titre">
+              <AdminLabel label={t("content.subtitleLabel")}>
                 <textarea
                   value={v.heroSubtitleFr}
                   onChange={(e) => set("heroSubtitleFr", e.target.value)}
@@ -74,19 +73,18 @@ export function ContentEditor({ initial }: { initial: ContentSettings }) {
               </AdminLabel>
             </div>
 
-            {/* EN column */}
             <div className="space-y-5">
               <div className="text-accent text-[10px] font-medium uppercase tracking-[0.3em]">
-                English
+                {t("content.english")}
               </div>
-              <AdminLabel label="Eyebrow (small text above)">
+              <AdminLabel label={t("content.eyebrowEn")}>
                 <input
                   value={v.heroEyebrowEn}
                   onChange={(e) => set("heroEyebrowEn", e.target.value)}
                   className={fieldClass}
                 />
               </AdminLabel>
-              <AdminLabel label="Main title (H1)">
+              <AdminLabel label={t("content.mainTitleEn")}>
                 <textarea
                   value={v.heroTitleEn}
                   onChange={(e) => set("heroTitleEn", e.target.value)}
@@ -94,7 +92,7 @@ export function ContentEditor({ initial }: { initial: ContentSettings }) {
                   className={fieldClass + " resize-none font-serif text-lg"}
                 />
               </AdminLabel>
-              <AdminLabel label="Subtitle">
+              <AdminLabel label={t("content.subtitleLabelEn")}>
                 <textarea
                   value={v.heroSubtitleEn}
                   onChange={(e) => set("heroSubtitleEn", e.target.value)}
@@ -107,7 +105,7 @@ export function ContentEditor({ initial }: { initial: ContentSettings }) {
         </AdminCard>
       </AdminSection>
 
-      <AdminSection title="Aperçu">
+      <AdminSection title={t("content.preview")}>
         <div
           className="relative min-h-[320px] overflow-hidden rounded-3xl p-10 text-white"
           style={{
@@ -129,7 +127,7 @@ export function ContentEditor({ initial }: { initial: ContentSettings }) {
 
       <div className="border-border/60 sticky bottom-0 flex items-center justify-end gap-3 border-t bg-background/95 p-8 backdrop-blur">
         <AdminButton type="submit" variant="primary" disabled={pending}>
-          {pending ? "Enregistrement…" : "Publier"}
+          {pending ? t("common.publishing") : t("common.publish")}
         </AdminButton>
       </div>
     </form>

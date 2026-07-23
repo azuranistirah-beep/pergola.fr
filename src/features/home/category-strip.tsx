@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useTranslations } from "next-intl";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductCard } from "@/features/products/product-card";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -10,6 +11,20 @@ import type {
   PergolaProduct,
   ProductCategory,
 } from "@/features/products/types";
+
+const PAGE_SIZE = 30;
+
+function pageWindow(current: number, total: number): (number | "…")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const out: (number | "…")[] = [1];
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  if (start > 2) out.push("…");
+  for (let i = start; i <= end; i++) out.push(i);
+  if (end < total - 1) out.push("…");
+  out.push(total);
+  return out;
+}
 
 const categoryDefs: { code: "all" | ProductCategory; labelKey: string }[] = [
   { code: "all", labelKey: "all" },
@@ -22,12 +37,34 @@ const categoryDefs: { code: "all" | ProductCategory; labelKey: string }[] = [
 
 export function CategoryStrip({ products }: { products: PergolaProduct[] }) {
   const t = useTranslations("home.categories");
+  const pt = useTranslations("plp.pagination");
   const [active, setActive] = React.useState<"all" | ProductCategory>("all");
+  const [page, setPage] = React.useState(1);
+  const gridRef = React.useRef<HTMLDivElement>(null);
 
   const filtered = React.useMemo(() => {
     if (active === "all") return products;
     return products.filter((p) => p.category === active);
   }, [active, products]);
+
+  React.useEffect(() => setPage(1), [active]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const visible = React.useMemo(
+    () =>
+      filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+    [filtered, currentPage],
+  );
+
+  const go = (p: number) => {
+    setPage(p);
+    if (typeof window !== "undefined") {
+      requestAnimationFrame(() =>
+        gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      );
+    }
+  };
 
   return (
     <section id="collection" className="scroll-mt-24 py-16 md:py-24">
@@ -78,15 +115,64 @@ export function CategoryStrip({ products }: { products: PergolaProduct[] }) {
           })}
         </div>
 
-        <div className="text-secondary mb-6 text-xs">
+        <div ref={gridRef} className="text-secondary mb-6 text-xs">
           {t("productsCount", { count: filtered.length })}
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((p) => (
+          {visible.map((p) => (
             <ProductCard key={p.slug} product={p} />
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <nav
+            aria-label="Pagination"
+            className="border-border/60 mt-12 flex items-center justify-center gap-1 border-t pt-8"
+          >
+            <button
+              onClick={() => go(currentPage - 1)}
+              disabled={currentPage === 1}
+              aria-label={pt("prev")}
+              className="border-border text-primary hover:border-primary inline-flex items-center gap-1 rounded-full border px-4 py-1.5 text-xs font-medium transition-colors disabled:opacity-30"
+            >
+              <ChevronLeft className="size-3.5" /> {pt("prev")}
+            </button>
+            {pageWindow(currentPage, totalPages).map((it, i) =>
+              it === "…" ? (
+                <span
+                  key={`gap-${i}`}
+                  className="text-secondary px-2 text-xs"
+                  aria-hidden
+                >
+                  …
+                </span>
+              ) : (
+                <button
+                  key={it}
+                  onClick={() => go(it)}
+                  className={cn(
+                    "min-w-[36px] rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                    it === currentPage
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border text-primary hover:border-primary",
+                  )}
+                  aria-current={it === currentPage ? "page" : undefined}
+                >
+                  {it}
+                </button>
+              ),
+            )}
+            <button
+              onClick={() => go(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              aria-label={pt("next")}
+              className="border-border text-primary hover:border-primary inline-flex items-center gap-1 rounded-full border px-4 py-1.5 text-xs font-medium transition-colors disabled:opacity-30"
+            >
+              {pt("next")} <ChevronRight className="size-3.5" />
+            </button>
+          </nav>
+        )}
       </Container>
     </section>
   );

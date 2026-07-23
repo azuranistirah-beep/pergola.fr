@@ -12,6 +12,13 @@ export type ProductFamily =
 
 export type ProductMaterial = "wood" | "steel" | "aluminium";
 
+export type PergolaColorway =
+  | "warm-cedar"
+  | "walnut"
+  | "barnwood"
+  | "black"
+  | "white";
+
 export type ProductCategory =
   | "pergola-bois"
   | "pergola-aluminium"
@@ -38,5 +45,5 @@ export interface PergolaProduct {
   heroUrl?: string;
   featured?: boolean;
   finish?: string;
-  colorway: "warm-cedar" | "walnut" | "barnwood" | "black" | "white";
+  colorway: PergolaColorway;
 }

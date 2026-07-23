@@ -3,6 +3,7 @@
 import { toast } from "sonner";
 import { Download, UserX } from "lucide-react";
 import { AdminButton } from "@/features/admin/admin-ui";
+import { useAdminT } from "@/features/admin/admin-i18n-provider";
 import { unsubscribeNewsletter } from "@/actions/admin-inbox-actions";
 
 interface Subscriber {
@@ -12,6 +13,7 @@ interface Subscriber {
 }
 
 export function NewsletterExport({ rows }: { rows: Subscriber[] }) {
+  const { t } = useAdminT();
   const download = () => {
     const csv = [
       "email,locale,subscribed_at",
@@ -31,27 +33,28 @@ export function NewsletterExport({ rows }: { rows: Subscriber[] }) {
   };
   return (
     <AdminButton variant="outline" onClick={download}>
-      <Download className="size-3.5" /> Export CSV
+      <Download className="size-3.5" /> {t("newsletter.export")}
     </AdminButton>
   );
 }
 
 export function UnsubscribeButton({ email }: { email: string }) {
+  const { t } = useAdminT();
   return (
     <button
       onClick={async () => {
-        if (!confirm(`Désinscrire ${email} ?`)) return;
+        if (!confirm(t("newsletter.unsubscribeConfirm", { email }))) return;
         try {
           await unsubscribeNewsletter(email);
-          toast.success("Désinscrit");
+          toast.success(t("newsletter.unsubscribed"));
         } catch (e) {
-          toast.error("Erreur", {
+          toast.error(t("common.error"), {
             description: e instanceof Error ? e.message : String(e),
           });
         }
       }}
       className="text-secondary hover:text-accent inline-flex items-center gap-1 text-xs"
-      title="Désinscrire"
+      title={t("newsletter.unsubscribeLabel")}
     >
       <UserX className="size-3.5" />
     </button>

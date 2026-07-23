@@ -1,15 +1,13 @@
 import { AdminHeader } from "@/features/admin/admin-ui";
 import { ContentEditor } from "@/features/admin/content-editor";
 import { getContent } from "@/repositories/settings-repository";
+import { getT } from "@/lib/admin-i18n";
 
 export default async function ContentPage() {
-  const content = await getContent();
+  const [content, { t }] = await Promise.all([getContent(), getT()]);
   return (
     <>
-      <AdminHeader
-        title="Contenu éditorial"
-        subtitle="Éditez le hero de la page d'accueil, en français et en anglais."
-      />
+      <AdminHeader title={t("content.title")} subtitle={t("content.subtitle")} />
       <ContentEditor initial={content} />
     </>
   );

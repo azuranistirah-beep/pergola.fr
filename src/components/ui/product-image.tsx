@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const gradientByColorway: Record<string, string> = {
@@ -23,10 +24,13 @@ export interface ProductImageProps {
 
 /**
  * Renders the colorway gradient as a permanent background, with the actual
- * <img> fading in on top when it successfully loads. When the file is missing
- * (404), the img simply never fades in and the gradient stays visible with a
- * discreet "Visuel à venir" caption. This avoids next/image's inconsistent
- * onError behaviour with Turbopack on missing files.
+ * image fading in on top when it successfully loads. Uses next/image so the
+ * remote source is resized + reformatted (WebP/AVIF) through Next's optimizer,
+ * which dramatically cuts payload and avoids connection-storm failures when a
+ * listing page requests dozens of full-resolution images at once.
+ *
+ * On network error (rare, but possible with unreliable storage) we retry once,
+ * then fall back to the colorway gradient with a small "Visuel à venir" hint.
  */
 export function ProductImage({
   src,
@@ -38,6 +42,17 @@ export function ProductImage({
 }: ProductImageProps) {
   const [loaded, setLoaded] = React.useState(false);
   const [failed, setFailed] = React.useState(false);
+  const [retryKey, setRetryKey] = React.useState(0);
+  const attemptedRetry = React.useRef(false);
+
+  const handleError = React.useCallback(() => {
+    if (!attemptedRetry.current) {
+      attemptedRetry.current = true;
+      window.setTimeout(() => setRetryKey((k) => k + 1), 400);
+      return;
+    }
+    setFailed(true);
+  }, []);
 
   return (
     <div
@@ -45,30 +60,29 @@ export function ProductImage({
       style={{ background: gradientByColorway[colorway] }}
     >
       {!failed && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
+          key={retryKey}
           src={src}
           alt={alt}
-          sizes={sizes}
-          loading={priority ? "eager" : "lazy"}
-          fetchPriority={priority ? "high" : "auto"}
+          fill
+          sizes={sizes ?? "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"}
+          priority={priority}
           onLoad={() => setLoaded(true)}
-          onError={() => setFailed(true)}
+          onError={handleError}
           className={cn(
-            "absolute inset-0 h-full w-full object-cover transition-opacity duration-500",
+            "object-cover transition-opacity duration-500",
             loaded ? "opacity-100" : "opacity-0",
           )}
         />
       )}
-      {(failed || !loaded) && (
+      {failed && (
         <div
           aria-hidden
           className={cn(
-            "absolute inset-x-0 bottom-0 flex items-center justify-center p-4 text-[10px] uppercase tracking-[0.3em] transition-opacity duration-500",
+            "absolute inset-x-0 bottom-0 flex items-center justify-center p-4 text-[10px] uppercase tracking-[0.3em]",
             colorway === "white" || colorway === "warm-cedar"
               ? "text-primary/40"
               : "text-white/60",
-            failed ? "opacity-100" : "opacity-60",
           )}
         >
           Visuel à venir

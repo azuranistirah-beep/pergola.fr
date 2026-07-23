@@ -4,6 +4,7 @@ import { ProductForm } from "@/features/admin/product-form";
 import { ProductMediaEditor } from "@/features/admin/product-media-editor";
 import { insforgeAdmin } from "@/lib/insforge-admin";
 import { deleteProduct } from "@/actions/admin-actions";
+import { getT } from "@/lib/admin-i18n";
 
 async function loadEverything(id: string) {
   const { data: rows } = await insforgeAdmin.database
@@ -95,7 +96,7 @@ export default async function EditProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const data = await loadEverything(id);
+  const [data, { t }] = await Promise.all([loadEverything(id), getT()]);
   if (!data) notFound();
 
   async function handleDelete() {
@@ -110,7 +111,7 @@ export default async function EditProductPage({
         subtitle={`SKU ${data.product.sku} · /${data.product.slug}`}
       />
 
-      <AdminSection title="Images produit">
+      <AdminSection title={t("products.mediaTitle")}>
         <ProductMediaEditor
           productId={data.product.id}
           slug={data.product.slug}

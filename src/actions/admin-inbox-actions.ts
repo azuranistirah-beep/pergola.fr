@@ -31,11 +31,8 @@ export async function updateOrderStatus(
     | "CANCELLED"
     | "REFUNDED",
 ) {
-  await insforgeAdmin.database
-    .from("orders")
-    .update({ status })
-    .eq("id", id);
-  revalidatePath("/admin/orders");
+  const { updateOrderStatusFull } = await import("./admin-orders-actions");
+  await updateOrderStatusFull(id, status);
 }
 
 export async function unsubscribeNewsletter(email: string) {

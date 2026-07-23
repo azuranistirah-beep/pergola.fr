@@ -66,26 +66,48 @@ function toPergolaProduct(
   };
 }
 
+const ID_BATCH = 50;
+
+function chunkIds<T>(arr: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
+}
+
 async function loadJoins(productIds: string[]) {
   if (productIds.length === 0)
     return { translations: [], media: [] as MediaRow[] };
 
-  const [{ data: translations }, { data: media }] = await Promise.all([
-    insforge.database
-      .from("product_translations")
-      .select("product_id, locale, name, short_desc")
-      .in("product_id", productIds),
-    insforge.database
-      .from("product_media")
-      .select("product_id, url, is_cover, sort_order")
-      .in("product_id", productIds)
-      .order("sort_order", { ascending: true }),
+  // `.in()` with hundreds of IDs would overflow the URL length limit and
+  // trigger a gateway error (HTML response). Split into small batches and
+  // merge the results.
+  const batches = chunkIds(productIds, ID_BATCH);
+  const [trResults, mdResults] = await Promise.all([
+    Promise.all(
+      batches.map((ids) =>
+        insforge.database
+          .from("product_translations")
+          .select("product_id, locale, name, short_desc")
+          .in("product_id", ids)
+          .limit(10000),
+      ),
+    ),
+    Promise.all(
+      batches.map((ids) =>
+        insforge.database
+          .from("product_media")
+          .select("product_id, url, is_cover, sort_order")
+          .in("product_id", ids)
+          .order("sort_order", { ascending: true })
+          .limit(10000),
+      ),
+    ),
   ]);
-
-  return {
-    translations: (translations ?? []) as TranslationRow[],
-    media: (media ?? []) as MediaRow[],
-  };
+  const translations = trResults.flatMap(
+    (r) => (r.data ?? []) as TranslationRow[],
+  );
+  const media = mdResults.flatMap((r) => (r.data ?? []) as MediaRow[]);
+  return { translations, media };
 }
 
 async function loadCategoryMap(): Promise<Map<string, string>> {
@@ -105,7 +127,8 @@ export async function listProducts(): Promise<PergolaProduct[]> {
     )
     .eq("status", "PUBLISHED")
     .order("is_featured", { ascending: false })
-    .order("base_price_cents", { ascending: true });
+    .order("base_price_cents", { ascending: true })
+    .limit(10000);
 
   if (error) throw error;
   const rows = (data ?? []) as ProductRow[];
@@ -183,7 +206,8 @@ export async function listProductSlugs(): Promise<string[]> {
   const { data, error } = await insforge.database
     .from("products")
     .select("slug")
-    .eq("status", "PUBLISHED");
+    .eq("status", "PUBLISHED")
+    .limit(10000);
   if (error) throw error;
   return ((data ?? []) as { slug: string }[]).map((r) => r.slug);
 }

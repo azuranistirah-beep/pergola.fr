@@ -7,6 +7,7 @@ import {
   updateContactStatus,
 } from "@/actions/admin-inbox-actions";
 import { AdminButton } from "@/features/admin/admin-ui";
+import { useAdminT } from "@/features/admin/admin-i18n-provider";
 
 type Status = "NEW" | "READ" | "REPLIED" | "ARCHIVED";
 
@@ -17,24 +18,26 @@ export function ContactActionsBar({
   id: string;
   current: Status;
 }) {
+  const { t } = useAdminT();
+
   const set = async (next: Status) => {
     try {
       await updateContactStatus(id, next);
-      toast.success("Statut mis à jour");
+      toast.success(t("inbox.statusUpdated"));
     } catch (e) {
-      toast.error("Erreur", {
+      toast.error(t("common.error"), {
         description: e instanceof Error ? e.message : String(e),
       });
     }
   };
 
   const remove = async () => {
-    if (!confirm("Supprimer ce message ?")) return;
+    if (!confirm(t("inbox.deleteConfirm"))) return;
     try {
       await deleteContact(id);
-      toast.success("Message supprimé");
+      toast.success(t("inbox.deleted"));
     } catch (e) {
-      toast.error("Erreur", {
+      toast.error(t("common.error"), {
         description: e instanceof Error ? e.message : String(e),
       });
     }
@@ -47,10 +50,10 @@ export function ContactActionsBar({
         onChange={(e) => set(e.target.value as Status)}
         className="border-border focus:border-primary rounded-full border bg-transparent px-3 py-1 text-xs outline-none"
       >
-        <option value="NEW">Nouveau</option>
-        <option value="READ">Lu</option>
-        <option value="REPLIED">Répondu</option>
-        <option value="ARCHIVED">Archivé</option>
+        <option value="NEW">{t("inbox.status.NEW")}</option>
+        <option value="READ">{t("inbox.status.READ")}</option>
+        <option value="REPLIED">{t("inbox.status.REPLIED")}</option>
+        <option value="ARCHIVED">{t("inbox.status.ARCHIVED")}</option>
       </select>
       <AdminButton variant="danger" onClick={remove}>
         <Trash2 className="size-3.5" />
