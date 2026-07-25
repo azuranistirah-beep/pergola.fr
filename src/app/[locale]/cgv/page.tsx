@@ -52,8 +52,8 @@ export default async function CgvPage({
 
         <LegalSection title="4. Livraison">
           <p>
-            Délai standard : 4 à 6 semaines à compter de la validation. Délai
-            express : 3 semaines (supplément 299 €). La livraison a lieu au
+            Délai standard : 4 à 6 jours à compter de la validation. Délai
+            express : 3 jours (supplément 299 €). La livraison a lieu au
             pied du camion sur RDV. Pour les grandes structures, une équipe
             de 2 personnes minimum est requise côté client, ou l&apos;option
             « pose » doit être choisie.

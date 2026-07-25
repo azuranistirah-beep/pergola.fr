@@ -56,7 +56,7 @@
     "categories": {
       "eyebrow": "La collection 2026",
       "title": "Chaque pergola, une pièce singulière.",
-      "subtitle": "{count} modèles, du cèdre massif au bioclimatique à lames orientables — tous fabriqués sur commande, livrés en 4 à 6 semaines.",
+      "subtitle": "{count} modèles, du cèdre massif au bioclimatique à lames orientables — tous fabriqués sur commande, livrés en 4 à 6 jours.",
       "cta": "Découvrir la collection",
       "all": "Toutes nos pergolas",
       "wood": "Bois cèdre",
@@ -204,7 +204,7 @@
     "specWarranty": "Garantie",
     "specShipping": "Livraison",
     "warrantyYears": "10 ans",
-    "shippingDelay": "4–6 semaines",
+    "shippingDelay": "4–6 jours",
     "finishDefault": "Cèdre naturel",
     "ctaConfigure": "Configurer & commander",
     "ctaQuote": "Demander un devis personnalisé",
@@ -295,8 +295,9 @@
     "shipping": "Livraison",
     "shippingFree": "Offerte",
     "total": "Total TTC",
-    "checkoutCta": "Commander",
-    "secure": "Paiement sécurisé Stripe & PayPal"
+    "checkoutCta": "Demander un devis",
+    "secure": "Notre équipe vous recontacte sous 48 h avec un devis détaillé.",
+    "installationIncluded": "Pose incluse (2 à 4 h)"
   },
   "checkout": {
     "eyebrow": "Commande",
@@ -315,8 +316,8 @@
     "city": "Ville",
     "country": "Pays",
     "countryDefault": "France",
-    "shippingStandard": "Standard — 4 à 6 semaines",
-    "shippingExpress": "Express — 3 semaines",
+    "shippingStandard": "Standard — 4 à 6 jours",
+    "shippingExpress": "Express — 3 jours",
     "shippingWithPose": "Livraison + pose (RDV équipe)",
     "paymentCard": "Carte",
     "paymentCardHelper": "Visa, Mastercard, Amex",
@@ -580,12 +581,12 @@
     "optionsTitle": "Un tarif clair, quel que soit votre projet.",
     "standard": {
       "label": "France métropolitaine — standard",
-      "delay": "4 à 6 semaines",
+      "delay": "4 à 6 jours",
       "price": "Offert dès 2 000 €"
     },
     "express": {
       "label": "France métropolitaine — express",
-      "delay": "3 semaines",
+      "delay": "3 jours",
       "price": "+ 299 €"
     },
     "install": {
@@ -762,7 +763,8 @@
     "configurator": "Configurateur",
     "shipping": "Livraison & pose",
     "warranty": "Garantie 10 ans",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "language": "Langue"
   },
   "productCard": {
     "materialLabel": {
@@ -788,11 +790,12 @@
     "totalTTC": "Total TTC",
     "addToCart": "Ajouter au panier",
     "requestQuote": "Demander un devis PDF",
-    "deliveryEstimate": "Livraison estimée : 4–6 semaines",
+    "deliveryEstimate": "Livraison estimée : 4–6 jours · Pose incluse (2–4 h)",
     "productName": "Pergola bioclimatique sur-mesure",
     "pageTitle": "Dessinez votre pergola bioclimatique.",
     "pageDescription": "Chaque choix met à jour le prix, la référence SKU et l'aperçu en temps réel. Sauvegardez, demandez un devis ou commandez directement en ligne.",
-    "customDimensions": "Sur-mesure hors format standard"
+    "customDimensions": "Sur-mesure hors format standard",
+    "installationIncluded": "Pose incluse (2 à 4 h)"
   },
   "configuratorData": {
     "options": {

@@ -82,19 +82,19 @@ export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
   }
 
   return (
-    <div className="bg-muted min-h-screen pt-28 pb-24 md:pt-32">
+    <div className="bg-muted min-h-screen pt-24 pb-16 md:pt-32 md:pb-24">
       <Container>
-        <div className="mb-10 flex flex-col gap-3">
+        <div className="mb-8 flex flex-col gap-3 md:mb-10">
           <Eyebrow>{t("eyebrow")}</Eyebrow>
-          <h1 className="font-serif text-4xl leading-tight md:text-6xl">
+          <h1 className="font-serif text-3xl leading-tight md:text-6xl">
             {t("pageTitle")}
           </h1>
-          <p className="text-secondary max-w-2xl text-base">
+          <p className="text-secondary max-w-2xl text-sm md:text-base">
             {t("pageDescription")}
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+        <div className="grid gap-6 md:gap-8 lg:grid-cols-[1.4fr_1fr]">
           {/* Options column */}
           <div className="space-y-8">
             {cfg.options.map((opt) => {
@@ -105,7 +105,7 @@ export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
               return (
                 <div
                   key={opt.code}
-                  className="bg-background border-border/70 rounded-[var(--radius-lg)] border p-6 md:p-8"
+                  className="bg-background border-border/70 rounded-[var(--radius-lg)] border p-4 md:p-8"
                 >
                   <div className="mb-5 flex items-baseline justify-between gap-4">
                     <div>
@@ -151,7 +151,7 @@ export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
           <aside className="lg:sticky lg:top-32 lg:self-start">
             <div className="bg-primary text-primary-foreground overflow-hidden rounded-[var(--radius-lg)]">
               {/* Live preview */}
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-[16/10] overflow-hidden md:aspect-[4/3]">
                 <PergolaPreview
                   frameColor={frameColor}
                   roofColor={roofColor}

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { cn } from "@/lib/utils";
 
 const groups = [
@@ -122,6 +123,12 @@ export function MobileMenu({ open, onClose, site }: Props) {
         </div>
 
         <div className="border-border/60 border-t p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <span className="text-secondary text-[10px] uppercase tracking-[0.25em]">
+              {t("language")}
+            </span>
+            <LanguageSwitcher />
+          </div>
           <Button asChild variant="accent" size="lg" className="w-full">
             <Link href="/configurateur" onClick={onClose}>
               {t("primaryCta")}

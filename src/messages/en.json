@@ -56,7 +56,7 @@
     "categories": {
       "eyebrow": "The 2026 collection",
       "title": "Every pergola, a bespoke piece.",
-      "subtitle": "{count} models, from solid cedar to bioclimatic louvered aluminium — all made to order, delivered in 4–6 weeks.",
+      "subtitle": "{count} models, from solid cedar to bioclimatic louvered aluminium — all made to order, delivered in 4–6 days.",
       "cta": "Explore the collection",
       "all": "All our pergolas",
       "wood": "Cedar wood",
@@ -204,7 +204,7 @@
     "specWarranty": "Warranty",
     "specShipping": "Delivery",
     "warrantyYears": "10 years",
-    "shippingDelay": "4–6 weeks",
+    "shippingDelay": "4–6 days",
     "finishDefault": "Natural cedar",
     "ctaConfigure": "Configure & order",
     "ctaQuote": "Request a custom quote",
@@ -295,8 +295,9 @@
     "shipping": "Shipping",
     "shippingFree": "Free",
     "total": "Total incl. VAT",
-    "checkoutCta": "Checkout",
-    "secure": "Secure payment via Stripe & PayPal"
+    "checkoutCta": "Request a quote",
+    "secure": "Our team gets back to you within 48 h with a detailed quote.",
+    "installationIncluded": "Installation included (2–4 h)"
   },
   "checkout": {
     "eyebrow": "Order",
@@ -315,8 +316,8 @@
     "city": "City",
     "country": "Country",
     "countryDefault": "France",
-    "shippingStandard": "Standard — 4 to 6 weeks",
-    "shippingExpress": "Express — 3 weeks",
+    "shippingStandard": "Standard — 4 to 6 days",
+    "shippingExpress": "Express — 3 days",
     "shippingWithPose": "Delivery + install (team appointment)",
     "paymentCard": "Card",
     "paymentCardHelper": "Visa, Mastercard, Amex",
@@ -580,12 +581,12 @@
     "optionsTitle": "Clear pricing, whatever your project.",
     "standard": {
       "label": "Mainland France — standard",
-      "delay": "4 to 6 weeks",
+      "delay": "4 to 6 days",
       "price": "Free over €2,000"
     },
     "express": {
       "label": "Mainland France — express",
-      "delay": "3 weeks",
+      "delay": "3 days",
       "price": "+ €299"
     },
     "install": {
@@ -762,7 +763,8 @@
     "configurator": "Configurator",
     "shipping": "Delivery & install",
     "warranty": "10-year warranty",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "language": "Language"
   },
   "productCard": {
     "materialLabel": {
@@ -788,11 +790,12 @@
     "totalTTC": "Total incl. VAT",
     "addToCart": "Add to cart",
     "requestQuote": "Request PDF quote",
-    "deliveryEstimate": "Estimated delivery: 4–6 weeks",
+    "deliveryEstimate": "Estimated delivery: 4–6 days · Installation included (2–4 h)",
     "productName": "Custom bioclimatic pergola",
     "pageTitle": "Design your bioclimatic pergola.",
     "pageDescription": "Every choice updates the price, SKU reference and preview in real time. Save, request a quote or order directly online.",
-    "customDimensions": "Custom size beyond standard format"
+    "customDimensions": "Custom size beyond standard format",
+    "installationIncluded": "Installation included (2–4 h)"
   },
   "configuratorData": {
     "options": {

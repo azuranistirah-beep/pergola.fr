@@ -69,9 +69,9 @@ export const faqGroups: FaqGroup[] = [
       {
         q: "Quels sont les délais de livraison ?",
         q_en: "What are the delivery lead times?",
-        a: "4 à 6 semaines pour une commande standard, 3 semaines en express (+299 €). Le délai commence à la validation du bureau d'études pour les configurations sur-mesure.",
+        a: "4 à 6 jours pour une commande standard, 3 jours en express (+299 €). Le délai commence à la validation du bureau d'études pour les configurations sur-mesure.",
         a_en:
-          "4 to 6 weeks for a standard order, 3 weeks in express (+€299). Lead time starts at engineering validation for custom configurations.",
+          "4 to 6 days for a standard order, 3 days in express (+€299). Lead time starts at engineering validation for custom configurations.",
       },
       {
         q: "Livrez-vous partout en France ?",

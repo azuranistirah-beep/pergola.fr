@@ -16,10 +16,10 @@ export default function PanierPage() {
   const totalCents = subtotalCents + shippingCents;
 
   return (
-    <div className="pt-28 pb-24 md:pt-32">
+    <div className="pt-24 pb-16 md:pt-32 md:pb-24">
       <Container>
         <Eyebrow>{t("eyebrow")}</Eyebrow>
-        <h1 className="mt-4 font-serif text-4xl leading-tight md:text-6xl">
+        <h1 className="mt-4 font-serif text-3xl leading-tight md:text-6xl">
           {t("title")}
         </h1>
 
@@ -41,9 +41,9 @@ export default function PanierPage() {
               {lines.map((l, i) => (
                 <div
                   key={l.id}
-                  className={`flex gap-4 p-6 md:gap-6 md:p-8 ${i > 0 ? "border-t border-border" : ""}`}
+                  className={`flex gap-3 p-4 md:gap-6 md:p-8 ${i > 0 ? "border-t border-border" : ""}`}
                 >
-                  <div className="bg-muted relative aspect-square w-24 shrink-0 overflow-hidden rounded-2xl md:w-32">
+                  <div className="bg-muted relative aspect-square w-20 shrink-0 overflow-hidden rounded-2xl md:w-32">
                     {l.imageUrl && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img

@@ -67,7 +67,7 @@ export function Hero({ content }: { content: ContentSettings }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 border-l border-white/15 pl-8 text-white/70 md:gap-8">
+          <div className="grid grid-cols-2 gap-6 border-t border-white/15 pt-8 text-white/70 md:gap-8 md:border-t-0 md:border-l md:pl-8 md:pt-0">
             {[
               { k: "12+", v: t("statYears") },
               { k: "3 500+", v: t("statInstalls") },
@@ -75,7 +75,9 @@ export function Hero({ content }: { content: ContentSettings }) {
               { k: "10 ans", v: t("statWarranty") },
             ].map((s) => (
               <div key={s.v}>
-                <div className="font-serif text-3xl text-white">{s.k}</div>
+                <div className="font-serif text-2xl text-white md:text-3xl">
+                  {s.k}
+                </div>
                 <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/50">
                   {s.v}
                 </div>
