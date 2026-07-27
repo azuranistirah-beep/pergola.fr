@@ -278,7 +278,9 @@
       "eyebrow": "You may also like",
       "title": "In the same spirit",
       "cta": "See the whole collection"
-    }
+    },
+    "ctaAddToCart": "Add to cart",
+    "ctaAdded": "Added!"
   },
   "cart": {
     "eyebrow": "Cart",
@@ -347,7 +349,13 @@
     "quoteNotesHelper": "Install constraints, preferred timeline, alternate address…",
     "configurationLabel": "View configuration",
     "cartEmptyCta": "Explore pergolas",
-    "submitError": "Could not send the request. Try again or contact us."
+    "submitError": "Could not send the request. Try again or contact us.",
+    "paymentTitle": "Payment details",
+    "paymentIntro": "Payment is made by bank transfer upon quote approval. Bank details:",
+    "paymentPreferred": "Preferred",
+    "paymentHolder": "Account holder",
+    "paymentBank": "Bank",
+    "paymentReference": "Please include reference {ref} in the transfer description."
   },
   "confirmation": {
     "badge": "Order confirmed",

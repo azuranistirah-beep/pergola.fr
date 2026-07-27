@@ -22,6 +22,7 @@ import { ProductGallery } from "@/features/products/product-gallery";
 import { ProductCard } from "@/features/products/product-card";
 import { ProductReviews } from "@/features/products/product-reviews";
 import { ProductDownloads } from "@/features/products/product-downloads";
+import { PdpAddToCartButton } from "@/features/products/pdp-add-to-cart";
 
 export const dynamic = "force-dynamic";
 
@@ -190,6 +191,7 @@ export default async function ProductDetailPage({
               </div>
 
               <div className="mt-8 flex flex-col gap-3">
+                <PdpAddToCartButton product={product} />
                 <Button asChild variant="primary" size="lg" className="w-full">
                   <Link href={`/configurateur?produit=${product.slug}`}>
                     {t("ctaConfigure")}

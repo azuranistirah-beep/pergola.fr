@@ -13,6 +13,7 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { Button } from "@/components/ui/button";
 import { formatEUR } from "@/lib/utils";
 import { insforge } from "@/lib/insforge";
+import { listActivePaymentMethodsForCustomer } from "@/repositories/payment-methods-repository";
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -55,9 +56,11 @@ export default async function OrderConfirmationPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const { ref } = await searchParams;
-  const [t, order] = await Promise.all([
+  const [t, tc, order, paymentMethods] = await Promise.all([
     getTranslations("confirmation"),
+    getTranslations("checkout"),
     loadOrder(ref),
+    listActivePaymentMethodsForCustomer(),
   ]);
 
   const orderNumber = order?.order_number ?? ref ?? "—";
@@ -119,6 +122,66 @@ export default async function OrderConfirmationPage({
               <Link href="/contact">{t("track")}</Link>
             </Button>
           </div>
+
+          {paymentMethods.length > 0 && (
+            <div className="border-border/70 mt-8 rounded-[var(--radius-lg)] border p-8">
+              <h2 className="font-serif text-xl">{tc("paymentTitle")}</h2>
+              <p className="text-secondary mt-2 text-xs">
+                {tc("paymentIntro")}
+              </p>
+              <ul className="mt-6 space-y-4">
+                {paymentMethods.map((m) => (
+                  <li
+                    key={m.id}
+                    className="border-border/60 flex flex-col gap-1 rounded-md border p-4 text-xs"
+                  >
+                    <div className="text-primary flex items-center justify-between text-sm font-medium">
+                      <span>{m.label}</span>
+                      {m.is_default && (
+                        <span className="bg-accent/10 text-accent rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider">
+                          {tc("paymentPreferred")}
+                        </span>
+                      )}
+                    </div>
+                    {m.holder && (
+                      <div className="text-secondary">
+                        <span className="text-primary/70">
+                          {tc("paymentHolder")}:
+                        </span>{" "}
+                        {m.holder}
+                      </div>
+                    )}
+                    {m.bank_name && (
+                      <div className="text-secondary">
+                        <span className="text-primary/70">
+                          {tc("paymentBank")}:
+                        </span>{" "}
+                        {m.bank_name}
+                      </div>
+                    )}
+                    {m.iban && (
+                      <div className="text-secondary font-mono">
+                        IBAN: {m.iban}
+                      </div>
+                    )}
+                    {m.bic && (
+                      <div className="text-secondary font-mono">
+                        BIC: {m.bic}
+                      </div>
+                    )}
+                    {m.notes && (
+                      <div className="text-secondary mt-1 italic">
+                        {m.notes}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-secondary mt-4 text-xs">
+                {tc("paymentReference", { ref: orderNumber })}
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="mx-auto mt-24 max-w-4xl">

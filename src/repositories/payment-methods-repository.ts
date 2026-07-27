@@ -35,3 +35,21 @@ export async function getDefaultPaymentMethod(): Promise<PaymentMethod | null> {
     null
   );
 }
+
+/**
+ * Active payment methods to display to end customers on checkout / confirmation.
+ * Uses the admin client so RLS never hides the list from unauthenticated
+ * visitors — customers do need to see it, but only via server components.
+ */
+export async function listActivePaymentMethodsForCustomer(): Promise<
+  PaymentMethod[]
+> {
+  const all = await listPaymentMethods({ adminOnly: true });
+  return all
+    .filter((m) => m.is_active)
+    .sort((a, b) => {
+      if (a.is_default && !b.is_default) return -1;
+      if (!a.is_default && b.is_default) return 1;
+      return a.sort_order - b.sort_order;
+    });
+}

@@ -278,7 +278,9 @@
       "eyebrow": "Vous aimerez aussi",
       "title": "Dans le même esprit",
       "cta": "Voir toute la collection"
-    }
+    },
+    "ctaAddToCart": "Ajouter au panier",
+    "ctaAdded": "Ajouté !"
   },
   "cart": {
     "eyebrow": "Panier",
@@ -347,7 +349,13 @@
     "quoteNotesHelper": "Contraintes de pose, calendrier souhaité, adresse alternative…",
     "configurationLabel": "Voir la configuration",
     "cartEmptyCta": "Explorer les pergolas",
-    "submitError": "Impossible d’envoyer la demande. Réessayez ou contactez-nous."
+    "submitError": "Impossible d’envoyer la demande. Réessayez ou contactez-nous.",
+    "paymentTitle": "Modalités de paiement",
+    "paymentIntro": "Le paiement se fait par virement bancaire à la validation du devis. Voici nos coordonnées bancaires :",
+    "paymentPreferred": "Recommandé",
+    "paymentHolder": "Titulaire",
+    "paymentBank": "Banque",
+    "paymentReference": "Merci d'indiquer la référence {ref} dans le libellé du virement."
   },
   "confirmation": {
     "badge": "Commande confirmée",

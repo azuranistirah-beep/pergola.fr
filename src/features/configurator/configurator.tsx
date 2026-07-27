@@ -20,7 +20,16 @@ import {
 } from "./engine";
 import type { ProductConfigurator, Selection } from "./config-types";
 
-export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
+export function Configurator({
+  cfg,
+  productName,
+  productImageUrl,
+}: {
+  cfg: ProductConfigurator;
+  /** When launched from a PDP, use the product's real name in the cart. */
+  productName?: string;
+  productImageUrl?: string;
+}) {
   const t = useTranslations("configuratorPage");
   const tData = useTranslations("configuratorData");
   const router = useRouter();
@@ -72,8 +81,9 @@ export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
 
     cart.add({
       productSlug: cfg.productSlug,
-      name: t("productName"),
+      name: productName ?? t("productName"),
       sku,
+      imageUrl: productImageUrl,
       unitPriceCents: price.totalCents,
       quantity: 1,
       configuration,
@@ -87,7 +97,7 @@ export function Configurator({ cfg }: { cfg: ProductConfigurator }) {
         <div className="mb-8 flex flex-col gap-3 md:mb-10">
           <Eyebrow>{t("eyebrow")}</Eyebrow>
           <h1 className="font-serif text-3xl leading-tight md:text-6xl">
-            {t("pageTitle")}
+            {productName ?? t("pageTitle")}
           </h1>
           <p className="text-secondary max-w-2xl text-sm md:text-base">
             {t("pageDescription")}
