@@ -803,7 +803,9 @@
     "pageTitle": "Dessinez votre pergola bioclimatique.",
     "pageDescription": "Chaque choix met à jour le prix, la référence SKU et l'aperçu en temps réel. Sauvegardez, demandez un devis ou commandez directement en ligne.",
     "customDimensions": "Sur-mesure hors format standard",
-    "installationIncluded": "Pose incluse (2 à 4 h)"
+    "installationIncluded": "Pose incluse (2 à 4 h)",
+    "requestQuotePending": "Génération du PDF...",
+    "requestQuoteError": "Erreur lors de la génération du PDF. Réessayez."
   },
   "configuratorData": {
     "options": {

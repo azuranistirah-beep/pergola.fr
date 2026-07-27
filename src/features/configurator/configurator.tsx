@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { AlertTriangle, Check, ChevronRight, Ruler } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { AlertTriangle, Check, ChevronRight, Loader2, Ruler } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -32,8 +32,10 @@ export function Configurator({
 }) {
   const t = useTranslations("configuratorPage");
   const tData = useTranslations("configuratorData");
+  const locale = useLocale();
   const router = useRouter();
   const cart = useCart();
+  const [pdfPending, setPdfPending] = React.useState(false);
 
   const [selection, setSelection] = React.useState<Selection>(() =>
     initialSelection(cfg),
@@ -62,8 +64,8 @@ export function Configurator({
   );
   const roofColor = roofColorValue?.code === "identique" ? frameColor : roofColorValue?.swatch ?? frameColor;
 
-  function handleAddToCart() {
-    const configuration: Record<string, string | number> = {};
+  function buildConfiguration(): Record<string, string> {
+    const configuration: Record<string, string> = {};
     cfg.options.forEach((opt) => {
       const optLabel = tData(`options.${opt.code}.label`);
       if (opt.type === "dimension") {
@@ -78,7 +80,10 @@ export function Configurator({
         }
       }
     });
+    return configuration;
+  }
 
+  function handleAddToCart() {
     cart.add({
       productSlug: cfg.productSlug,
       name: productName ?? t("productName"),
@@ -86,9 +91,52 @@ export function Configurator({
       imageUrl: productImageUrl,
       unitPriceCents: price.totalCents,
       quantity: 1,
-      configuration,
+      configuration: buildConfiguration(),
     });
     router.push("/panier");
+  }
+
+  async function handleDownloadPdf() {
+    if (pdfPending) return;
+    setPdfPending(true);
+    try {
+      const configuration = buildConfiguration();
+      const adjustments = price.lines.map((l) => ({
+        label: l.labelKey
+          ? t(l.labelKey)
+          : `${tData(`options.${l.optCode}.label`)} — ${tData(`options.${l.optCode}.values.${l.valCode}`)}`,
+        amountCents: l.amountCents,
+      }));
+      const res = await fetch("/api/quote-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productName: productName ?? t("productName"),
+          sku,
+          totalCents: price.totalCents,
+          basePriceCents: price.baseCents,
+          adjustments,
+          configuration,
+          areaSqm: area,
+          locale: locale === "en" ? "en" : "fr",
+        }),
+      });
+      if (!res.ok) throw new Error(`PDF failed: ${res.status}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `pergolafr-quote-${sku}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert(t("requestQuoteError"));
+    } finally {
+      setPdfPending(false);
+    }
   }
 
   return (
@@ -241,9 +289,17 @@ export function Configurator({
                     variant="outline"
                     size="lg"
                     className="w-full border-white/30 bg-transparent text-white hover:border-white hover:bg-white hover:text-primary"
-                    onClick={() => router.push("/contact")}
+                    onClick={handleDownloadPdf}
+                    disabled={pdfPending}
                   >
-                    {t("requestQuote")}
+                    {pdfPending ? (
+                      <>
+                        <Loader2 className="animate-spin" />{" "}
+                        {t("requestQuotePending")}
+                      </>
+                    ) : (
+                      t("requestQuote")
+                    )}
                   </Button>
                 </div>
 

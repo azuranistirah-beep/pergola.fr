@@ -6,16 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/admin",
-          "/checkout",
-          "/panier",
-          "/commande/",
-          "/compte",
-          "/wishlist",
-          "/connexion",
-          "/inscription",
-        ],
+        disallow: ["/admin", "/checkout", "/panier", "/commande/"],
       },
     ],
     sitemap: "https://pergolafr.com/sitemap.xml",

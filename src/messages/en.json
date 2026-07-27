@@ -803,7 +803,9 @@
     "pageTitle": "Design your bioclimatic pergola.",
     "pageDescription": "Every choice updates the price, SKU reference and preview in real time. Save, request a quote or order directly online.",
     "customDimensions": "Custom size beyond standard format",
-    "installationIncluded": "Installation included (2–4 h)"
+    "installationIncluded": "Installation included (2–4 h)",
+    "requestQuotePending": "Generating PDF...",
+    "requestQuoteError": "Failed to generate PDF. Please try again."
   },
   "configuratorData": {
     "options": {
