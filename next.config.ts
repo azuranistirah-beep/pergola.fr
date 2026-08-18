@@ -29,8 +29,8 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data: https://fonts.gstatic.com",
-      // API + storage on InsForge, WhatsApp deep-link, OpenStreetMap embed
-      "connect-src 'self' https://*.insforge.app https://*.insforge.dev",
+      // Same-origin only — MySQL lives server-side, no browser connect target.
+      "connect-src 'self'",
       "frame-src 'self' https://www.openstreetmap.org",
       "object-src 'none'",
       "upgrade-insecure-requests",
@@ -43,11 +43,11 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
+    // Every product/editorial image now ships from /public/images. Keep unsplash
+    // + our own CDN allowed for any remaining hero backgrounds and future work.
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "cdn.pergolafr.com" },
-      { protocol: "https", hostname: "maa37bw9.eu-central.insforge.app" },
-      { protocol: "https", hostname: "cdn.insforge.dev" },
     ],
   },
   experimental: {

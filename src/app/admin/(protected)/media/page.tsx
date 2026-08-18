@@ -6,7 +6,7 @@ import {
   AdminSection,
   KpiCard,
 } from "@/features/admin/admin-ui";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query } from "@/lib/db";
 import { getT } from "@/lib/admin-i18n";
 
 interface MediaGroup {
@@ -21,31 +21,36 @@ async function load(): Promise<{
   totalImages: number;
   totalProducts: number;
 }> {
-  const [prodRes, mediaRes, trRes] = await Promise.all([
-    insforgeAdmin.database.from("products").select("id, slug"),
-    insforgeAdmin.database
-      .from("product_media")
-      .select("id, product_id, url, is_cover, sort_order")
-      .order("sort_order", { ascending: true }),
-    insforgeAdmin.database
-      .from("product_translations")
-      .select("product_id, name")
-      .eq("locale", "fr"),
+  const [products, media, tr] = await Promise.all([
+    query<{ id: string; slug: string }>("SELECT id, slug FROM products"),
+    query<{
+      id: string;
+      product_id: string;
+      url: string;
+      is_cover: number;
+      sort_order: number;
+    }>(
+      "SELECT id, product_id, url, is_cover, sort_order FROM product_media ORDER BY sort_order ASC",
+    ),
+    query<{ product_id: string; name: string }>(
+      "SELECT product_id, name FROM product_translations WHERE locale = ?",
+      ["fr"],
+    ),
   ]);
 
   const nameById = new Map<string, string>();
-  (trRes.data ?? []).forEach((tr) => nameById.set(tr.product_id, tr.name));
+  tr.forEach((r) => nameById.set(r.product_id, r.name));
 
-  const groups: MediaGroup[] = (prodRes.data ?? []).map((p) => ({
+  const groups: MediaGroup[] = products.map((p) => ({
     productId: p.id,
     slug: p.slug,
     productName: nameById.get(p.id) ?? p.slug,
-    images: (mediaRes.data ?? [])
+    images: media
       .filter((m) => m.product_id === p.id)
-      .map((m) => ({ id: m.id, url: m.url, isCover: m.is_cover })),
+      .map((m) => ({ id: m.id, url: m.url, isCover: m.is_cover === 1 })),
   }));
 
-  const totalImages = (mediaRes.data ?? []).length;
+  const totalImages = media.length;
   const totalProducts = groups.filter((g) => g.images.length > 0).length;
   return { groups, totalImages, totalProducts };
 }

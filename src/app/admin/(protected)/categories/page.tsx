@@ -5,29 +5,36 @@ import {
   AdminHeader,
   AdminSection,
 } from "@/features/admin/admin-ui";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query } from "@/lib/db";
 import { getT } from "@/lib/admin-i18n";
 
+interface CategoryRow {
+  id: string;
+  slug: string;
+  sort_order: number;
+  is_featured: number;
+}
+
 async function load() {
-  const { data: cats } = await insforgeAdmin.database
-    .from("categories")
-    .select("id, slug, sort_order, is_featured")
-    .order("sort_order", { ascending: true });
-  const { data: tr } = await insforgeAdmin.database
-    .from("category_translations")
-    .select("category_id, locale, name")
-    .eq("locale", "fr");
-  const { data: products } = await insforgeAdmin.database
-    .from("products")
-    .select("category_id");
+  const [cats, tr, products] = await Promise.all([
+    query<CategoryRow>(
+      "SELECT id, slug, sort_order, is_featured FROM categories ORDER BY sort_order ASC",
+    ),
+    query<{ category_id: string; name: string }>(
+      "SELECT category_id, name FROM category_translations WHERE locale = ?",
+      ["fr"],
+    ),
+    query<{ category_id: string }>("SELECT category_id FROM products"),
+  ]);
   const name = new Map<string, string>();
-  (tr ?? []).forEach((r) => name.set(r.category_id, r.name));
+  tr.forEach((r) => name.set(r.category_id, r.name));
   const count = new Map<string, number>();
-  (products ?? []).forEach((p) => {
+  products.forEach((p) => {
     count.set(p.category_id, (count.get(p.category_id) ?? 0) + 1);
   });
-  return (cats ?? []).map((c) => ({
+  return cats.map((c) => ({
     ...c,
+    is_featured: c.is_featured === 1,
     name: name.get(c.id) ?? c.slug,
     products: count.get(c.id) ?? 0,
   }));

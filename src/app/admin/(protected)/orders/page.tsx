@@ -7,7 +7,7 @@ import {
   KpiCard,
 } from "@/features/admin/admin-ui";
 import { OrdersTable } from "@/features/admin/orders-table";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query } from "@/lib/db";
 import { formatEUR } from "@/lib/utils";
 import { getT } from "@/lib/admin-i18n";
 
@@ -23,12 +23,9 @@ interface Order {
 }
 
 async function load() {
-  const { data } = await insforgeAdmin.database
-    .from("orders")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(10000);
-  return (data ?? []) as Order[];
+  return query<Order>(
+    "SELECT * FROM orders ORDER BY created_at DESC LIMIT 10000",
+  );
 }
 
 export default async function OrdersPage() {

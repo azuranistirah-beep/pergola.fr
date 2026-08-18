@@ -8,7 +8,7 @@ import {
 } from "@/features/admin/admin-ui";
 import { ReportsToolbar } from "@/features/admin/reports-toolbar";
 import { ReportsDangerZone } from "@/features/admin/reports-danger-zone";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query, toSqlDate } from "@/lib/db";
 import { formatEUR } from "@/lib/utils";
 import { getT } from "@/lib/admin-i18n";
 
@@ -52,21 +52,30 @@ interface ItemRow {
 
 async function loadReport(period: Period) {
   const { from, to } = rangeFor(period);
-  let ordersQ = insforgeAdmin.database.from("orders").select("*");
-  if (from) ordersQ = ordersQ.gte("created_at", from.toISOString());
-  if (to) ordersQ = ordersQ.lt("created_at", to.toISOString());
-  ordersQ = ordersQ.order("created_at", { ascending: false });
-  const ordersRes = await ordersQ;
-  const orders = (ordersRes.data ?? []) as OrderRow[];
+  const clauses: string[] = [];
+  const params: unknown[] = [];
+  if (from) {
+    clauses.push("created_at >= ?");
+    params.push(toSqlDate(from));
+  }
+  if (to) {
+    clauses.push("created_at < ?");
+    params.push(toSqlDate(to));
+  }
+  const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
+  const orders = await query<OrderRow>(
+    `SELECT * FROM orders ${where} ORDER BY created_at DESC`,
+    params,
+  );
 
   const orderIds = orders.map((o) => o.id);
   let items: ItemRow[] = [];
   if (orderIds.length) {
-    const itemsRes = await insforgeAdmin.database
-      .from("order_items")
-      .select("order_id, product_id, product_name, quantity, line_total_cents")
-      .in("order_id", orderIds);
-    items = (itemsRes.data ?? []) as ItemRow[];
+    items = await query<ItemRow>(
+      "SELECT order_id, product_id, product_name, quantity, line_total_cents " +
+        "FROM order_items WHERE order_id IN (?)",
+      [orderIds],
+    );
   }
   return { orders, items };
 }

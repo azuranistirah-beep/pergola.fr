@@ -1,12 +1,27 @@
-import { insforge } from "@/lib/insforge";
+import { query } from "@/lib/db";
 import type { PergolaProduct, ProductCategory } from "@/features/products/types";
+
+// If the DB is unreachable (build-time prerender without MYSQL_URL, or a
+// transient outage), we prefer an empty catalogue over a 500. The alternative
+// is marking every consumer page `force-dynamic` and losing static caching.
+async function tryQuery<T>(sql: string, params?: unknown[]): Promise<T[]> {
+  try {
+    return await query<T>(sql, params);
+  } catch (err) {
+    console.warn(
+      "[product-repository] DB read failed, returning empty:",
+      err instanceof Error ? err.message : err,
+    );
+    return [];
+  }
+}
 
 interface ProductRow {
   id: string;
   sku: string;
   slug: string;
   base_price_cents: number;
-  is_featured: boolean;
+  is_featured: number; // MySQL TINYINT(1) → 0/1
   family: string | null;
   material: string | null;
   colorway: string | null;
@@ -33,9 +48,13 @@ interface TranslationRow {
 interface MediaRow {
   product_id: string;
   url: string;
-  is_cover: boolean;
+  is_cover: number;
   sort_order: number;
 }
+
+const PRODUCT_COLS =
+  "id, sku, slug, base_price_cents, is_featured, family, material, " +
+  "colorway, finish, width_ft, length_ft, width_cm, length_cm, category_id";
 
 function toPergolaProduct(
   row: ProductRow,
@@ -44,7 +63,7 @@ function toPergolaProduct(
   media: MediaRow[],
 ): PergolaProduct {
   const fr = translations.find((t) => t.locale === "fr") ?? translations[0];
-  const cover = media.find((m) => m.is_cover) ?? media[0];
+  const cover = media.find((m) => m.is_cover === 1) ?? media[0];
   return {
     slug: row.slug,
     sku: row.sku,
@@ -60,78 +79,41 @@ function toPergolaProduct(
     priceCents: row.base_price_cents,
     imageCount: 3,
     heroUrl: cover?.url,
-    featured: row.is_featured,
+    featured: row.is_featured === 1,
     finish: row.finish ?? undefined,
     colorway: (row.colorway ?? "warm-cedar") as PergolaProduct["colorway"],
   };
 }
 
-const ID_BATCH = 50;
-
-function chunkIds<T>(arr: T[], size: number): T[][] {
-  const out: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-  return out;
-}
-
 async function loadJoins(productIds: string[]) {
   if (productIds.length === 0)
-    return { translations: [], media: [] as MediaRow[] };
-
-  // `.in()` with hundreds of IDs would overflow the URL length limit and
-  // trigger a gateway error (HTML response). Split into small batches and
-  // merge the results.
-  const batches = chunkIds(productIds, ID_BATCH);
-  const [trResults, mdResults] = await Promise.all([
-    Promise.all(
-      batches.map((ids) =>
-        insforge.database
-          .from("product_translations")
-          .select("product_id, locale, name, short_desc")
-          .in("product_id", ids)
-          .limit(10000),
-      ),
-    ),
-    Promise.all(
-      batches.map((ids) =>
-        insforge.database
-          .from("product_media")
-          .select("product_id, url, is_cover, sort_order")
-          .in("product_id", ids)
-          .order("sort_order", { ascending: true })
-          .limit(10000),
-      ),
-    ),
-  ]);
-  const translations = trResults.flatMap(
-    (r) => (r.data ?? []) as TranslationRow[],
+    return { translations: [] as TranslationRow[], media: [] as MediaRow[] };
+  // mysql2 expands a single `?` bound to an array into `(v1, v2, …)` when
+  // using `pool.query` (which we do in `query()`).
+  const translations = await tryQuery<TranslationRow>(
+    "SELECT product_id, locale, name, short_desc FROM product_translations WHERE product_id IN (?)",
+    [productIds],
   );
-  const media = mdResults.flatMap((r) => (r.data ?? []) as MediaRow[]);
+  const media = await tryQuery<MediaRow>(
+    "SELECT product_id, url, is_cover, sort_order FROM product_media WHERE product_id IN (?) ORDER BY sort_order ASC",
+    [productIds],
+  );
   return { translations, media };
 }
 
 async function loadCategoryMap(): Promise<Map<string, string>> {
-  const { data } = await insforge.database
-    .from("categories")
-    .select("id, slug");
+  const rows = await tryQuery<CategoryRow>("SELECT id, slug FROM categories");
   const map = new Map<string, string>();
-  ((data ?? []) as CategoryRow[]).forEach((c) => map.set(c.id, c.slug));
+  rows.forEach((c) => map.set(c.id, c.slug));
   return map;
 }
 
 export async function listProducts(): Promise<PergolaProduct[]> {
-  const { data, error } = await insforge.database
-    .from("products")
-    .select(
-      "id, sku, slug, base_price_cents, is_featured, family, material, colorway, finish, width_ft, length_ft, width_cm, length_cm, category_id",
-    )
-    .eq("status", "PUBLISHED")
-    .order("is_featured", { ascending: false })
-    .order("base_price_cents", { ascending: true })
-    .limit(10000);
-
-  if (error) throw error;
-  const rows = (data ?? []) as ProductRow[];
+  const rows = await tryQuery<ProductRow>(
+    `SELECT ${PRODUCT_COLS} FROM products WHERE status = ? ` +
+      `ORDER BY is_featured DESC, base_price_cents ASC LIMIT 10000`,
+    ["PUBLISHED"],
+  );
   const [{ translations, media }, catMap] = await Promise.all([
     loadJoins(rows.map((r) => r.id)),
     loadCategoryMap(),
@@ -149,15 +131,11 @@ export async function listProducts(): Promise<PergolaProduct[]> {
 export async function getProductBySlug(
   slug: string,
 ): Promise<PergolaProduct | null> {
-  const { data, error } = await insforge.database
-    .from("products")
-    .select(
-      "id, sku, slug, base_price_cents, is_featured, family, material, colorway, finish, width_ft, length_ft, width_cm, length_cm, category_id",
-    )
-    .eq("slug", slug)
-    .limit(1);
-  if (error) throw error;
-  const row = ((data ?? [])[0] ?? null) as ProductRow | null;
+  const rows = await tryQuery<ProductRow>(
+    `SELECT ${PRODUCT_COLS} FROM products WHERE slug = ? LIMIT 1`,
+    [slug],
+  );
+  const row = rows[0];
   if (!row) return null;
   const [{ translations, media }, catMap] = await Promise.all([
     loadJoins([row.id]),
@@ -180,17 +158,10 @@ export async function listRelatedProducts(
     ([, slug]) => slug === product.category,
   )?.[0];
   if (!categoryId) return [];
-  const { data, error } = await insforge.database
-    .from("products")
-    .select(
-      "id, sku, slug, base_price_cents, is_featured, family, material, colorway, finish, width_ft, length_ft, width_cm, length_cm, category_id",
-    )
-    .eq("status", "PUBLISHED")
-    .eq("category_id", categoryId)
-    .neq("slug", product.slug)
-    .limit(limit);
-  if (error) throw error;
-  const rows = (data ?? []) as ProductRow[];
+  const rows = await tryQuery<ProductRow>(
+    `SELECT ${PRODUCT_COLS} FROM products WHERE status = ? AND category_id = ? AND slug != ? LIMIT ?`,
+    ["PUBLISHED", categoryId, product.slug, limit],
+  );
   const { translations, media } = await loadJoins(rows.map((r) => r.id));
   return rows.map((r) =>
     toPergolaProduct(
@@ -203,11 +174,9 @@ export async function listRelatedProducts(
 }
 
 export async function listProductSlugs(): Promise<string[]> {
-  const { data, error } = await insforge.database
-    .from("products")
-    .select("slug")
-    .eq("status", "PUBLISHED")
-    .limit(10000);
-  if (error) throw error;
-  return ((data ?? []) as { slug: string }[]).map((r) => r.slug);
+  const rows = await tryQuery<{ slug: string }>(
+    "SELECT slug FROM products WHERE status = ? LIMIT 10000",
+    ["PUBLISHED"],
+  );
+  return rows.map((r) => r.slug);
 }

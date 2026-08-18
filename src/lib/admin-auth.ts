@@ -3,7 +3,14 @@ import { redirect } from "next/navigation";
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { generateSecret, generateURI, verifySync } from "otplib";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import {
+  execute,
+  insertOne,
+  query,
+  queryOne,
+  toSqlDate,
+  updateWhere,
+} from "@/lib/db";
 
 const COOKIE_NAME = "pergola_admin";
 const PENDING_COOKIE = "pergola_admin_pending";
@@ -35,6 +42,25 @@ export interface AdminUser {
   totp_enabled: boolean;
 }
 
+// The DB returns TINYINT(1) as 0/1; hydrate to booleans at the boundary.
+interface AdminUserRow {
+  id: string;
+  email: string;
+  name: string;
+  is_active: number;
+  totp_enabled: number;
+}
+
+function toUser(row: AdminUserRow): AdminUser {
+  return {
+    id: row.id,
+    email: row.email,
+    name: row.name,
+    is_active: row.is_active === 1,
+    totp_enabled: row.totp_enabled === 1,
+  };
+}
+
 async function clientIp(): Promise<string> {
   const h = await headers();
   const xff = h.get("x-forwarded-for");
@@ -43,14 +69,13 @@ async function clientIp(): Promise<string> {
 }
 
 async function recentFailures(ip: string): Promise<number> {
-  const since = new Date(Date.now() - RL_WINDOW_MINUTES * 60 * 1000).toISOString();
-  const { data } = await insforgeAdmin.database
-    .from("admin_login_attempts")
-    .select("id")
-    .eq("ip", ip)
-    .eq("success", false)
-    .gte("attempted_at", since);
-  return (data ?? []).length;
+  const since = toSqlDate(new Date(Date.now() - RL_WINDOW_MINUTES * 60 * 1000));
+  const rows = await query<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM admin_login_attempts " +
+      "WHERE ip = ? AND success = 0 AND attempted_at >= ?",
+    [ip, since],
+  );
+  return Number(rows[0]?.n ?? 0);
 }
 
 async function logAttempt(
@@ -59,9 +84,12 @@ async function logAttempt(
   email: string,
   userId: string | null,
 ) {
-  await insforgeAdmin.database
-    .from("admin_login_attempts")
-    .insert({ ip, success, email, user_id: userId });
+  await insertOne("admin_login_attempts", {
+    ip,
+    success: success ? 1 : 0,
+    email,
+    user_id: userId,
+  });
 }
 
 function requireSecret(): string {
@@ -109,14 +137,12 @@ function verifyToken(
 }
 
 async function loadUser(userId: string): Promise<AdminUser | null> {
-  const { data } = await insforgeAdmin.database
-    .from("admin_users")
-    .select("id, email, name, is_active, totp_enabled")
-    .eq("id", userId)
-    .limit(1);
-  const u = (data ?? [])[0] as AdminUser | undefined;
-  if (!u || !u.is_active) return null;
-  return u;
+  const row = await queryOne<AdminUserRow>(
+    "SELECT id, email, name, is_active, totp_enabled FROM admin_users WHERE id = ? LIMIT 1",
+    [userId],
+  );
+  if (!row || row.is_active !== 1) return null;
+  return toUser(row);
 }
 
 export async function getAdminUser(): Promise<AdminUser | null> {
@@ -177,22 +203,20 @@ export async function loginAdmin(
     throw new LoginBlockedError(RL_WINDOW_MINUTES * 60);
   }
 
-  const { data } = await insforgeAdmin.database
-    .from("admin_users")
-    .select("id, email, password_hash, is_active, totp_enabled")
-    .eq("email", cleanEmail)
-    .limit(1);
-  const user = (data ?? [])[0] as
-    | {
-        id: string;
-        email: string;
-        password_hash: string;
-        is_active: boolean;
-        totp_enabled: boolean;
-      }
-    | undefined;
+  const row = await queryOne<{
+    id: string;
+    email: string;
+    password_hash: string;
+    is_active: number;
+    totp_enabled: number;
+  }>(
+    "SELECT id, email, password_hash, is_active, totp_enabled FROM admin_users WHERE email = ? LIMIT 1",
+    [cleanEmail],
+  );
 
-  if (!user || !user.is_active) {
+  if (!row || row.is_active !== 1) {
+    // Constant-time miss — burn a bcrypt compare on a dummy hash so timing
+    // doesn't leak whether the email existed.
     await bcrypt.compare(
       password,
       "$2b$12$dummydummydummydummydummydummydummydummydummydummydu",
@@ -201,30 +225,32 @@ export async function loginAdmin(
     return "invalid";
   }
 
-  const ok = await bcrypt.compare(password, user.password_hash);
+  const ok = await bcrypt.compare(password, row.password_hash);
   if (!ok) {
-    await logAttempt(ip, false, cleanEmail, user.id);
+    await logAttempt(ip, false, cleanEmail, row.id);
     return "invalid";
   }
 
-  if (user.totp_enabled) {
+  if (row.totp_enabled === 1) {
     // Issue short-lived pending cookie; do NOT log as success yet.
     await setSessionCookie(
       PENDING_COOKIE,
-      issueTokenWithTtl(user.id, "pending"),
+      issueTokenWithTtl(row.id, "pending"),
       PENDING_TTL_SECONDS,
     );
     return "needs_totp";
   }
 
-  await logAttempt(ip, true, cleanEmail, user.id);
-  await insforgeAdmin.database
-    .from("admin_users")
-    .update({ last_login_at: new Date().toISOString() })
-    .eq("id", user.id);
+  await logAttempt(ip, true, cleanEmail, row.id);
+  await updateWhere(
+    "admin_users",
+    { last_login_at: toSqlDate() },
+    "id = ?",
+    [row.id],
+  );
   await setSessionCookie(
     COOKIE_NAME,
-    issueTokenWithTtl(user.id, "full"),
+    issueTokenWithTtl(row.id, "full"),
     SESSION_TTL_SECONDS,
   );
   return "ok";
@@ -233,13 +259,11 @@ export async function loginAdmin(
 export async function verifyTotpAndCompleteLogin(code: string): Promise<boolean> {
   const pending = await getPendingUser();
   if (!pending) return false;
-  const { data } = await insforgeAdmin.database
-    .from("admin_users")
-    .select("totp_secret")
-    .eq("id", pending.id)
-    .limit(1);
-  const s = ((data ?? [])[0] as { totp_secret: string | null } | undefined)
-    ?.totp_secret;
+  const row = await queryOne<{ totp_secret: string | null }>(
+    "SELECT totp_secret FROM admin_users WHERE id = ? LIMIT 1",
+    [pending.id],
+  );
+  const s = row?.totp_secret;
   if (!s) return false;
   const clean = code.replace(/\s+/g, "");
   const ok = totpVerify(clean, s);
@@ -248,10 +272,12 @@ export async function verifyTotpAndCompleteLogin(code: string): Promise<boolean>
   await logAttempt(ip, ok, pending.email, pending.id);
   if (!ok) return false;
 
-  await insforgeAdmin.database
-    .from("admin_users")
-    .update({ last_login_at: new Date().toISOString() })
-    .eq("id", pending.id);
+  await updateWhere(
+    "admin_users",
+    { last_login_at: toSqlDate() },
+    "id = ?",
+    [pending.id],
+  );
 
   const store = await cookies();
   store.delete(PENDING_COOKIE);
@@ -288,16 +314,24 @@ export async function enableTotpForUser(
 ): Promise<boolean> {
   const clean = code.replace(/\s+/g, "");
   if (!totpVerify(clean, totpSecret)) return false;
-  await insforgeAdmin.database
-    .from("admin_users")
-    .update({ totp_secret: totpSecret, totp_enabled: true })
-    .eq("id", userId);
+  await updateWhere(
+    "admin_users",
+    { totp_secret: totpSecret, totp_enabled: 1 },
+    "id = ?",
+    [userId],
+  );
   return true;
 }
 
 export async function disableTotpForUser(userId: string) {
-  await insforgeAdmin.database
-    .from("admin_users")
-    .update({ totp_secret: null, totp_enabled: false })
-    .eq("id", userId);
+  await updateWhere(
+    "admin_users",
+    { totp_secret: null, totp_enabled: 0 },
+    "id = ?",
+    [userId],
+  );
 }
+
+// `execute` is imported to keep future TODO callers on the same helper set —
+// don't remove even if unused today.
+void execute;

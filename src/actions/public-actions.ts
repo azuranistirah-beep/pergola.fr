@@ -1,9 +1,16 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { insforge } from "@/lib/insforge";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import {
+  insertMany,
+  insertOne,
+  query,
+  queryOne,
+  toSqlDate,
+  upsertOne,
+} from "@/lib/db";
 
 const RL_WINDOW_MINUTES = 10;
 const RL_MAX = { contact: 3, newsletter: 5, quote: 3 } as const;
@@ -20,25 +27,21 @@ async function recentCount(
   kind: "contact" | "newsletter" | "quote",
   ip: string,
 ) {
-  const since = new Date(
-    Date.now() - RL_WINDOW_MINUTES * 60 * 1000,
-  ).toISOString();
-  const { data } = await insforgeAdmin.database
-    .from("public_submissions")
-    .select("id")
-    .eq("kind", kind)
-    .eq("ip", ip)
-    .gte("submitted_at", since);
-  return (data ?? []).length;
+  const since = toSqlDate(new Date(Date.now() - RL_WINDOW_MINUTES * 60 * 1000));
+  const rows = await query<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM public_submissions " +
+      "WHERE kind = ? AND ip = ? AND submitted_at >= ?",
+    [kind, ip, since],
+  );
+  return Number(rows[0]?.n ?? 0);
 }
 
 async function logSubmission(
   kind: "contact" | "newsletter" | "quote",
   ip: string,
 ) {
-  await insforgeAdmin.database
-    .from("public_submissions")
-    .insert({ kind, ip });
+  // `public_submissions.id` is BIGINT AUTO_INCREMENT — let the DB assign it.
+  await insertOne("public_submissions", { kind, ip });
 }
 
 const RATE_LIMITED = "Too many submissions. Please try again later.";
@@ -73,17 +76,15 @@ export async function submitContactMessage(input: {
   if (count >= RL_MAX.contact) throw new Error(RATE_LIMITED);
 
   // 4. Insert + log.
-  const { error } = await insforge.database.from("contact_messages").insert([
-    {
-      name,
-      email,
-      phone: (input.phone ?? "").trim() || null,
-      postal: (input.postal ?? "").trim() || null,
-      message,
-      locale: input.locale,
-    },
-  ]);
-  if (error) throw error;
+  await insertOne("contact_messages", {
+    id: randomUUID(),
+    name,
+    email,
+    phone: (input.phone ?? "").trim() || null,
+    postal: (input.postal ?? "").trim() || null,
+    message,
+    locale: input.locale,
+  });
   await logSubmission("contact", ip);
   revalidatePath("/admin/inbox");
 }
@@ -102,10 +103,7 @@ export async function subscribeNewsletter(
   const count = await recentCount("newsletter", ip);
   if (count >= RL_MAX.newsletter) throw new Error(RATE_LIMITED);
 
-  const { error } = await insforge.database
-    .from("newsletter_subscribers")
-    .upsert([{ email: clean, locale }]);
-  if (error) throw error;
+  await upsertOne("newsletter_subscribers", { email: clean, locale });
   await logSubmission("newsletter", ip);
   revalidatePath("/admin/newsletter");
 }
@@ -135,12 +133,10 @@ interface QuoteRequestInput {
 }
 
 async function nextQuoteNumber(): Promise<string> {
-  const { data } = await insforgeAdmin.database
-    .from("orders")
-    .select("order_number")
-    .order("created_at", { ascending: false })
-    .limit(1);
-  const last = (data ?? [])[0]?.order_number as string | undefined;
+  const row = await queryOne<{ order_number: string }>(
+    "SELECT order_number FROM orders ORDER BY created_at DESC LIMIT 1",
+  );
+  const last = row?.order_number;
   const year = new Date().getUTCFullYear();
   if (last && last.startsWith(`PGL-${year}-`)) {
     const seq = Number(last.split("-").pop() ?? "0") + 1;
@@ -151,8 +147,8 @@ async function nextQuoteNumber(): Promise<string> {
 
 /**
  * Public quote request from the checkout page. Creates a PENDING order plus its
- * items in InsForge so the sales team can follow up (Stripe integration is not
- * wired yet — this is the quote-based flow).
+ * items in MySQL so the sales team can follow up. Stripe wiring is not part of
+ * the quote flow yet.
  */
 export async function submitQuoteRequest(
   input: QuoteRequestInput,
@@ -176,47 +172,41 @@ export async function submitQuoteRequest(
   );
   const itemsCount = input.items.reduce((s, it) => s + it.quantity, 0);
   const orderNumber = await nextQuoteNumber();
+  const orderId = randomUUID();
 
-  const { data, error } = await insforgeAdmin.database
-    .from("orders")
-    .insert({
-      order_number: orderNumber,
-      customer_name: name,
-      customer_email: email,
-      customer_phone: (input.customerPhone ?? "").trim() || null,
-      shipping_address: (input.shippingAddress ?? "").trim() || null,
-      shipping_postal: (input.shippingPostal ?? "").trim() || null,
-      shipping_city: (input.shippingCity ?? "").trim() || null,
-      shipping_country: (input.shippingCountry ?? "").trim() || "FR",
-      notes: (input.notes ?? "").trim() || null,
-      status: "PENDING",
-      total_cents: total,
-      items_count: itemsCount,
-      currency: "EUR",
-    })
-    .select("id")
-    .single();
+  await insertOne("orders", {
+    id: orderId,
+    order_number: orderNumber,
+    customer_name: name,
+    customer_email: email,
+    customer_phone: (input.customerPhone ?? "").trim() || null,
+    shipping_address: (input.shippingAddress ?? "").trim() || null,
+    shipping_postal: (input.shippingPostal ?? "").trim() || null,
+    shipping_city: (input.shippingCity ?? "").trim() || null,
+    shipping_country: (input.shippingCountry ?? "").trim() || "FR",
+    notes: (input.notes ?? "").trim() || null,
+    status: "PENDING",
+    total_cents: total,
+    items_count: itemsCount,
+    currency: "EUR",
+  });
 
-  if (error || !data) throw error ?? new Error("Failed to create quote");
-  const orderId = data.id as string;
-
-  const itemsErr = (
-    await insforgeAdmin.database.from("order_items").insert(
-      input.items.map((it) => ({
-        order_id: orderId,
-        product_name: it.productName,
-        product_sku: it.productSku || null,
-        product_slug: it.productSlug || null,
-        unit_price_cents: it.unitPriceCents,
-        quantity: it.quantity,
-        line_total_cents: it.unitPriceCents * it.quantity,
-        configuration: it.configuration
-          ? JSON.stringify(it.configuration)
-          : null,
-      })),
-    )
-  ).error;
-  if (itemsErr) throw itemsErr;
+  await insertMany(
+    "order_items",
+    input.items.map((it) => ({
+      id: randomUUID(),
+      order_id: orderId,
+      product_name: it.productName,
+      product_sku: it.productSku || null,
+      product_slug: it.productSlug || null,
+      unit_price_cents: it.unitPriceCents,
+      quantity: it.quantity,
+      line_total_cents: it.unitPriceCents * it.quantity,
+      // order_items has no `configuration` column in the current schema;
+      // stash it into `product_name` or drop it. Original code assigned to
+      // a column that doesn't exist — we drop it here to match the schema.
+    })),
+  );
 
   await logSubmission("quote", ip);
   revalidatePath("/admin/orders");

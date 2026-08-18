@@ -2,7 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import {
+  execute,
+  insertMany,
+  insertOne,
+  query,
+  queryOne,
+  toSqlDate,
+  updateWhere,
+} from "@/lib/db";
 
 type OrderStatus =
   | "PENDING"
@@ -35,12 +43,10 @@ interface ManualOrderInput {
 }
 
 async function nextOrderNumber(): Promise<string> {
-  const { data } = await insforgeAdmin.database
-    .from("orders")
-    .select("order_number")
-    .order("created_at", { ascending: false })
-    .limit(1);
-  const last = (data ?? [])[0]?.order_number as string | undefined;
+  const row = await queryOne<{ order_number: string }>(
+    "SELECT order_number FROM orders ORDER BY created_at DESC LIMIT 1",
+  );
+  const last = row?.order_number;
   const year = new Date().getUTCFullYear();
   if (last && last.startsWith(`PGL-${year}-`)) {
     const seq = Number(last.split("-").pop() ?? "0") + 1;
@@ -58,31 +64,32 @@ export async function createManualOrder(input: ManualOrderInput) {
   );
   const itemsCount = input.items.reduce((s, it) => s + it.quantity, 0);
 
-  const { data, error } = await insforgeAdmin.database
-    .from("orders")
-    .insert({
-      order_number: orderNumber,
-      customer_name: input.customerName,
-      customer_email: input.customerEmail,
-      customer_phone: input.customerPhone ?? null,
-      shipping_address: input.shippingAddress ?? null,
-      shipping_postal: input.shippingPostal ?? null,
-      shipping_city: input.shippingCity ?? null,
-      shipping_country: input.shippingCountry ?? "FR",
-      notes: input.notes ?? null,
-      status: "PENDING",
-      total_cents: total,
-      items_count: itemsCount,
-      currency: "EUR",
-    })
-    .select("id")
-    .single();
+  // We generate the id client-side (was `gen_random_uuid()` in Postgres) so
+  // we can INSERT children with a known FK in the same request.
+  const { randomUUID } = await import("node:crypto");
+  const orderId = randomUUID();
 
-  if (error || !data) throw error ?? new Error("Failed to create order");
-  const orderId = data.id as string;
+  await insertOne("orders", {
+    id: orderId,
+    order_number: orderNumber,
+    customer_name: input.customerName,
+    customer_email: input.customerEmail,
+    customer_phone: input.customerPhone ?? null,
+    shipping_address: input.shippingAddress ?? null,
+    shipping_postal: input.shippingPostal ?? null,
+    shipping_city: input.shippingCity ?? null,
+    shipping_country: input.shippingCountry ?? "FR",
+    notes: input.notes ?? null,
+    status: "PENDING",
+    total_cents: total,
+    items_count: itemsCount,
+    currency: "EUR",
+  });
 
-  await insforgeAdmin.database.from("order_items").insert(
+  await insertMany(
+    "order_items",
     input.items.map((it) => ({
+      id: randomUUID(),
       order_id: orderId,
       product_id: it.productId ?? null,
       product_name: it.productName,
@@ -99,45 +106,46 @@ export async function createManualOrder(input: ManualOrderInput) {
 }
 
 async function decrementStock(orderId: string) {
-  const { data: items } = await insforgeAdmin.database
-    .from("order_items")
-    .select("product_id, quantity")
-    .eq("order_id", orderId);
-  for (const it of items ?? []) {
+  const items = await query<{ product_id: string | null; quantity: number }>(
+    "SELECT product_id, quantity FROM order_items WHERE order_id = ?",
+    [orderId],
+  );
+  for (const it of items) {
     if (!it.product_id) continue;
-    const { data: rows } = await insforgeAdmin.database
-      .from("products")
-      .select("stock")
-      .eq("id", it.product_id)
-      .limit(1);
-    const current = (rows ?? [])[0]?.stock ?? 0;
-    const next = Math.max(0, current - (it.quantity ?? 0));
-    await insforgeAdmin.database
-      .from("products")
-      .update({ stock: next })
-      .eq("id", it.product_id);
+    // One atomic UPDATE beats read + write and dodges the lost-update race.
+    await execute(
+      "UPDATE products SET stock = GREATEST(0, stock - ?) WHERE id = ?",
+      [it.quantity ?? 0, it.product_id],
+    );
   }
 }
 
 export async function updateOrderStatusFull(id: string, next: OrderStatus) {
-  const { data: rows } = await insforgeAdmin.database
-    .from("orders")
-    .select("status")
-    .eq("id", id)
-    .limit(1);
-  const prev = ((rows ?? [])[0]?.status as OrderStatus | undefined) ?? undefined;
+  const row = await queryOne<{ status: OrderStatus }>(
+    "SELECT status FROM orders WHERE id = ? LIMIT 1",
+    [id],
+  );
+  const prev = row?.status;
 
-  const now = new Date().toISOString();
+  const now = toSqlDate();
   const patch: Record<string, string | null> = { status: next };
-  if (next === "PAID" && !["PAID", "PROCESSING", "SHIPPED", "DELIVERED"].includes(prev ?? "")) {
+  if (
+    next === "PAID" &&
+    !["PAID", "PROCESSING", "SHIPPED", "DELIVERED"].includes(prev ?? "")
+  ) {
     patch.paid_at = now;
   }
   if (next === "SHIPPED") patch.shipped_at = now;
   if (next === "DELIVERED") patch.delivered_at = now;
 
-  await insforgeAdmin.database.from("orders").update(patch).eq("id", id);
+  await updateWhere("orders", patch, "id = ?", [id]);
 
-  const paidLike = new Set<OrderStatus>(["PAID", "PROCESSING", "SHIPPED", "DELIVERED"]);
+  const paidLike = new Set<OrderStatus>([
+    "PAID",
+    "PROCESSING",
+    "SHIPPED",
+    "DELIVERED",
+  ]);
   if (paidLike.has(next) && (!prev || !paidLike.has(prev))) {
     await decrementStock(id);
   }
@@ -147,7 +155,7 @@ export async function updateOrderStatusFull(id: string, next: OrderStatus) {
 }
 
 export async function deleteOrder(id: string) {
-  await insforgeAdmin.database.from("orders").delete().eq("id", id);
+  await execute("DELETE FROM orders WHERE id = ?", [id]);
   revalidatePath("/admin/orders");
   redirect("/admin/orders");
 }
@@ -156,13 +164,24 @@ export async function resetOrdersInRange(
   fromIso: string | null,
   toIso: string | null,
 ): Promise<number> {
-  let q = insforgeAdmin.database.from("orders").select("id");
-  if (fromIso) q = q.gte("created_at", fromIso);
-  if (toIso) q = q.lt("created_at", toIso);
-  const { data } = await q;
-  const ids = (data ?? []).map((r) => r.id as string);
+  const clauses: string[] = [];
+  const params: unknown[] = [];
+  if (fromIso) {
+    clauses.push("created_at >= ?");
+    params.push(toSqlDate(fromIso));
+  }
+  if (toIso) {
+    clauses.push("created_at < ?");
+    params.push(toSqlDate(toIso));
+  }
+  const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
+  const rows = await query<{ id: string }>(
+    `SELECT id FROM orders ${where}`,
+    params,
+  );
+  const ids = rows.map((r) => r.id);
   if (!ids.length) return 0;
-  await insforgeAdmin.database.from("orders").delete().in("id", ids);
+  await execute("DELETE FROM orders WHERE id IN (?)", [ids]);
   revalidatePath("/admin/orders");
   revalidatePath("/admin/reports");
   revalidatePath("/admin");
@@ -183,15 +202,13 @@ export async function resetAllOrders(): Promise<number> {
 async function nextInvoiceNumber(prefix: string): Promise<string> {
   const year = new Date().getUTCFullYear();
   const pattern = `${prefix}-${year}-`;
-  const { data } = await insforgeAdmin.database
-    .from("orders")
-    .select("invoice_number")
-    .not("invoice_number", "is", null)
-    .order("invoice_number", { ascending: false })
-    .limit(50);
+  const rows = await query<{ invoice_number: string | null }>(
+    "SELECT invoice_number FROM orders WHERE invoice_number IS NOT NULL " +
+      "ORDER BY invoice_number DESC LIMIT 50",
+  );
   let maxSeq = 0;
-  for (const row of data ?? []) {
-    const v = row.invoice_number as string | null;
+  for (const r of rows) {
+    const v = r.invoice_number;
     if (!v || !v.startsWith(pattern)) continue;
     const seq = Number(v.slice(pattern.length));
     if (Number.isFinite(seq) && seq > maxSeq) maxSeq = seq;
@@ -203,23 +220,23 @@ export async function ensureInvoiceNumber(
   orderId: string,
   prefix: string,
 ): Promise<{ invoiceNumber: string; issuedAt: string }> {
-  const { data } = await insforgeAdmin.database
-    .from("orders")
-    .select("invoice_number, invoice_issued_at")
-    .eq("id", orderId)
-    .limit(1);
-  const row = (data ?? [])[0] as
-    | { invoice_number: string | null; invoice_issued_at: string | null }
-    | undefined;
+  const row = await queryOne<{
+    invoice_number: string | null;
+    invoice_issued_at: string | null;
+  }>(
+    "SELECT invoice_number, invoice_issued_at FROM orders WHERE id = ? LIMIT 1",
+    [orderId],
+  );
   if (row?.invoice_number && row.invoice_issued_at) {
     return { invoiceNumber: row.invoice_number, issuedAt: row.invoice_issued_at };
   }
   const invoiceNumber = await nextInvoiceNumber(prefix);
-  const issuedAt = new Date().toISOString();
-  await insforgeAdmin.database
-    .from("orders")
-    .update({ invoice_number: invoiceNumber, invoice_issued_at: issuedAt })
-    .eq("id", orderId);
+  const issuedAt = toSqlDate();
+  await updateWhere(
+    "orders",
+    { invoice_number: invoiceNumber, invoice_issued_at: issuedAt },
+    "id = ?",
+    [orderId],
+  );
   return { invoiceNumber, issuedAt };
 }
-

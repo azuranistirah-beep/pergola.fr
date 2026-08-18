@@ -24,9 +24,10 @@ insert into site_settings (key, value) values
     "radius": 16
   }'::jsonb),
   ('site', '{
-    "phone": "+33 1 84 88 00 00",
+    "phone": "+905016479902",
     "email": "bonjour@pergolafr.com",
     "showroomAddress": "12 rue de Rivoli, 75004 Paris",
     "showroomHours": "Mardi–Samedi, 10h–19h",
-    "instagram": "@pergolafr"
+    "instagram": "@pergolafr",
+    "whatsappNumber": "905016479902"
   }'::jsonb);

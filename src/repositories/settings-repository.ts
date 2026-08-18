@@ -1,5 +1,4 @@
-import { insforge } from "@/lib/insforge";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { queryOne, upsertOne, toSqlDate } from "@/lib/db";
 
 export interface ThemeSettings {
   primary: string;
@@ -47,12 +46,12 @@ export const defaultTheme: ThemeSettings = {
 };
 
 const defaultSite: SiteInfoSettings = {
-  phone: "+33 1 84 88 00 00",
+  phone: "+905016479902",
   email: "bonjour@pergolafr.com",
   showroomAddress: "12 rue de Rivoli, 75004 Paris",
   showroomHours: "Mardi–Samedi, 10h–19h",
   instagram: "@pergolafr",
-  whatsappNumber: "",
+  whatsappNumber: "905016479902",
   whatsappMessage: "Bonjour, je souhaite en savoir plus sur vos pergolas.",
   companyName: "Pergola FR SAS",
   companyLegalForm: "SAS",
@@ -94,27 +93,44 @@ const defaultContent: ContentSettings = {
 };
 
 async function get<T>(key: string, fallback: T): Promise<T> {
-  const { data } = await insforge.database
-    .from("site_settings")
-    .select("value")
-    .eq("key", key)
-    .limit(1);
-  const first = (data ?? [])[0] as { value: Partial<T> } | undefined;
-  if (!first?.value) return fallback;
-  if (typeof fallback === "object" && fallback !== null) {
-    return { ...(fallback as object), ...(first.value as object) } as T;
+  // If the DB is unreachable (build-time prerender without a MYSQL_URL, or a
+  // transient outage in prod), the theme / site chrome should still render.
+  // The defaults are good-enough copy — swallow the connection error and log
+  // once so operators can spot it in server logs.
+  let row: { value: unknown } | null = null;
+  try {
+    row = await queryOne<{ value: unknown }>(
+      "SELECT value FROM site_settings WHERE `key` = ? LIMIT 1",
+      [key],
+    );
+  } catch (err) {
+    console.warn(
+      `[settings-repository] Falling back to defaults for "${key}":`,
+      err instanceof Error ? err.message : err,
+    );
+    return fallback;
   }
-  return first.value as T;
+  if (!row?.value) return fallback;
+  // mysql2 auto-parses JSON columns into JS objects/values.
+  const parsed = row.value as Partial<T>;
+  if (typeof fallback === "object" && fallback !== null) {
+    return { ...(fallback as object), ...(parsed as object) } as T;
+  }
+  return parsed as T;
 }
 
 export const getTheme = () => get<ThemeSettings>("theme", defaultTheme);
 export const getSiteInfo = () => get<SiteInfoSettings>("site", defaultSite);
 export const getContent = () => get<ContentSettings>("content", defaultContent);
 
-/** Admin write. */
+/** Admin write — INSERT or UPDATE on PRIMARY KEY conflict. */
 export async function upsertSetting(key: string, value: unknown) {
-  const { error } = await insforgeAdmin.database
-    .from("site_settings")
-    .upsert([{ key, value, updated_at: new Date().toISOString() }]);
-  if (error) throw error;
+  // MySQL's JSON column accepts either a JSON literal string or a native JS
+  // value bound as JSON.stringify. We stringify explicitly so complex objects
+  // (defaults spread + patch) round-trip without surprises.
+  await upsertOne("site_settings", {
+    key,
+    value: JSON.stringify(value),
+    updated_at: toSqlDate(),
+  });
 }

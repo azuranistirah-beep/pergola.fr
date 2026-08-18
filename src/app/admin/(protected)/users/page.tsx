@@ -1,6 +1,6 @@
 import { AdminHeader } from "@/features/admin/admin-ui";
 import { UsersManager } from "@/features/admin/users-manager";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-auth";
 import { getT } from "@/lib/admin-i18n";
 
@@ -14,11 +14,19 @@ interface Row {
 }
 
 async function load(): Promise<Row[]> {
-  const { data } = await insforgeAdmin.database
-    .from("admin_users")
-    .select("id, email, name, is_active, last_login_at, created_at")
-    .order("created_at", { ascending: true });
-  return (data ?? []) as Row[];
+  // is_active stored as TINYINT(1); the UI expects a boolean.
+  const rows = await query<{
+    id: string;
+    email: string;
+    name: string;
+    is_active: number;
+    last_login_at: string | null;
+    created_at: string;
+  }>(
+    "SELECT id, email, name, is_active, last_login_at, created_at " +
+      "FROM admin_users ORDER BY created_at ASC",
+  );
+  return rows.map((r) => ({ ...r, is_active: r.is_active === 1 }));
 }
 
 export default async function AdminUsersPage() {

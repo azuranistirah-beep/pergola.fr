@@ -8,7 +8,7 @@ import {
   NewsletterExport,
   UnsubscribeButton,
 } from "@/features/admin/newsletter-actions";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query } from "@/lib/db";
 import { getT } from "@/lib/admin-i18n";
 
 interface Subscriber {
@@ -19,11 +19,9 @@ interface Subscriber {
 }
 
 async function load() {
-  const { data } = await insforgeAdmin.database
-    .from("newsletter_subscribers")
-    .select("*")
-    .order("subscribed_at", { ascending: false });
-  return (data ?? []) as Subscriber[];
+  return query<Subscriber>(
+    "SELECT * FROM newsletter_subscribers ORDER BY subscribed_at DESC",
+  );
 }
 
 export default async function NewsletterPage() {

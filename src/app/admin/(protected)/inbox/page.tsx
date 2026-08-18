@@ -6,7 +6,7 @@ import {
   KpiCard,
 } from "@/features/admin/admin-ui";
 import { ContactActionsBar } from "@/features/admin/contact-actions-bar";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query } from "@/lib/db";
 import { getT, type AdminMessageKey } from "@/lib/admin-i18n";
 
 interface Message {
@@ -29,11 +29,9 @@ const statusTone: Record<string, string> = {
 };
 
 async function load() {
-  const { data } = await insforgeAdmin.database
-    .from("contact_messages")
-    .select("*")
-    .order("created_at", { ascending: false });
-  return (data ?? []) as Message[];
+  return query<Message>(
+    "SELECT * FROM contact_messages ORDER BY created_at DESC",
+  );
 }
 
 export default async function InboxPage() {

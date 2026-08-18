@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query, queryOne } from "@/lib/db";
 import { formatEUR } from "@/lib/utils";
 import { getT, type AdminMessageKey } from "@/lib/admin-i18n";
 import { getSiteInfo } from "@/repositories/settings-repository";
@@ -42,18 +42,15 @@ interface Item {
 }
 
 async function load(id: string) {
-  const [invRes, itemsRes, site, methods] = await Promise.all([
-    insforgeAdmin.database.from("invoices").select("*").eq("id", id).limit(1),
-    insforgeAdmin.database
-      .from("invoice_items")
-      .select("*")
-      .eq("invoice_id", id)
-      .order("sort_order", { ascending: true }),
+  const [inv, items, site, methods] = await Promise.all([
+    queryOne<Inv>("SELECT * FROM invoices WHERE id = ? LIMIT 1", [id]),
+    query<Item>(
+      "SELECT * FROM invoice_items WHERE invoice_id = ? ORDER BY sort_order ASC",
+      [id],
+    ),
     getSiteInfo(),
-    listPaymentMethods({ adminOnly: true }),
+    listPaymentMethods(),
   ]);
-  const inv = ((invRes.data ?? [])[0] ?? null) as Inv | null;
-  const items = (itemsRes.data ?? []) as Item[];
   const activeMethods = methods.filter((m) => m.is_active);
   return { inv, items, site, methods: activeMethods };
 }

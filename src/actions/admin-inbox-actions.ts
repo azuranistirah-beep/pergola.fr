@@ -1,22 +1,19 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { execute, toSqlDate, updateWhere } from "@/lib/db";
 import { upsertSetting } from "@/repositories/settings-repository";
 
 export async function updateContactStatus(
   id: string,
   status: "NEW" | "READ" | "REPLIED" | "ARCHIVED",
 ) {
-  await insforgeAdmin.database
-    .from("contact_messages")
-    .update({ status })
-    .eq("id", id);
+  await updateWhere("contact_messages", { status }, "id = ?", [id]);
   revalidatePath("/admin/inbox");
 }
 
 export async function deleteContact(id: string) {
-  await insforgeAdmin.database.from("contact_messages").delete().eq("id", id);
+  await execute("DELETE FROM contact_messages WHERE id = ?", [id]);
   revalidatePath("/admin/inbox");
 }
 
@@ -36,10 +33,12 @@ export async function updateOrderStatus(
 }
 
 export async function unsubscribeNewsletter(email: string) {
-  await insforgeAdmin.database
-    .from("newsletter_subscribers")
-    .update({ unsubscribed_at: new Date().toISOString() })
-    .eq("email", email);
+  await updateWhere(
+    "newsletter_subscribers",
+    { unsubscribed_at: toSqlDate() },
+    "email = ?",
+    [email],
+  );
   revalidatePath("/admin/newsletter");
 }
 

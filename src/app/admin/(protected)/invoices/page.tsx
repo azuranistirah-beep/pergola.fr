@@ -6,7 +6,7 @@ import {
   AdminSection,
 } from "@/features/admin/admin-ui";
 import { InvoicesTable } from "@/features/admin/invoices-table";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query } from "@/lib/db";
 import { getT } from "@/lib/admin-i18n";
 
 interface Row {
@@ -21,14 +21,11 @@ interface Row {
 }
 
 async function load() {
-  const { data } = await insforgeAdmin.database
-    .from("invoices")
-    .select(
-      "id, invoice_number, status, customer_name, customer_email, issued_at, due_at, total_ttc_cents",
-    )
-    .order("issued_at", { ascending: false })
-    .limit(10000);
-  return (data ?? []) as Row[];
+  return query<Row>(
+    "SELECT id, invoice_number, status, customer_name, customer_email, " +
+      "issued_at, due_at, total_ttc_cents FROM invoices " +
+      "ORDER BY issued_at DESC LIMIT 10000",
+  );
 }
 
 export default async function InvoicesListPage() {

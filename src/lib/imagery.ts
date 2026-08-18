@@ -1,15 +1,18 @@
 /**
- * Central catalogue of the 29 pergola photos we host on InsForge Storage.
+ * Central catalogue of the 29 pergola photos we ship with the repo.
  * Everywhere the design needs a real photo (hero, category card, article
  * cover, project cover, …) reference one of these keys instead of hardcoding
  * a URL. If we ever swap the storage provider this stays a one-line edit.
+ *
+ * Photos live under `public/images/products/<slug>/<file>` and are seeded by
+ * `scripts/seed-product-images.mjs`. Deploying via git makes them available
+ * on Hostinger without a separate upload step.
  */
 
-const STORAGE_BASE =
-  "https://maa37bw9.eu-central.insforge.app/api/storage/buckets/products/objects";
+const STORAGE_BASE = "/images/products";
 
 export const photoBySlug = (slug: string, file: string = "cover.jpg") =>
-  `${STORAGE_BASE}/${slug}%2F${file}`;
+  `${STORAGE_BASE}/${slug}/${file}`;
 
 /** Curated photo pointers for editorial surfaces. */
 export const editorialPhoto = {

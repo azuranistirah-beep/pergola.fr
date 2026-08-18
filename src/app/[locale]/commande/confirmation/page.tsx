@@ -12,7 +12,7 @@ import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Button } from "@/components/ui/button";
 import { formatEUR } from "@/lib/utils";
-import { insforge } from "@/lib/insforge";
+import { queryOne } from "@/lib/db";
 import { listActivePaymentMethodsForCustomer } from "@/repositories/payment-methods-repository";
 
 export const metadata = {
@@ -38,12 +38,11 @@ interface OrderRow {
 
 async function loadOrder(ref: string | undefined): Promise<OrderRow | null> {
   if (!ref) return null;
-  const { data } = await insforge.database
-    .from("orders")
-    .select("order_number, customer_name, customer_email, total_cents, currency, status, created_at")
-    .eq("order_number", ref)
-    .limit(1);
-  return ((data ?? [])[0] as OrderRow | undefined) ?? null;
+  return queryOne<OrderRow>(
+    "SELECT order_number, customer_name, customer_email, total_cents, currency, status, created_at " +
+      "FROM orders WHERE order_number = ? LIMIT 1",
+    [ref],
+  );
 }
 
 export default async function OrderConfirmationPage({

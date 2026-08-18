@@ -2,59 +2,58 @@ import { notFound } from "next/navigation";
 import { AdminHeader, AdminSection } from "@/features/admin/admin-ui";
 import { ProductForm } from "@/features/admin/product-form";
 import { ProductMediaEditor } from "@/features/admin/product-media-editor";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query, queryOne } from "@/lib/db";
 import { deleteProduct } from "@/actions/admin-actions";
 import { getT } from "@/lib/admin-i18n";
 
+interface ProductRow {
+  id: string;
+  slug: string;
+  sku: string;
+  category_id: string;
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  base_price_cents: number;
+  stock: number;
+  is_configurable: number; // TINYINT(1)
+  is_featured: number;
+  family: string | null;
+  material: string | null;
+  colorway: string | null;
+  finish: string | null;
+  width_ft: number | null;
+  length_ft: number | null;
+}
+
 async function loadEverything(id: string) {
-  const { data: rows } = await insforgeAdmin.database
-    .from("products")
-    .select("*")
-    .eq("id", id)
-    .limit(1);
-  const product = ((rows ?? [])[0] ?? null) as
-    | {
-        id: string;
-        slug: string;
-        sku: string;
-        category_id: string;
-        status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
-        base_price_cents: number;
-        stock: number;
-        is_configurable: boolean;
-        is_featured: boolean;
-        family: string | null;
-        material: string | null;
-        colorway: string | null;
-        finish: string | null;
-        width_ft: number | null;
-        length_ft: number | null;
-      }
-    | null;
+  const product = await queryOne<ProductRow>(
+    "SELECT * FROM products WHERE id = ? LIMIT 1",
+    [id],
+  );
   if (!product) return null;
 
-  const { data: tr } = await insforgeAdmin.database
-    .from("product_translations")
-    .select("locale, name, short_desc")
-    .eq("product_id", id);
-  const { data: media } = await insforgeAdmin.database
-    .from("product_media")
-    .select("id, url, is_cover, sort_order")
-    .eq("product_id", id)
-    .order("sort_order", { ascending: true });
-  const { data: cats } = await insforgeAdmin.database
-    .from("categories")
-    .select("id, slug")
-    .order("sort_order", { ascending: true });
-  const { data: catTr } = await insforgeAdmin.database
-    .from("category_translations")
-    .select("category_id, locale, name")
-    .eq("locale", "fr");
-  const label = new Map<string, string>();
-  (catTr ?? []).forEach((t) => label.set(t.category_id, t.name));
+  const [tr, media, cats, catTr] = await Promise.all([
+    query<{ locale: string; name: string; short_desc: string | null }>(
+      "SELECT locale, name, short_desc FROM product_translations WHERE product_id = ?",
+      [id],
+    ),
+    query<{ id: string; url: string; is_cover: number; sort_order: number }>(
+      "SELECT id, url, is_cover, sort_order FROM product_media WHERE product_id = ? ORDER BY sort_order ASC",
+      [id],
+    ),
+    query<{ id: string; slug: string }>(
+      "SELECT id, slug FROM categories ORDER BY sort_order ASC",
+    ),
+    query<{ category_id: string; locale: string; name: string }>(
+      "SELECT category_id, locale, name FROM category_translations WHERE locale = ?",
+      ["fr"],
+    ),
+  ]);
 
-  const fr = (tr ?? []).find((t) => t.locale === "fr");
-  const en = (tr ?? []).find((t) => t.locale === "en");
+  const label = new Map<string, string>();
+  catTr.forEach((t) => label.set(t.category_id, t.name));
+
+  const fr = tr.find((t) => t.locale === "fr");
+  const en = tr.find((t) => t.locale === "en");
 
   return {
     product,
@@ -65,8 +64,8 @@ async function loadEverything(id: string) {
       status: product.status,
       basePriceEur: (product.base_price_cents / 100).toFixed(2),
       stock: String(product.stock),
-      isConfigurable: product.is_configurable,
-      isFeatured: product.is_featured,
+      isConfigurable: product.is_configurable === 1,
+      isFeatured: product.is_featured === 1,
       family: product.family ?? "",
       material: product.material ?? "",
       colorway: product.colorway ?? "",
@@ -78,12 +77,12 @@ async function loadEverything(id: string) {
       taglineFr: fr?.short_desc ?? "",
       taglineEn: en?.short_desc ?? "",
     },
-    media: (media ?? []).map((m) => ({
+    media: media.map((m) => ({
       id: m.id,
       url: m.url,
-      isCover: m.is_cover,
+      isCover: m.is_cover === 1,
     })),
-    categories: (cats ?? []).map((c) => ({
+    categories: cats.map((c) => ({
       id: c.id,
       label: label.get(c.id) ?? c.slug,
     })),

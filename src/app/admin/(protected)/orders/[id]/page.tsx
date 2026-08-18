@@ -9,7 +9,7 @@ import {
 } from "@/features/admin/admin-ui";
 import { OrderStatusSelect } from "@/features/admin/order-status-select";
 import { OrderDeleteButton } from "@/features/admin/order-delete-button";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query, queryOne } from "@/lib/db";
 import { formatEUR } from "@/lib/utils";
 import { getT } from "@/lib/admin-i18n";
 import { generateInvoiceFromOrderAndRedirect } from "@/actions/admin-invoices-actions";
@@ -46,16 +46,13 @@ interface ItemRow {
 }
 
 async function load(id: string) {
-  const [orderRes, itemsRes] = await Promise.all([
-    insforgeAdmin.database.from("orders").select("*").eq("id", id).limit(1),
-    insforgeAdmin.database
-      .from("order_items")
-      .select("*")
-      .eq("order_id", id)
-      .order("created_at", { ascending: true }),
+  const [order, items] = await Promise.all([
+    queryOne<OrderRow>("SELECT * FROM orders WHERE id = ? LIMIT 1", [id]),
+    query<ItemRow>(
+      "SELECT * FROM order_items WHERE order_id = ? ORDER BY created_at ASC",
+      [id],
+    ),
   ]);
-  const order = ((orderRes.data ?? [])[0] ?? null) as OrderRow | null;
-  const items = (itemsRes.data ?? []) as ItemRow[];
   return { order, items };
 }
 

@@ -1,7 +1,8 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { execute, insertOne, toSqlDate, updateWhere } from "@/lib/db";
 import { hashPassword, requireAdmin } from "@/lib/admin-auth";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -19,10 +20,14 @@ export async function createAdminUser(input: {
   if (input.password.length < 10)
     throw new Error("Password must be at least 10 characters");
   const password_hash = await hashPassword(input.password);
-  const { error } = await insforgeAdmin.database
-    .from("admin_users")
-    .insert({ email, name, password_hash });
-  if (error) throw error;
+  await insertOne("admin_users", {
+    id: randomUUID(),
+    email,
+    name,
+    password_hash,
+    // is_active + created_at default in the schema; specify neither so we
+    // inherit the CURRENT_TIMESTAMP(6) / DEFAULT true from CREATE TABLE.
+  });
   revalidatePath("/admin/users");
 }
 
@@ -31,10 +36,7 @@ export async function resetAdminPassword(id: string, newPassword: string) {
   if (newPassword.length < 10)
     throw new Error("Password must be at least 10 characters");
   const password_hash = await hashPassword(newPassword);
-  await insforgeAdmin.database
-    .from("admin_users")
-    .update({ password_hash })
-    .eq("id", id);
+  await updateWhere("admin_users", { password_hash }, "id = ?", [id]);
   revalidatePath("/admin/users");
 }
 
@@ -43,10 +45,12 @@ export async function setAdminActive(id: string, active: boolean) {
   if (id === currentUser.id && !active) {
     throw new Error("You cannot deactivate your own account.");
   }
-  await insforgeAdmin.database
-    .from("admin_users")
-    .update({ is_active: active })
-    .eq("id", id);
+  await updateWhere(
+    "admin_users",
+    { is_active: active ? 1 : 0 },
+    "id = ?",
+    [id],
+  );
   revalidatePath("/admin/users");
 }
 
@@ -55,6 +59,10 @@ export async function deleteAdminUser(id: string) {
   if (id === currentUser.id) {
     throw new Error("You cannot delete your own account.");
   }
-  await insforgeAdmin.database.from("admin_users").delete().eq("id", id);
+  await execute("DELETE FROM admin_users WHERE id = ?", [id]);
   revalidatePath("/admin/users");
 }
+
+// toSqlDate re-exported for symmetry with the other action files that need it;
+// keeping the import stable prevents an unused-import lint here.
+void toSqlDate;

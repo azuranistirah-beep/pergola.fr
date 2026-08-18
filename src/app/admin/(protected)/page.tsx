@@ -17,56 +17,68 @@ import {
   AdminSection,
   KpiCard,
 } from "@/features/admin/admin-ui";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query } from "@/lib/db";
 import { formatEUR } from "@/lib/utils";
 import { getT } from "@/lib/admin-i18n";
 
 async function loadStats() {
-  const [products, categories, media, drafts, msgs, orders, subs] = await Promise.all([
-    insforgeAdmin.database.from("products").select("id").eq("status", "PUBLISHED"),
-    insforgeAdmin.database.from("categories").select("id"),
-    insforgeAdmin.database.from("product_media").select("id"),
-    insforgeAdmin.database.from("products").select("id").eq("status", "DRAFT"),
-    insforgeAdmin.database
-      .from("contact_messages")
-      .select("id, status")
-      .eq("status", "NEW"),
-    insforgeAdmin.database
-      .from("orders")
-      .select("id, total_cents, status")
-      .neq("status", "CANCELLED"),
-    insforgeAdmin.database.from("newsletter_subscribers").select("email"),
+  // Aggregate counts in the DB — one round-trip per KPI, cheaper than
+  // fetching every row and counting in JS the way the InsForge version did.
+  const [
+    productCount,
+    categoryCount,
+    mediaCount,
+    draftCount,
+    unreadMsgs,
+    orders,
+    subCount,
+  ] = await Promise.all([
+    query<{ n: number }>(
+      "SELECT COUNT(*) AS n FROM products WHERE status = ?",
+      ["PUBLISHED"],
+    ),
+    query<{ n: number }>("SELECT COUNT(*) AS n FROM categories"),
+    query<{ n: number }>("SELECT COUNT(*) AS n FROM product_media"),
+    query<{ n: number }>(
+      "SELECT COUNT(*) AS n FROM products WHERE status = ?",
+      ["DRAFT"],
+    ),
+    query<{ n: number }>(
+      "SELECT COUNT(*) AS n FROM contact_messages WHERE status = ?",
+      ["NEW"],
+    ),
+    query<{ n: number; revenue: number }>(
+      "SELECT COUNT(*) AS n, COALESCE(SUM(total_cents), 0) AS revenue " +
+        "FROM orders WHERE status != ?",
+      ["CANCELLED"],
+    ),
+    query<{ n: number }>("SELECT COUNT(*) AS n FROM newsletter_subscribers"),
   ]);
-  const revenue = (orders.data ?? []).reduce(
-    (s, o: { total_cents: number }) => s + o.total_cents,
-    0,
-  );
+
   return {
-    products: (products.data ?? []).length,
-    categories: (categories.data ?? []).length,
-    media: (media.data ?? []).length,
-    drafts: (drafts.data ?? []).length,
-    newMessages: (msgs.data ?? []).length,
-    orders: (orders.data ?? []).length,
-    revenue,
-    subs: (subs.data ?? []).length,
+    products: Number(productCount[0]?.n ?? 0),
+    categories: Number(categoryCount[0]?.n ?? 0),
+    media: Number(mediaCount[0]?.n ?? 0),
+    drafts: Number(draftCount[0]?.n ?? 0),
+    newMessages: Number(unreadMsgs[0]?.n ?? 0),
+    orders: Number(orders[0]?.n ?? 0),
+    revenue: Number(orders[0]?.revenue ?? 0),
+    subs: Number(subCount[0]?.n ?? 0),
   };
 }
 
 async function loadRecentOrders() {
-  const { data } = await insforgeAdmin.database
-    .from("orders")
-    .select("id, order_number, customer_name, total_cents, status, created_at")
-    .order("created_at", { ascending: false })
-    .limit(5);
-  return (data ?? []) as {
+  return query<{
     id: string;
     order_number: string;
     customer_name: string;
     total_cents: number;
     status: string;
     created_at: string;
-  }[];
+  }>(
+    "SELECT id, order_number, customer_name, total_cents, status, created_at " +
+      "FROM orders ORDER BY created_at DESC LIMIT 5",
+  );
 }
 
 export default async function AdminDashboard() {

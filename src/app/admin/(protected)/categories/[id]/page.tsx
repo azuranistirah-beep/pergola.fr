@@ -1,34 +1,36 @@
 import { notFound } from "next/navigation";
 import { AdminHeader } from "@/features/admin/admin-ui";
 import { CategoryForm } from "@/features/admin/category-form";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { query, queryOne } from "@/lib/db";
 import { deleteCategory } from "@/actions/admin-actions";
 
 async function load(id: string) {
-  const { data } = await insforgeAdmin.database
-    .from("categories")
-    .select("id, slug, sort_order, is_featured")
-    .eq("id", id)
-    .limit(1);
-  const cat = ((data ?? [])[0] ?? null) as {
+  const cat = await queryOne<{
     id: string;
     slug: string;
     sort_order: number;
-    is_featured: boolean;
-  } | null;
+    is_featured: number;
+  }>(
+    "SELECT id, slug, sort_order, is_featured FROM categories WHERE id = ? LIMIT 1",
+    [id],
+  );
   if (!cat) return null;
-  const { data: tr } = await insforgeAdmin.database
-    .from("category_translations")
-    .select("locale, name, description")
-    .eq("category_id", id);
-  const fr = (tr ?? []).find((t) => t.locale === "fr");
-  const en = (tr ?? []).find((t) => t.locale === "en");
+  const tr = await query<{
+    locale: string;
+    name: string;
+    description: string | null;
+  }>(
+    "SELECT locale, name, description FROM category_translations WHERE category_id = ?",
+    [id],
+  );
+  const fr = tr.find((t) => t.locale === "fr");
+  const en = tr.find((t) => t.locale === "en");
   return {
     id: cat.id,
     initial: {
       slug: cat.slug,
       sortOrder: String(cat.sort_order),
-      isFeatured: cat.is_featured,
+      isFeatured: cat.is_featured === 1,
       nameFr: fr?.name ?? "",
       nameEn: en?.name ?? "",
       descriptionFr: fr?.description ?? "",

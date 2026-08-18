@@ -2,7 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { insforgeAdmin } from "@/lib/insforge-admin";
+import { mkdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+import {
+  execute,
+  insertMany,
+  insertOne,
+  query,
+  queryOne,
+  updateWhere,
+  toSqlDate,
+} from "@/lib/db";
 import { upsertSetting } from "@/repositories/settings-repository";
 import type { SiteInfoSettings } from "@/repositories/settings-repository";
 
@@ -33,57 +43,16 @@ interface ProductInput {
 
 export async function createProduct(input: ProductInput) {
   const id = `p-${input.slug}-${Date.now().toString(36)}`;
-  const { error: pErr } = await insforgeAdmin.database.from("products").insert([
-    {
-      id,
-      sku: input.sku,
-      slug: input.slug,
-      category_id: input.categoryId,
-      status: input.status,
-      base_price_cents: input.basePriceCents,
-      stock: input.stock,
-      is_configurable: input.isConfigurable,
-      is_featured: input.isFeatured,
-      family: input.family ?? null,
-      material: input.material ?? null,
-      colorway: input.colorway ?? null,
-      finish: input.finish ?? null,
-      width_ft: input.widthFt ?? null,
-      length_ft: input.lengthFt ?? null,
-      width_cm: input.widthCm ?? null,
-      length_cm: input.lengthCm ?? null,
-      published_at: input.status === "PUBLISHED" ? new Date().toISOString() : null,
-    },
-  ]);
-  if (pErr) throw pErr;
-
-  await insforgeAdmin.database.from("product_translations").insert([
-    { id: id + "-fr", product_id: id, locale: "fr", name: input.nameFr, short_desc: input.taglineFr },
-    { id: id + "-en", product_id: id, locale: "en", name: input.nameEn, short_desc: input.taglineEn },
-  ]);
-
-  revalidatePath("/", "layout");
-  redirect(`/admin/products/${id}`);
-}
-
-export async function updateProduct(id: string, input: ProductInput) {
-  const { data: existing } = await insforgeAdmin.database
-    .from("products")
-    .select("status, published_at")
-    .eq("id", id)
-    .limit(1);
-  const prev = (existing ?? [])[0] as
-    | { status: string; published_at: string | null }
-    | undefined;
-  const patch: Record<string, string | number | boolean | null> = {
+  await insertOne("products", {
+    id,
     sku: input.sku,
     slug: input.slug,
     category_id: input.categoryId,
     status: input.status,
     base_price_cents: input.basePriceCents,
     stock: input.stock,
-    is_configurable: input.isConfigurable,
-    is_featured: input.isFeatured,
+    is_configurable: input.isConfigurable ? 1 : 0,
+    is_featured: input.isFeatured ? 1 : 0,
     family: input.family ?? null,
     material: input.material ?? null,
     colorway: input.colorway ?? null,
@@ -92,34 +61,79 @@ export async function updateProduct(id: string, input: ProductInput) {
     length_ft: input.lengthFt ?? null,
     width_cm: input.widthCm ?? null,
     length_cm: input.lengthCm ?? null,
-    updated_at: new Date().toISOString(),
+    published_at: input.status === "PUBLISHED" ? toSqlDate() : null,
+  });
+
+  await insertMany("product_translations", [
+    {
+      id: id + "-fr",
+      product_id: id,
+      locale: "fr",
+      name: input.nameFr,
+      short_desc: input.taglineFr,
+    },
+    {
+      id: id + "-en",
+      product_id: id,
+      locale: "en",
+      name: input.nameEn,
+      short_desc: input.taglineEn,
+    },
+  ]);
+
+  revalidatePath("/", "layout");
+  redirect(`/admin/products/${id}`);
+}
+
+export async function updateProduct(id: string, input: ProductInput) {
+  const prev = await queryOne<{ status: string; published_at: string | null }>(
+    "SELECT status, published_at FROM products WHERE id = ? LIMIT 1",
+    [id],
+  );
+  const patch: Record<string, string | number | boolean | null> = {
+    sku: input.sku,
+    slug: input.slug,
+    category_id: input.categoryId,
+    status: input.status,
+    base_price_cents: input.basePriceCents,
+    stock: input.stock,
+    is_configurable: input.isConfigurable ? 1 : 0,
+    is_featured: input.isFeatured ? 1 : 0,
+    family: input.family ?? null,
+    material: input.material ?? null,
+    colorway: input.colorway ?? null,
+    finish: input.finish ?? null,
+    width_ft: input.widthFt ?? null,
+    length_ft: input.lengthFt ?? null,
+    width_cm: input.widthCm ?? null,
+    length_cm: input.lengthCm ?? null,
+    updated_at: toSqlDate(),
   };
   if (input.status === "PUBLISHED" && !prev?.published_at) {
-    patch.published_at = new Date().toISOString();
+    patch.published_at = toSqlDate();
   }
-  await insforgeAdmin.database.from("products").update(patch).eq("id", id);
+  await updateWhere("products", patch, "id = ?", [id]);
 
-  await insforgeAdmin.database
-    .from("product_translations")
-    .update({ name: input.nameFr, short_desc: input.taglineFr })
-    .eq("product_id", id)
-    .eq("locale", "fr");
-  await insforgeAdmin.database
-    .from("product_translations")
-    .update({ name: input.nameEn, short_desc: input.taglineEn })
-    .eq("product_id", id)
-    .eq("locale", "en");
+  await updateWhere(
+    "product_translations",
+    { name: input.nameFr, short_desc: input.taglineFr },
+    "product_id = ? AND locale = ?",
+    [id, "fr"],
+  );
+  await updateWhere(
+    "product_translations",
+    { name: input.nameEn, short_desc: input.taglineEn },
+    "product_id = ? AND locale = ?",
+    [id, "en"],
+  );
 
   revalidatePath("/", "layout");
 }
 
 export async function deleteProduct(id: string) {
-  await insforgeAdmin.database.from("product_media").delete().eq("product_id", id);
-  await insforgeAdmin.database
-    .from("product_translations")
-    .delete()
-    .eq("product_id", id);
-  await insforgeAdmin.database.from("products").delete().eq("id", id);
+  await execute("DELETE FROM product_media WHERE product_id = ?", [id]);
+  await execute("DELETE FROM product_translations WHERE product_id = ?", [id]);
+  await execute("DELETE FROM products WHERE id = ?", [id]);
   revalidatePath("/", "layout");
   redirect("/admin/products");
 }
@@ -132,31 +146,29 @@ export async function bulkSetProductStatus(
 ): Promise<number> {
   if (!ids.length) return 0;
   const patch: Record<string, string> = { status };
-  if (status === "PUBLISHED") patch.published_at = new Date().toISOString();
-  await insforgeAdmin.database.from("products").update(patch).in("id", ids);
+  if (status === "PUBLISHED") patch.published_at = toSqlDate();
+  await updateWhere("products", patch, "id IN (?)", [ids]);
   revalidatePath("/", "layout");
   return ids.length;
 }
 
 export async function bulkDeleteProducts(ids: string[]): Promise<number> {
   if (!ids.length) return 0;
-  await insforgeAdmin.database.from("product_media").delete().in("product_id", ids);
-  await insforgeAdmin.database
-    .from("product_translations")
-    .delete()
-    .in("product_id", ids);
-  await insforgeAdmin.database.from("products").delete().in("id", ids);
+  await execute("DELETE FROM product_media WHERE product_id IN (?)", [ids]);
+  await execute(
+    "DELETE FROM product_translations WHERE product_id IN (?)",
+    [ids],
+  );
+  await execute("DELETE FROM products WHERE id IN (?)", [ids]);
   revalidatePath("/", "layout");
   return ids.length;
 }
 
 export async function duplicateProduct(id: string): Promise<string> {
-  const { data: rows } = await insforgeAdmin.database
-    .from("products")
-    .select("*")
-    .eq("id", id)
-    .limit(1);
-  const src = (rows ?? [])[0] as Record<string, unknown> | undefined;
+  const src = await queryOne<Record<string, unknown>>(
+    "SELECT * FROM products WHERE id = ? LIMIT 1",
+    [id],
+  );
   if (!src) throw new Error("Product not found");
 
   const stamp = Date.now().toString(36);
@@ -164,61 +176,59 @@ export async function duplicateProduct(id: string): Promise<string> {
   const newSlug = `${src.slug}-copy-${stamp}`;
   const newSku = `${src.sku}-COPY-${stamp.slice(-4).toUpperCase()}`;
 
-  const insertRow = {
+  const insertRow: Record<string, unknown> = {
     ...src,
     id: newId,
     slug: newSlug,
     sku: newSku,
     status: "DRAFT",
-    is_featured: false,
+    is_featured: 0,
     published_at: null,
-    created_at: undefined,
-    updated_at: undefined,
   };
-  delete (insertRow as Record<string, unknown>).created_at;
-  delete (insertRow as Record<string, unknown>).updated_at;
-  const { error } = await insforgeAdmin.database.from("products").insert(insertRow);
-  if (error) throw error;
+  delete insertRow.created_at;
+  delete insertRow.updated_at;
+  await insertOne("products", insertRow);
 
-  const { data: trRows } = await insforgeAdmin.database
-    .from("product_translations")
-    .select("locale, name, short_desc, description, features_json")
-    .eq("product_id", id);
-  const trs = (trRows ?? []) as {
+  const translations = await query<{
     locale: string;
     name: string;
     short_desc: string | null;
     description: string | null;
     features_json: unknown;
-  }[];
-  if (trs.length) {
-    await insforgeAdmin.database.from("product_translations").insert(
-      trs.map((tr) => ({
+  }>(
+    "SELECT locale, name, short_desc, description, features_json FROM product_translations WHERE product_id = ?",
+    [id],
+  );
+  if (translations.length) {
+    await insertMany(
+      "product_translations",
+      translations.map((tr) => ({
         id: `${newId}-${tr.locale}`,
         product_id: newId,
         locale: tr.locale,
         name: `${tr.name} (copy)`,
         short_desc: tr.short_desc,
         description: tr.description,
-        features_json: tr.features_json ?? null,
+        features_json:
+          tr.features_json != null ? JSON.stringify(tr.features_json) : null,
       })),
     );
   }
 
-  const { data: mediaRows } = await insforgeAdmin.database
-    .from("product_media")
-    .select("url, alt_text, type, sort_order, is_lifestyle, is_cover")
-    .eq("product_id", id);
-  const media = (mediaRows ?? []) as {
+  const media = await query<{
     url: string;
     alt_text: string | null;
     type: string;
     sort_order: number;
-    is_lifestyle: boolean;
-    is_cover: boolean;
-  }[];
+    is_lifestyle: number;
+    is_cover: number;
+  }>(
+    "SELECT url, alt_text, type, sort_order, is_lifestyle, is_cover FROM product_media WHERE product_id = ?",
+    [id],
+  );
   if (media.length) {
-    await insforgeAdmin.database.from("product_media").insert(
+    await insertMany(
+      "product_media",
       media.map((m, i) => ({
         id: `m-${newId}-${i}`,
         product_id: newId,
@@ -279,6 +289,12 @@ function detectImageMime(buf: Buffer): string | null {
   return null;
 }
 
+// Where admin-uploaded images land. Kept OUTSIDE the git-tracked
+// public/images/products/ tree (which ships the seed catalogue), so a
+// git-based deploy on Hostinger doesn't wipe them. Add `public/uploads/`
+// to `.gitignore` — the folder is created on first upload.
+const UPLOAD_DIR = join(process.cwd(), "public", "uploads", "products");
+
 export async function uploadProductImage(
   productId: string,
   slug: string,
@@ -286,6 +302,7 @@ export async function uploadProductImage(
   mime: string,
   isCover: boolean,
 ) {
+  void mime; // client-provided mime is untrusted — we detect it below
   const buf = Buffer.from(base64.split(",").pop() ?? "", "base64");
   if (buf.length === 0) throw new Error("Empty file");
   if (buf.length > MAX_IMAGE_BYTES)
@@ -297,45 +314,35 @@ export async function uploadProductImage(
   if (!detected || !IMAGE_MIME_TO_EXT[detected]) {
     throw new Error("Only JPG, PNG and WebP images are allowed.");
   }
-  // If the client-declared mime disagrees with the magic bytes, trust the bytes.
-  const safeMime = detected;
-  const ext = IMAGE_MIME_TO_EXT[safeMime];
+  const ext = IMAGE_MIME_TO_EXT[detected];
   const safeSlug = sanitizeSlug(slug);
-  const key = `${safeSlug}/${Date.now()}.${ext}`;
+  const stamp = Date.now();
+  const filename = `${stamp}.${ext}`;
 
-  const blob = new Blob([buf], { type: safeMime });
-  const file = new File([blob], key.split("/").pop() ?? `img.${ext}`, {
-    type: safeMime,
+  const dir = join(UPLOAD_DIR, safeSlug);
+  await mkdir(dir, { recursive: true });
+  await writeFile(join(dir, filename), buf);
+
+  // Public-facing URL — Next serves everything under public/ verbatim.
+  const url = `/uploads/products/${safeSlug}/${filename}`;
+
+  const mediaId = `m-${productId}-${stamp.toString(36)}`;
+  await insertOne("product_media", {
+    id: mediaId,
+    product_id: productId,
+    url,
+    alt_text: null,
+    type: "IMAGE",
+    sort_order: 0,
+    is_cover: isCover ? 1 : 0,
   });
-
-  const { data: uploaded, error } = await insforgeAdmin.storage
-    .from("products")
-    .upload(key, file);
-  if (error) throw error;
-
-  const url =
-    (uploaded as { url?: string } | undefined)?.url ??
-    `${process.env.INSFORGE_URL}/api/storage/buckets/products/objects/${encodeURIComponent(key)}`;
-
-  const mediaId = `m-${productId}-${Date.now().toString(36)}`;
-  await insforgeAdmin.database.from("product_media").insert([
-    {
-      id: mediaId,
-      product_id: productId,
-      url,
-      alt_text: null,
-      type: "IMAGE",
-      sort_order: 0,
-      is_cover: isCover,
-    },
-  ]);
 
   revalidatePath("/", "layout");
   return { url };
 }
 
 export async function deleteProductMedia(mediaId: string) {
-  await insforgeAdmin.database.from("product_media").delete().eq("id", mediaId);
+  await execute("DELETE FROM product_media WHERE id = ?", [mediaId]);
   revalidatePath("/", "layout");
 }
 
@@ -353,51 +360,62 @@ interface CategoryInput {
 
 export async function createCategory(input: CategoryInput) {
   const id = `cat-${input.slug}-${Date.now().toString(36)}`;
-  await insforgeAdmin.database.from("categories").insert([
+  await insertOne("categories", {
+    id,
+    slug: input.slug,
+    sort_order: input.sortOrder,
+    is_featured: input.isFeatured ? 1 : 0,
+  });
+  await insertMany("category_translations", [
     {
-      id,
-      slug: input.slug,
-      sort_order: input.sortOrder,
-      is_featured: input.isFeatured,
+      id: id + "-fr",
+      category_id: id,
+      locale: "fr",
+      name: input.nameFr,
+      description: input.descriptionFr,
     },
-  ]);
-  await insforgeAdmin.database.from("category_translations").insert([
-    { id: id + "-fr", category_id: id, locale: "fr", name: input.nameFr, description: input.descriptionFr },
-    { id: id + "-en", category_id: id, locale: "en", name: input.nameEn, description: input.descriptionEn },
+    {
+      id: id + "-en",
+      category_id: id,
+      locale: "en",
+      name: input.nameEn,
+      description: input.descriptionEn,
+    },
   ]);
   revalidatePath("/", "layout");
   redirect("/admin/categories");
 }
 
 export async function updateCategory(id: string, input: CategoryInput) {
-  await insforgeAdmin.database
-    .from("categories")
-    .update({
+  await updateWhere(
+    "categories",
+    {
       slug: input.slug,
       sort_order: input.sortOrder,
-      is_featured: input.isFeatured,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id);
-  await insforgeAdmin.database
-    .from("category_translations")
-    .update({ name: input.nameFr, description: input.descriptionFr })
-    .eq("category_id", id)
-    .eq("locale", "fr");
-  await insforgeAdmin.database
-    .from("category_translations")
-    .update({ name: input.nameEn, description: input.descriptionEn })
-    .eq("category_id", id)
-    .eq("locale", "en");
+      is_featured: input.isFeatured ? 1 : 0,
+      updated_at: toSqlDate(),
+    },
+    "id = ?",
+    [id],
+  );
+  await updateWhere(
+    "category_translations",
+    { name: input.nameFr, description: input.descriptionFr },
+    "category_id = ? AND locale = ?",
+    [id, "fr"],
+  );
+  await updateWhere(
+    "category_translations",
+    { name: input.nameEn, description: input.descriptionEn },
+    "category_id = ? AND locale = ?",
+    [id, "en"],
+  );
   revalidatePath("/", "layout");
 }
 
 export async function deleteCategory(id: string) {
-  await insforgeAdmin.database
-    .from("category_translations")
-    .delete()
-    .eq("category_id", id);
-  await insforgeAdmin.database.from("categories").delete().eq("id", id);
+  await execute("DELETE FROM category_translations WHERE category_id = ?", [id]);
+  await execute("DELETE FROM categories WHERE id = ?", [id]);
   revalidatePath("/", "layout");
   redirect("/admin/categories");
 }
