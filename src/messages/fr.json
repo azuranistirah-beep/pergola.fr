@@ -46,7 +46,7 @@
   "home": {
     "heroEyebrow": "Collection 2026 — Fabrication française",
     "heroTitle": "L'art de vivre dehors, redessiné.",
-    "heroSubtitle": "Pergolas bioclimatiques, gazebos et structures d'extérieur haut de gamme, dessinées à Paris et fabriquées dans nos ateliers en Vendée.",
+    "heroSubtitle": "Livraison offerte. Pose incluse. Coloris et dimensions sur mesure. Votre pergola prête en 4 à 6 jours.",
     "heroCta": "Configurer ma pergola",
     "heroCtaSecondary": "Voir la collection",
     "statYears": "Ans de savoir-faire",
@@ -803,6 +803,7 @@
     "pageTitle": "Dessinez votre pergola bioclimatique.",
     "pageDescription": "Chaque choix met à jour le prix, la référence SKU et l'aperçu en temps réel. Sauvegardez, demandez un devis ou commandez directement en ligne.",
     "customDimensions": "Sur-mesure hors format standard",
+    "addOnCap": "Remise plafond options (max 100 €)",
     "installationIncluded": "Pose incluse (2 à 4 h)",
     "requestQuotePending": "Génération du PDF...",
     "requestQuoteError": "Erreur lors de la génération du PDF. Réessayez."

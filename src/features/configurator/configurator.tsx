@@ -10,6 +10,7 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { useCart } from "@/features/cart/cart-store";
 import { cn, formatEUR } from "@/lib/utils";
 import {
+  applyAddOnPromo,
   buildSku,
   computeAreaSqm,
   computeConflicts,
@@ -255,7 +256,9 @@ export function Configurator({
                         >
                           <span className="truncate">{lineLabel}</span>
                           <span className="whitespace-nowrap">
-                            +{formatEUR(l.amountCents)}
+                            {l.amountCents < 0
+                              ? `−${formatEUR(Math.abs(l.amountCents))}`
+                              : `+${formatEUR(l.amountCents)}`}
                           </span>
                         </div>
                       );
@@ -405,7 +408,7 @@ function OptionCards({
                 <div className="text-secondary mt-1 text-xs">
                   {v.priceCents === 0
                     ? t("included")
-                    : `+${formatEUR(v.priceCents)}${v.priceKind === "per_sqm" ? "/m²" : v.priceKind === "per_linear_m" ? "/ml" : ""}`}
+                    : `+${formatEUR(applyAddOnPromo(v.priceCents))}${v.priceKind === "per_sqm" ? "/m²" : v.priceKind === "per_linear_m" ? "/ml" : ""}`}
                 </div>
               </div>
               <div
@@ -471,7 +474,7 @@ function SwatchGrid({
               <span className="block truncate text-xs font-medium">{valueLabel}</span>
               {v.priceCents > 0 && (
                 <span className="text-secondary block text-[10px]">
-                  +{formatEUR(v.priceCents)}
+                  +{formatEUR(applyAddOnPromo(v.priceCents))}
                 </span>
               )}
             </span>

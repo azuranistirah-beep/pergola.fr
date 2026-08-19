@@ -46,7 +46,7 @@
   "home": {
     "heroEyebrow": "2026 Collection — Made in France",
     "heroTitle": "Outdoor living, redrawn.",
-    "heroSubtitle": "Bioclimatic pergolas, gazebos and premium outdoor structures — designed in Paris, crafted in our Vendée workshops.",
+    "heroSubtitle": "Free delivery. Free installation. Custom colors and sizes. Your pergola ready in 4–6 days.",
     "heroCta": "Configure my pergola",
     "heroCtaSecondary": "See the collection",
     "statYears": "Years of craft",
@@ -803,6 +803,7 @@
     "pageTitle": "Design your bioclimatic pergola.",
     "pageDescription": "Every choice updates the price, SKU reference and preview in real time. Save, request a quote or order directly online.",
     "customDimensions": "Custom size beyond standard format",
+    "addOnCap": "Options cap discount (€100 max)",
     "installationIncluded": "Installation included (2–4 h)",
     "requestQuotePending": "Generating PDF...",
     "requestQuoteError": "Failed to generate PDF. Please try again."

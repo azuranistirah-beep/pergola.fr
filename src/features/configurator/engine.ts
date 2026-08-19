@@ -69,6 +69,19 @@ function dimensionUpcharge(cfg: ProductConfigurator, selection: Selection) {
   return Math.round(extra * 32000);
 }
 
+// Add-on pricing policy (site-wide promo):
+//   • every add-on shown at 50% of its list price
+//   • total add-on ceiling of €100 above the base product price
+// Keeping the list prices intact in `configurator-data.ts` documents the
+// full-rate figure and lets us switch the promo off by flipping these two
+// constants back to 1 / Infinity.
+export const ADD_ON_MULTIPLIER = 0.5;
+export const ADD_ON_CAP_CENTS = 10000; // €100
+
+/** Apply the promo multiplier to a list-price value for display. */
+export const applyAddOnPromo = (cents: number) =>
+  Math.round(cents * ADD_ON_MULTIPLIER);
+
 export function computePrice(
   cfg: ProductConfigurator,
   selection: Selection,
@@ -79,7 +92,7 @@ export function computePrice(
     lines.push({
       code: "dimensions",
       labelKey: "customDimensions",
-      amountCents: dimExtra,
+      amountCents: Math.round(dimExtra * ADD_ON_MULTIPLIER),
     });
   }
 
@@ -106,6 +119,9 @@ export function computePrice(
         amt = Math.round((cfg.basePriceCents * val.priceCents) / 10000);
         break;
     }
+    // Apply the promo multiplier per-line so the breakdown reads honestly
+    // (each line shows what it actually contributes to the total).
+    amt = Math.round(amt * ADD_ON_MULTIPLIER);
     if (amt > 0) {
       lines.push({
         code: opt.code,
@@ -115,6 +131,18 @@ export function computePrice(
       });
     }
   });
+
+  // Add-on cap: if the discounted sum still exceeds €100, book the overshoot
+  // as a negative "cap" line so the receipt stays self-explanatory —
+  // options subtotal + rebate line = capped subtotal.
+  const addOnSum = lines.reduce((s, l) => s + l.amountCents, 0);
+  if (addOnSum > ADD_ON_CAP_CENTS) {
+    lines.push({
+      code: "add-on-cap",
+      labelKey: "addOnCap",
+      amountCents: -(addOnSum - ADD_ON_CAP_CENTS),
+    });
+  }
 
   const totalCents =
     cfg.basePriceCents + lines.reduce((s, l) => s + l.amountCents, 0);

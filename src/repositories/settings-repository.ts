@@ -85,9 +85,9 @@ const defaultContent: ContentSettings = {
   heroTitleFr: "L'art de vivre dehors, redessiné.",
   heroTitleEn: "Outdoor living, redrawn.",
   heroSubtitleFr:
-    "Pergolas bioclimatiques, gazebos et structures d'extérieur haut de gamme, dessinées à Paris et fabriquées dans nos ateliers en Vendée.",
+    "Livraison offerte. Pose incluse. Coloris et dimensions sur mesure. Votre pergola prête en 4 à 6 jours.",
   heroSubtitleEn:
-    "Bioclimatic pergolas, gazebos and premium outdoor structures — designed in Paris, crafted in our Vendée workshops.",
+    "Free delivery. Free installation. Custom colors and sizes. Your pergola ready in 4–6 days.",
   heroEyebrowFr: "Collection 2026 — Fabrication française",
   heroEyebrowEn: "2026 Collection — Made in France",
 };
