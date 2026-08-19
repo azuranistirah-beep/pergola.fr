@@ -10,6 +10,7 @@
 
 import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
+import bcrypt from "bcryptjs";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -54,6 +55,7 @@ export async function GET(req: Request) {
 
   let connection: string = "ok";
   let counts: Record<string, number | string> = {};
+  let adminCheck: Record<string, unknown> = {};
   try {
     const conn = await mysql.createConnection(opts);
     try {
@@ -68,7 +70,6 @@ export async function GET(req: Request) {
           counts[t] = `ERR: ${e instanceof Error ? e.message : String(e)}`;
         }
       }
-      // Published-only count for products (matches listProducts filter)
       try {
         const [rows] = await conn.query<mysql.RowDataPacket[]>(
           "SELECT COUNT(*) AS n FROM products WHERE status = 'PUBLISHED'",
@@ -76,6 +77,37 @@ export async function GET(req: Request) {
         counts["products (PUBLISHED)"] = Number(rows[0]?.n ?? 0);
       } catch (e) {
         counts["products (PUBLISHED)"] = `ERR: ${e instanceof Error ? e.message : String(e)}`;
+      }
+
+      // Admin login diagnostic — runs bcrypt.compare on the server so we know
+      // whether the stored hash actually matches the expected password using
+      // the SAME bcryptjs the login flow uses. Password is hard-coded here for
+      // one-shot debugging; delete this route once fixed.
+      try {
+        const [rows] = await conn.query<mysql.RowDataPacket[]>(
+          "SELECT email, password_hash, LENGTH(password_hash) AS hash_len, is_active, totp_enabled FROM admin_users WHERE email = ? LIMIT 1",
+          ["admin@pergolafr.com"],
+        );
+        const row = rows[0];
+        if (!row) {
+          adminCheck = { error: "no row for admin@pergolafr.com" };
+        } else {
+          const testPassword = "PergolaFR2026!";
+          const stored = String(row.password_hash);
+          const ok = await bcrypt.compare(testPassword, stored);
+          adminCheck = {
+            email: row.email,
+            is_active: row.is_active,
+            totp_enabled: row.totp_enabled,
+            hash_len: row.hash_len,
+            hash_prefix: stored.slice(0, 10),
+            hash_suffix: stored.slice(-10),
+            test_password: testPassword,
+            bcrypt_compare: ok,
+          };
+        }
+      } catch (e) {
+        adminCheck = { error: e instanceof Error ? e.message : String(e) };
       }
     } finally {
       await conn.end();
@@ -87,5 +119,5 @@ export async function GET(req: Request) {
     }
   }
 
-  return NextResponse.json({ env, connection, counts, ts: new Date().toISOString() });
+  return NextResponse.json({ env, connection, counts, adminCheck, ts: new Date().toISOString() });
 }
