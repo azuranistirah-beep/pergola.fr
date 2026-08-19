@@ -164,6 +164,12 @@ function indexedColumns(table) {
       set.add(name);
     });
   });
+  // FK source columns must match the referenced column's type — MySQL rejects
+  // a TEXT→VARCHAR foreign key with errno 150. Force-promote any column named
+  // as the local side of a public.* → public.* FK.
+  foreignKeys
+    .filter((fk) => fk.table === table)
+    .forEach((fk) => set.add(fk.column));
   return set;
 }
 

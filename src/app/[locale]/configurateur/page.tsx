@@ -3,6 +3,10 @@ import { Configurator } from "@/features/configurator/configurator";
 import { bioclimaticConfigurator } from "@/features/configurator/configurator-data";
 import { getProductBySlug } from "@/repositories/product-repository";
 
+// Fetches getProductBySlug per request — force dynamic so price changes
+// propagate immediately.
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Configurateur — Pergola bioclimatique sur-mesure",
   description:

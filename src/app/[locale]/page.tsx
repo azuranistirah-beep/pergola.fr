@@ -10,7 +10,9 @@ import { CtaShowroom } from "@/features/home/cta-showroom";
 import { listProducts } from "@/repositories/product-repository";
 import { getContent } from "@/repositories/settings-repository";
 
-export const revalidate = 300;
+// Homepage pulls the same catalogue + site settings — keep it fresh so admin
+// edits (theme, hero, prices) reflect immediately.
+export const dynamic = "force-dynamic";
 
 export default async function HomePage({
   params,

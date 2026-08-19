@@ -125,7 +125,7 @@ DROP TABLE IF EXISTS `order_items`;
 CREATE TABLE `order_items` (
   `id` VARCHAR(191) NOT NULL,
   `order_id` VARCHAR(191) NOT NULL,
-  `product_id` TEXT,
+  `product_id` VARCHAR(191),
   `product_name` TEXT NOT NULL,
   `product_slug` TEXT,
   `product_sku` TEXT,

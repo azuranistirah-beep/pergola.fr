@@ -14,7 +14,11 @@ export async function generateMetadata({
   return { title: t("title"), description: t("intro") };
 }
 
-export const revalidate = 300;
+// Dynamic rendering so DB updates (new products, price changes) show up on
+// the next request rather than waiting for the 5-min ISR window. The catalogue
+// query is cheap enough (~350 rows + joins) that per-request rendering is fine
+// at our traffic level.
+export const dynamic = "force-dynamic";
 
 export default async function PergolasPage({
   params,
