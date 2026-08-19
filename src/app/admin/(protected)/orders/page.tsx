@@ -7,6 +7,7 @@ import {
   KpiCard,
 } from "@/features/admin/admin-ui";
 import { OrdersTable } from "@/features/admin/orders-table";
+import { OrdersResetButton } from "@/features/admin/orders-reset-button";
 import { query } from "@/lib/db";
 import { formatEUR } from "@/lib/utils";
 import { getT } from "@/lib/admin-i18n";
@@ -45,11 +46,14 @@ export default async function OrdersPage() {
         title={t("orders.title")}
         subtitle={t("orders.subtitle")}
         actions={
-          <Link href="/admin/orders/new">
-            <AdminButton variant="primary">
-              <Plus className="size-4" /> {t("orderCreate.title")}
-            </AdminButton>
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <OrdersResetButton count={orders.length} />
+            <Link href="/admin/orders/new">
+              <AdminButton variant="primary">
+                <Plus className="size-4" /> {t("orderCreate.title")}
+              </AdminButton>
+            </Link>
+          </div>
         }
       />
 

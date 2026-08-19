@@ -181,8 +181,13 @@ export async function resetOrdersInRange(
   );
   const ids = rows.map((r) => r.id);
   if (!ids.length) return 0;
+  // `invoices.order_id` is ON DELETE SET NULL — killing the orders would leave
+  // orphaned invoices/invoice_items behind. Drop the invoices first so the
+  // reset actually clears everything the customer transactions produced.
+  await execute("DELETE FROM invoices WHERE order_id IN (?)", [ids]);
   await execute("DELETE FROM orders WHERE id IN (?)", [ids]);
   revalidatePath("/admin/orders");
+  revalidatePath("/admin/invoices");
   revalidatePath("/admin/reports");
   revalidatePath("/admin");
   return ids.length;
